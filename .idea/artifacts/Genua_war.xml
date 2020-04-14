@@ -1,0 +1,14 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="Genua:war">
+    <output-path>$PROJECT_DIR$/target</output-path>
+    <properties id="maven-jee-properties">
+      <options>
+        <module>Genua</module>
+        <packaging>war</packaging>
+      </options>
+    </properties>
+    <root id="archive" name="Genua.war">
+      <element id="artifact" artifact-name="Genua:war exploded" />
+    </root>
+  </artifact>
+</component>
