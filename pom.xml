@@ -15,6 +15,23 @@
     </dependencies>
     <build>
         <finalName>Genua</finalName>
+
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.jacoco</groupId>
+                    <artifactId>jacoco-maven-plugin</artifactId>
+                    <version>0.8.2</version>
+                    <configuration>
+                        <destFile>${basedir}/target/jacoco.exec</destFile>
+                        <dataFile>${basedir}/target/jacoco.exec</dataFile>
+                    </configuration>
+                    <goals>
+                        <goal>prepare-agent</goal>
+                    </goals>
+                </plugin>
+            </plugins>
+        </pluginManagement>
     </build>
     <properties>
         <maven.compiler.source>13</maven.compiler.source>
