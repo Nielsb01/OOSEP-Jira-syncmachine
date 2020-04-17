@@ -1,15 +1,20 @@
 pipeline {
-    agent {
-        docker {
-            image 'maven:3-alpine'
-            args '-v //root//.m2://root//.m2'
-        }
-    }
+    agent any
     stages {
-        stage('Build') {
+        stage('Compile Source Code') {
             steps {
-                sh 'mvn -B -DskipTests clean package'
+                sh './mvnw compile'
             }
         }
-    }
+        stage('Run Tests') {
+            steps {
+                sh './mvnw test'
+            }
+        }
+        stage('SonarQube Quality Check') {
+             steps {
+                sh "./mvnw clean install sonar:sonar -Dsonar.branch=${env.BRANCH_NAME}"
+            }
+        }
+     }
 }
