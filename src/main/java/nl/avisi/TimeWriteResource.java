@@ -24,7 +24,16 @@ public class TimeWriteResource {
         addWorklog(issueKey, basicAuthUserName, basicAuthPass, spendTime);
     }
 
-
+    /***
+     * Method creates a new worklog for a user by sending a post request to the Jira API,
+     * the location of where the worklog should be created is specified by the issueKey.
+     * the standard comment of the worklog will be "Logging from JavaSyncApp"
+     * 
+     * @param issueKey Tag used to specify Jira url.
+     * @param username for basicAuth.
+     * @param password for basicAuth.
+     * @param timeSpend total worked time on issueKey.
+     */
     private void addWorklog(String issueKey, String username, String password, String timeSpend) {
         String urlBase = "http://127.0.0.1/rest/api/2/issue/";
         String urlEnd = "/worklog";
