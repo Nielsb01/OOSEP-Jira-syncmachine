@@ -17,7 +17,7 @@ public class TimeWriteResource {
     @GET
     public void sync(){
         //mock data moet van post komen
-        String issueKey = "KVNNTES-1";
+        String issueKey = "KNBPU-1";
         String basicAuthUserName = "Nielsb111";
         String basicAuthPass = "OOSEGenua";
         String spendTime = "29m";
@@ -43,7 +43,7 @@ public class TimeWriteResource {
 
         WorklogDTO worklogDTO = new WorklogDTO();
         worklogDTO.setTimeSpent(timeSpend);
-                worklogDTO.setComment("new unirest");
+                worklogDTO.setComment("2acc");
 
         HttpResponse<JsonNode> response = Unirest.post(url)
                 .basicAuth(username, password)
