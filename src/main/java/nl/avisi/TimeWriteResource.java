@@ -3,9 +3,7 @@ package nl.avisi;
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
 import kong.unirest.Unirest;
-import kong.unirest.UnirestInstance;
 
-import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import java.time.LocalDate;
@@ -38,12 +36,12 @@ public class TimeWriteResource {
 
 //        String worker = "JIRAUSER10100"; // niels a
 //        String worker = "JIRAUSER10000"; // niels borkes
-
+        //end of mock
 
         addWorklog(worklogs, basicAuthUserName, basicAuthPass);
     }
 
-    /***
+    /**
      * Method creates worklog for a user by sending a post request to the Tempo API,
      * the location of where the worklog should be created is specified by the originTaskId in the {@link WorklogDTO}.
      * the standard comment of the {@link WorklogDTO} will be "Logging from JavaSyncApp"
