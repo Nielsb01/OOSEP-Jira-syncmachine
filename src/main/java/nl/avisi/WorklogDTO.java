@@ -7,6 +7,13 @@ public class WorklogDTO {
     private int timeSpentSeconds;
     private String originTaskId;
 
+    public WorklogDTO(String worker, String started, int timeSpentSeconds, String originTaskId) {
+        this.worker = worker;
+        this.started = started;
+        this.timeSpentSeconds = timeSpentSeconds;
+        this.originTaskId = originTaskId;
+    }
+
     public String getWorker() {
         return worker;
     }
