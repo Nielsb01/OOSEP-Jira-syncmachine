@@ -5,5 +5,5 @@ import nl.avisi.exception.InvalidCredentialsException;
 import nl.avisi.model.User;
 
 public interface AuthenticationService {
-    User login(LoginDto loginCredentials) throws InvalidCredentialsException;
+    String login(LoginDto loginCredentials) throws InvalidCredentialsException;
 }

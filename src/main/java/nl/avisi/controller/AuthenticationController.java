@@ -19,9 +19,9 @@ public class AuthenticationController {
     private AuthenticationService authenticationService;
 
     @POST
-    @Produces(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.TEXT_HTML)
     @Consumes(MediaType.APPLICATION_JSON)
-    public User authenticateUser(LoginDto loginCredentials) {
+    public String authenticateUser(LoginDto loginCredentials) {
         try {
             return authenticationService.login(loginCredentials);
         } catch(InvalidCredentialsException invalidCredentials) {
