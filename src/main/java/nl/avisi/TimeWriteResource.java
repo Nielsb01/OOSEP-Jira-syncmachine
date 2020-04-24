@@ -8,6 +8,8 @@ import kong.unirest.UnirestInstance;
 import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 
 @Path("send")
@@ -17,13 +19,15 @@ public class TimeWriteResource {
     @GET
     public void sync(){
         //mock data moet van post komen
-        String issueKey = "KNBPU-1";
-        String basicAuthUserName = "Nielsb111";
-        String basicAuthPass = "OOSEGenua";
-        String spendTime = "29m";
-        //end of mock
+        String basicAuthUserName = "Nielsb01";
+        String basicAuthPass = "OOSEGENUA";
 
-        addWorklog(issueKey, basicAuthUserName, basicAuthPass, spendTime);
+//        String worker = "JIRAUSER10100"; // niels a
+        String worker = "JIRAUSER10000"; // niels borkes
+        int spendTimeSeconds = 3960;
+        String issueKey = "KNBPU-1";
+
+        addWorklog(worker, spendTimeSeconds, issueKey, basicAuthUserName, basicAuthPass);
     }
 
     /***
@@ -36,14 +40,24 @@ public class TimeWriteResource {
      * @param password for basicAuth.
      * @param timeSpend total worked time on issueKey.
      */
-    public void addWorklog(String issueKey, String username, String password, String timeSpend) {
-        String urlBase = "http://127.0.0.1/rest/api/2/issue/";
-        String urlEnd = "/worklog";
-        String url = urlBase + issueKey + urlEnd;
+    public void addWorklog(String workerID, int timeSpend, String issueKey, String username, String password) {
+//        String urlBase = "http://127.0.0.1/rest/api/2/issue/";
+//        String urlEnd = "/worklog";
+//        String url = urlBase + issueKey + urlEnd;
+        String url = "http://127.0.0.1/rest/tempo-timesheets/4/worklogs";
+
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate localDate = LocalDate.now();
+        String currentDate = dtf.format(localDate);
+        System.out.println(currentDate);
 
         WorklogDTO worklogDTO = new WorklogDTO();
-        worklogDTO.setTimeSpent(timeSpend);
-                worklogDTO.setComment("2acc");
+        worklogDTO.setWorker(workerID);
+        //worklogDTO.setComment("aaa");
+        worklogDTO.setStarted(currentDate);
+        worklogDTO.setTimeSpentSeconds(timeSpend);
+        worklogDTO.setOriginTaskId(issueKey);
+
 
         HttpResponse<JsonNode> response = Unirest.post(url)
                 .basicAuth(username, password)

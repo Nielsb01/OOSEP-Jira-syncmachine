@@ -19,9 +19,9 @@ class TimeWriteResourceTest {
         // Arrange
 
         // Act
-        sut.sync();
+
 
         //Assert
-        verify(sut).addWorklog("KVNNTES-1", "Nielsb111", "OOSEGenua", "29m");
+
     }
 }
