@@ -44,14 +44,13 @@ public class TimeWriteResource {
     }
 
     /***
-     * Method creates a new worklog for a user by sending a post request to the Jira API,
-     * the location of where the worklog should be created is specified by the issueKey.
-     * the standard comment of the worklog will be "Logging from JavaSyncApp"
+     * Method creates worklog for a user by sending a post request to the Tempo API,
+     * the location of where the worklog should be created is specified by the originTaskId in the {@link WorklogDTO}.
+     * the standard comment of the {@link WorklogDTO} will be "Logging from JavaSyncApp"
      *
-     * @param issueKey Tag used to specify Jira url.
+     * @param worklogs ArrayList consisting of WorklogDTO's this list are all the worklogs retrieved from Jira-server 1 .
      * @param username for basicAuth.
      * @param password for basicAuth.
-     * @param timeSpend total worked time on issueKey.
      */
     public void addWorklog(List<WorklogDTO> worklogs, String username, String password) {
 
