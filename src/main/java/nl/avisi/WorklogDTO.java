@@ -1,0 +1,60 @@
+package nl.avisi;
+
+public class WorklogDTO {
+        private String worker;
+        private String comment;
+        private String started;
+        private int timeSpentSeconds;
+        private String originTaskId;
+
+    public WorklogDTO() {
+    }
+
+    public WorklogDTO(String worker, String started, int timeSpentSeconds, String originTaskId) {
+        this.worker = worker;
+        this.comment = "Logging from JavaSyncApp";
+        this.started = started;
+        this.timeSpentSeconds = timeSpentSeconds;
+        this.originTaskId = originTaskId;
+    }
+
+    public String getWorker() {
+        return worker;
+    }
+
+    public void setWorker(String worker) {
+        this.worker = worker;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+
+    public String getStarted() {
+        return started;
+    }
+
+    public void setStarted(String started) {
+        this.started = started;
+    }
+
+    public int getTimeSpentSeconds() {
+        return timeSpentSeconds;
+    }
+
+    public void setTimeSpentSeconds(int timeSpentSeconds) {
+        this.timeSpentSeconds = timeSpentSeconds;
+    }
+
+    public String getOriginTaskId() {
+        return originTaskId;
+    }
+
+    public void setOriginTaskId(String originTaskId) {
+        this.originTaskId = originTaskId;
+    }
+}
