@@ -56,7 +56,6 @@ public class BasicAuthRequest implements IRequest<BasicAuth> {
         return Unirest.get(url)
                 .basicAuth(authentication.getUsername(), authentication.getPassword())
                 .header(acceptHeader, contentTypeJson)
-                .header(contentTypeHeader, contentTypeJson)
                 .asJson()
                 .getBody();
     }
