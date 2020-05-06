@@ -3,6 +3,7 @@ package nl.avisi.network;
 import com.google.gson.JsonObject;
 import kong.unirest.JsonNode;
 import kong.unirest.Unirest;
+import nl.avisi.network.authentication.BasicAuth;
 
 /**
  * Send a request with the basic auth headers
@@ -10,7 +11,7 @@ import kong.unirest.Unirest;
  * The basic auth credentials are set using
  * the constructor
  */
-public class BasicAuthRequest implements IRequest {
+public class BasicAuthRequest implements IRequest<BasicAuth> {
 
     /**
      * Header name for the content type which is
@@ -31,18 +32,18 @@ public class BasicAuthRequest implements IRequest {
     private final String contentTypeJson = "application/json";
 
     /**
-     * Username used for basic auth
+     * The basic auth information to send
+     * with the request
      */
-    private String username;
+    private BasicAuth authentication;
 
     /**
-     * Password used for basic auth
+     * Set the basic auth information
+     *
+     * @param authentication basic auth
      */
-    private String password;
-
-    public BasicAuthRequest(String username, String password) {
-        this.username = username;
-        this.password = password;
+    public void setAuthentication(BasicAuth authentication) {
+        this.authentication = authentication;
     }
 
     /**
@@ -53,7 +54,7 @@ public class BasicAuthRequest implements IRequest {
      */
     public JsonNode get(String url) {
         return Unirest.get(url)
-                .basicAuth(this.username, this.password)
+                .basicAuth(authentication.getUsername(), authentication.getPassword())
                 .header(acceptHeader, contentTypeJson)
                 .header(contentTypeHeader, contentTypeJson)
                 .asJson()
@@ -69,7 +70,7 @@ public class BasicAuthRequest implements IRequest {
      */
     public JsonNode post(String url, JsonObject data) {
         return Unirest.post(url)
-                .basicAuth(this.username, this.password)
+                .basicAuth(authentication.getUsername(), authentication.getPassword())
                 .header(acceptHeader, contentTypeJson)
                 .header(contentTypeHeader, contentTypeJson)
                 .body(data)
