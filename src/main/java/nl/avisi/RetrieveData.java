@@ -2,11 +2,13 @@ package nl.avisi;
 
 import kong.unirest.*;
 
+import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 
 
 public class RetrieveData {
+
 
     /**
      *

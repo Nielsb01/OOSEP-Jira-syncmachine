@@ -18,6 +18,7 @@
             <artifactId>unirest-java</artifactId>
             <version>3.7.02</version>
         </dependency>
+<<<<<<< HEAD
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
@@ -30,6 +31,8 @@
             <version>RELEASE</version>
             <scope>test</scope>
         </dependency>
+=======
+>>>>>>> origin/development
     </dependencies>
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
