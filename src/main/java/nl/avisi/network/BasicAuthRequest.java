@@ -3,7 +3,6 @@ package nl.avisi.network;
 import com.google.gson.JsonObject;
 import kong.unirest.JsonNode;
 import kong.unirest.Unirest;
-import org.apache.http.entity.mime.Header;
 
 /**
  * Send a request with the basic auth headers
