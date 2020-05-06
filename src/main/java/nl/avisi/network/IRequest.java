@@ -1,9 +1,10 @@
 package nl.avisi.network;
 
+import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
 
 public interface IRequest<Authentication> {
     void setAuthentication(Authentication authentication);
-    JsonNode get(String url);
-    <PostData> JsonNode post(String url, PostData data);
+    HttpResponse<JsonNode> get(String url);
+    <PostData> HttpResponse<JsonNode> post(String url, PostData data);
 }

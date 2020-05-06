@@ -1,5 +1,6 @@
 package nl.avisi.network;
 
+import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
 import kong.unirest.Unirest;
 import nl.avisi.network.authentication.BasicAuth;
@@ -51,12 +52,11 @@ public class BasicAuthRequest implements IRequest<BasicAuth> {
      * @param url the eddpoint to send a get request to
      * @return the response of the get request
      */
-    public JsonNode get(String url) {
+    public HttpResponse<JsonNode> get(String url) {
         return Unirest.get(url)
                 .basicAuth(authentication.getUsername(), authentication.getPassword())
                 .header(acceptHeader, contentTypeJson)
-                .asJson()
-                .getBody();
+                .asJson();
     }
 
     /**
@@ -66,13 +66,12 @@ public class BasicAuthRequest implements IRequest<BasicAuth> {
      * @param data the object to be sent
      * @return the response of the post request
      */
-    public <PostData> JsonNode post(String url, PostData data) {
+    public <PostData> HttpResponse<JsonNode> post(String url, PostData data) {
         return Unirest.post(url)
                 .basicAuth(authentication.getUsername(), authentication.getPassword())
                 .header(acceptHeader, contentTypeJson)
                 .header(contentTypeHeader, contentTypeJson)
                 .body(data)
-                .asJson()
-                .getBody();
+                .asJson();
     }
 }
