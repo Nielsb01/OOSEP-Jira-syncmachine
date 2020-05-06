@@ -3,6 +3,7 @@ package nl.avisi.network;
 import com.google.gson.JsonObject;
 import kong.unirest.JsonNode;
 import kong.unirest.Unirest;
+import org.apache.http.entity.mime.Header;
 
 /**
  * Send a request with the basic auth headers
@@ -11,6 +12,24 @@ import kong.unirest.Unirest;
  * the constructor
  */
 public class BasicAuthRequest implements IRequest {
+
+    /**
+     * Header name for the content type which is
+     * expected by the Unirest client
+     */
+    private final String acceptHeader = "Accept";
+
+    /**
+     * Header name for the content type which is
+     * sent by the Unirest client
+     */
+    private final String contentTypeHeader = "Content-Type";
+
+    /**
+     * The type of data that is accepted by the Unirest
+     * client
+     */
+    private final String contentTypeJson = "application/json";
 
     /**
      * Username used for basic auth
@@ -36,6 +55,8 @@ public class BasicAuthRequest implements IRequest {
     public JsonNode get(String url) {
         return Unirest.get(url)
                 .basicAuth(this.username, this.password)
+                .header(acceptHeader, contentTypeJson)
+                .header(contentTypeHeader, contentTypeJson)
                 .asJson()
                 .getBody();
     }
@@ -50,6 +71,8 @@ public class BasicAuthRequest implements IRequest {
     public JsonNode post(String url, JsonObject data) {
         return Unirest.post(url)
                 .basicAuth(this.username, this.password)
+                .header(acceptHeader, contentTypeJson)
+                .header(contentTypeHeader, contentTypeJson)
                 .body(data)
                 .asJson()
                 .getBody();
