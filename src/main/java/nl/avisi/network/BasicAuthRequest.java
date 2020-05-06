@@ -10,7 +10,7 @@ import nl.avisi.network.authentication.BasicAuth;
  * The basic auth credentials are set using
  * the constructor
  */
-public class BasicAuthRequest<PostData> implements IRequest<BasicAuth, PostData> {
+public class BasicAuthRequest implements IRequest<BasicAuth> {
 
     /**
      * Header name for the content type which is
@@ -66,7 +66,7 @@ public class BasicAuthRequest<PostData> implements IRequest<BasicAuth, PostData>
      * @param data the object to be sent
      * @return the response of the post request
      */
-    public JsonNode post(String url, PostData data) {
+    public <PostData> JsonNode post(String url, PostData data) {
         return Unirest.post(url)
                 .basicAuth(authentication.getUsername(), authentication.getPassword())
                 .header(acceptHeader, contentTypeJson)
