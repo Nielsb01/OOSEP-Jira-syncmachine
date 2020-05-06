@@ -1,6 +1,6 @@
 package nl.avisi.network;
 
-import com.google.gson.JsonObject;
+import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
 import kong.unirest.Unirest;
 import nl.avisi.network.authentication.BasicAuth;
@@ -52,28 +52,26 @@ public class BasicAuthRequest implements IRequest<BasicAuth> {
      * @param url the eddpoint to send a get request to
      * @return the response of the get request
      */
-    public JsonNode get(String url) {
+    public HttpResponse<JsonNode> get(String url) {
         return Unirest.get(url)
                 .basicAuth(authentication.getUsername(), authentication.getPassword())
                 .header(acceptHeader, contentTypeJson)
-                .asJson()
-                .getBody();
+                .asJson();
     }
 
     /**
-     * Post the json object to the given url
+     * Post the object to the given url
      *
      * @param url the endpoint to send the json object to
-     * @param data the json object to be sent
+     * @param data the object to be sent
      * @return the response of the post request
      */
-    public JsonNode post(String url, JsonObject data) {
+    public <PostData> HttpResponse<JsonNode> post(String url, PostData data) {
         return Unirest.post(url)
                 .basicAuth(authentication.getUsername(), authentication.getPassword())
                 .header(acceptHeader, contentTypeJson)
                 .header(contentTypeHeader, contentTypeJson)
                 .body(data)
-                .asJson()
-                .getBody();
+                .asJson();
     }
 }
