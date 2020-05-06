@@ -14,9 +14,11 @@ public class HelloWorld {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public List<WorklogDTO> helloWorld() {
-List<String> workers = new ArrayList<>();
-workers.add("JIRAUSER10000");
-workers.add("JIRAUSER10100");
+
+        List<String> workers = new ArrayList<>();
+        workers.add("JIRAUSER10000");
+        workers.add("JIRAUSER10100");
+
         return retrieveData.retrieveWorklogs("2020-04-01", "2020-04-23", workers);
     }
 }
