@@ -1,5 +1,8 @@
 package nl.avisi;
 
+import nl.avisi.network.authentication.BasicAuth;
+
+import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -9,7 +12,13 @@ import java.util.List;
 
 @Path("test")
 public class HelloWorld {
-    RetrieveData retrieveData = new RetrieveData();
+
+    private RetrieveData retrieveData;
+
+    @Inject
+    public void setRetrieveData(RetrieveData retrieveData) {
+        this.retrieveData = retrieveData;
+    }
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -18,6 +27,9 @@ public class HelloWorld {
         List<String> workers = new ArrayList<>();
         workers.add("JIRAUSER10000");
         workers.add("JIRAUSER10100");
+
+        retrieveData.setBasicAuth(new BasicAuth().setPassword("xtkWMeAbZcWB6FN").setUsername("ruubz2"));
+        retrieveData.setUrl("http://127.0.0.1/");
 
         return retrieveData.retrieveWorklogs("2020-04-01", "2020-04-23", workers);
     }
