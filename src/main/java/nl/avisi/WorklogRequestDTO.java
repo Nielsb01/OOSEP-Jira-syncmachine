@@ -9,15 +9,7 @@ public class WorklogRequestDTO {
 
     public WorklogRequestDTO() {
     }
-
-/*
-    public WorklogRequestBody(String from, String to, List<String> worker) {
-        this.from = from;
-        this.to = to;
-        this.worker = worker;
-    }
-*/
-
+    
     public String getFrom() {
         return from;
     }

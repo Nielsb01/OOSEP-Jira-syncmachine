@@ -12,6 +12,10 @@ import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Responsible for retrieving worklogs from the Jira server through the Tempo API with HTTP requests
+ */
+
 @Default
 public class RetrieveData {
 
@@ -37,7 +41,7 @@ public class RetrieveData {
     }
 
     public void setUrl(String url) {
-        this.url = url + "rest/tempo-timesheets/4/worklogs/search";
+        this.url = String.format("%s/rest/tempo-timesheets/4/worklogs/search", url);
     }
 
     public void setBasicAuth(BasicAuth basicAuth) {
@@ -45,9 +49,8 @@ public class RetrieveData {
     }
 
     /**
-     *
-     * @param from Date to be used in retrieving the worklogs from a certain point in time.
-     * @param to Date to be used in retrieving the worklogs to a certain point in time.
+     * @param from    Date to be used in retrieving the worklogs from a certain point in time.
+     * @param to      Date to be used in retrieving the worklogs to a certain point in time.
      * @param workers The workers that will have their worklogs retrieved.
      * @return List of all worklogs that were retrieved between the two given dates for the specified workers.
      */
@@ -65,7 +68,6 @@ public class RetrieveData {
     }
 
     /**
-     *
      * @param jsonArray All retrieved worklogs in jsonArray form.
      * @return List of all worklogs that were retrieved between the two given dates for the specified workers.
      */
@@ -91,7 +93,6 @@ public class RetrieveData {
     }
 
     /**
-     *
      * @param requestBody Contains the parameters to specify the worklogs to be retrieved during the HTTP request.
      * @return httpResponse containing the worklogs in JsonNode form.
      */

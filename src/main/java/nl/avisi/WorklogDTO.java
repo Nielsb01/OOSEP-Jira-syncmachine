@@ -1,22 +1,27 @@
 package nl.avisi;
 
 public class WorklogDTO {
+
     /**
      * is the id of a user the worklog will be created for. "JIRAUSER10000"
      */
     private String worker;
+
     /**
      * is a message displayed in the worklog so that is is clear there has been made use of the synchronisation app.
      */
     private String comment = "Logging from JavaSyncApp";
+
     /**
      * is the date the worklog was created in Jira-server 1.
      */
     private String started;
+
     /**
      * is the amount of worked time displayed.
      */
     private int timeSpentSeconds;
+
     /**
      * this id from a Tempo account and will be used to link the issue of Jira-server 1 to the correct issue on Avisi-Jira-server.
      */
@@ -25,7 +30,6 @@ public class WorklogDTO {
     public String getWorker() {
         return worker;
     }
-
 
     public WorklogDTO setWorker(String worker) {
         this.worker = worker;
