@@ -25,12 +25,12 @@ public class HelloWorld {
     public List<WorklogDTO> helloWorld() {
 
         List<String> workers = new ArrayList<>();
-        workers.add("JIRAUSER10000");
+   /*     workers.add("JIRAUSER10000");
         workers.add("JIRAUSER10100");
-
+*/
         retrieveData.setBasicAuth(new BasicAuth().setPassword("xtkWMeAbZcWB6FN").setUsername("ruubz2"));
         retrieveData.setUrl("http://127.0.0.1/");
 
-        return retrieveData.retrieveWorklogs("2020-04-01", "2020-04-23", workers);
+        return retrieveData.retrieveWorklogs("2020-01-01", "2020-12-23", workers);
     }
 }

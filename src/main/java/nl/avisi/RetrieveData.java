@@ -2,6 +2,7 @@ package nl.avisi;
 
 import kong.unirest.*;
 import kong.unirest.json.JSONArray;
+import kong.unirest.json.JSONException;
 import kong.unirest.json.JSONObject;
 import nl.avisi.network.IRequest;
 import nl.avisi.network.authentication.BasicAuth;
@@ -27,7 +28,7 @@ public class RetrieveData {
     }
 
     public void setUrl(String url) {
-        this.url = url;
+        this.url = url + "rest/tempo-timesheets/4/worklogs/search";
     }
 
     public void setBasicAuth(BasicAuth basicAuth) {
@@ -35,15 +36,14 @@ public class RetrieveData {
     }
 
 
-
     public List<WorklogDTO> retrieveWorklogs(String from, String to, List<String> workers) {
 
 
-        WorklogRequestBody worklogRequestBody = new WorklogRequestBody().setFrom(from).setTo(to).setWorker(workers);
-        HttpResponse<JsonNode> JSONWorklogs = requestWorklogs(worklogRequestBody);
+        WorklogRequestDTO worklogRequestDTO = new WorklogRequestDTO().setFrom(from).setTo(to).setWorker(workers);
+        HttpResponse<JsonNode> JSONWorklogs = requestWorklogs(worklogRequestDTO);
 
 
-        if (JSONWorklogs.getBody() == null) {
+        if (JSONWorklogs.getBody() == null || !JSONWorklogs.getBody().isArray()) {
             return new ArrayList<>();
         }
 
@@ -58,19 +58,23 @@ public class RetrieveData {
         for (int i = 0; i < jsonArray.length(); i++) {
             JSONObject jsonObject = jsonArray.getJSONObject(i);
 
-            String worker = jsonObject.getString("worker");
-            String started = jsonObject.getString("started");
-            String originTaskId = jsonObject.getJSONObject("issue").getString("accountKey");
-            int timeSpentSeconds = jsonObject.getInt("timeSpentSeconds");
+            try {
+                String worker = jsonObject.getString("worker");
+                String started = jsonObject.getString("started");
+                String originTaskId = jsonObject.getJSONObject("issue").getString("accountKey");
+                int timeSpentSeconds = jsonObject.getInt("timeSpentSeconds");
 
-            worklogs.add(new WorklogDTO().setWorker(worker).setStarted(started).setOriginTaskId(originTaskId).setTimeSpentSeconds(timeSpentSeconds));
+                worklogs.add(new WorklogDTO().setWorker(worker).setStarted(started).setOriginTaskId(originTaskId).setTimeSpentSeconds(timeSpentSeconds));
+            } catch (JSONException e) {
+                return new ArrayList<>();
+            }
         }
 
         return worklogs;
     }
 
 
-    private HttpResponse<JsonNode> requestWorklogs(WorklogRequestBody requestBody) {
+    private HttpResponse<JsonNode> requestWorklogs(WorklogRequestDTO requestBody) {
         request.setAuthentication(basicAuth);
 
         return request.post(url, requestBody);

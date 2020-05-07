@@ -2,6 +2,8 @@ package nl.avisi;
 
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
+import kong.unirest.json.JSONArray;
+import kong.unirest.json.JSONObject;
 import nl.avisi.network.IRequest;
 import nl.avisi.network.authentication.BasicAuth;
 import org.junit.jupiter.api.BeforeEach;
@@ -81,8 +83,7 @@ class RetrieveDataTest {
         HttpResponse response = mock(HttpResponse.class);
 
         when(mockedRequest.post(any(), any())).thenReturn(response);
-        when(response.getBody()).thenReturn(new JsonNode(
-                json));
+        when(response.getBody()).thenReturn(new JsonNode(json));
 
         List<WorklogDTO> actualValue = sut.retrieveWorklogs("-", "-", new ArrayList<>());
 
@@ -90,5 +91,31 @@ class RetrieveDataTest {
         assertEquals(startedValue, actualValue.get(0).getStarted());
         assertEquals(accountKeyValue, actualValue.get(0).getOriginTaskId());
         assertEquals(timeSpentSecondsValue, actualValue.get(0).getTimeSpentSeconds());
+    }
+
+    @Test
+    void testRetrieveAllWorklogsCreatesEmptyListWhenAccountKeyIsMissing() {
+
+        String workerValue = "ttt";
+        String startedValue = "fff";
+        String accountKeyValue = "null";
+        int timeSpentSecondsValue = 1234;
+
+        JSONObject jsonString = new JSONObject()
+                .put("worker", workerValue)
+                .put("started", startedValue)
+                .put("timeSpentSeconds", timeSpentSecondsValue);
+
+        String jsonArray = new JSONArray().put(jsonString).toString();
+
+
+        HttpResponse response = mock(HttpResponse.class);
+
+        when(mockedRequest.post(any(), any())).thenReturn(response);
+        when(response.getBody()).thenReturn(new JsonNode(jsonArray));
+
+        List<WorklogDTO> actualValue = sut.retrieveWorklogs("-", "-", new ArrayList<>());
+        assertEquals(0, actualValue.size());
+
     }
 }

@@ -2,12 +2,12 @@ package nl.avisi;
 
 import java.util.List;
 
-public class WorklogRequestBody {
+public class WorklogRequestDTO {
     private String from;
     private String to;
     private List<String> worker;
 
-    public WorklogRequestBody() {
+    public WorklogRequestDTO() {
     }
 
 /*
@@ -22,7 +22,7 @@ public class WorklogRequestBody {
         return from;
     }
 
-    public WorklogRequestBody setFrom(String from) {
+    public WorklogRequestDTO setFrom(String from) {
         this.from = from;
         return this;
     }
@@ -31,7 +31,7 @@ public class WorklogRequestBody {
         return to;
     }
 
-    public WorklogRequestBody setTo(String to) {
+    public WorklogRequestDTO setTo(String to) {
         this.to = to;
         return this;
     }
@@ -40,7 +40,7 @@ public class WorklogRequestBody {
         return worker;
     }
 
-    public WorklogRequestBody setWorker(List<String> worker) {
+    public WorklogRequestDTO setWorker(List<String> worker) {
         this.worker = worker;
         return this;
     }
