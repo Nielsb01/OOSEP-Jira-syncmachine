@@ -15,12 +15,21 @@ import java.util.List;
 @Default
 public class RetrieveData {
 
-    public RetrieveData() {
-    }
-
+    /**
+     * base URL where the Jira server is being hosted
+     */
     private String url;
+
+    /**
+     * Method by which HTTP requests are sent
+     */
     private IRequest request;
+
+    /**
+     * Contains information for the authentication required to make a HTTP request
+     */
     private BasicAuth basicAuth;
+
 
     @Inject
     public void setRequest(IRequest<BasicAuth> request) {
@@ -35,13 +44,16 @@ public class RetrieveData {
         this.basicAuth = basicAuth;
     }
 
-
+    /**
+     *
+     * @param from Date to be used in retrieving the worklogs from a certain point in time.
+     * @param to Date to be used in retrieving the worklogs to a certain point in time.
+     * @param workers The workers that will have their worklogs retrieved.
+     * @return List of all worklogs that were retrieved between the two given dates for the specified workers.
+     */
     public List<WorklogDTO> retrieveWorklogs(String from, String to, List<String> workers) {
-
-
         WorklogRequestDTO worklogRequestDTO = new WorklogRequestDTO().setFrom(from).setTo(to).setWorker(workers);
         HttpResponse<JsonNode> JSONWorklogs = requestWorklogs(worklogRequestDTO);
-
 
         if (JSONWorklogs.getBody() == null || !JSONWorklogs.getBody().isArray()) {
             return new ArrayList<>();
@@ -52,6 +64,11 @@ public class RetrieveData {
         return createWorklogs(jsonArray);
     }
 
+    /**
+     *
+     * @param jsonArray All retrieved worklogs in jsonArray form.
+     * @return List of all worklogs that were retrieved between the two given dates for the specified workers.
+     */
     private List<WorklogDTO> createWorklogs(JSONArray jsonArray) {
         List<WorklogDTO> worklogs = new ArrayList<>();
 
@@ -73,14 +90,14 @@ public class RetrieveData {
         return worklogs;
     }
 
-
+    /**
+     *
+     * @param requestBody Contains the parameters to specify the worklogs to be retrieved during the HTTP request.
+     * @return httpResponse containing the worklogs in JsonNode form.
+     */
     private HttpResponse<JsonNode> requestWorklogs(WorklogRequestDTO requestBody) {
         request.setAuthentication(basicAuth);
 
         return request.post(url, requestBody);
-
     }
-
-
-
 }
