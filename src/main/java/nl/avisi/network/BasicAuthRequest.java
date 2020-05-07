@@ -17,19 +17,19 @@ public class BasicAuthRequest implements IRequest<BasicAuth> {
      * Header name for the content type which is
      * expected by the Unirest client
      */
-    private final String acceptHeader = "Accept";
+    private final static String acceptHeader = "Accept";
 
     /**
      * Header name for the content type which is
      * sent by the Unirest client
      */
-    private final String contentTypeHeader = "Content-Type";
+    private final static String contentTypeHeader = "Content-Type";
 
     /**
      * The type of data that is accepted by the Unirest
      * client
      */
-    private final String contentTypeJson = "application/json";
+    private final static String contentTypeJson = "application/json";
 
     /**
      * The basic auth information to send
