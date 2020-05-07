@@ -4,6 +4,9 @@ public class BasicAuth {
     private String username;
     private String password;
 
+    public BasicAuth() {
+    }
+
     public String getUsername() {
         return username;
     }

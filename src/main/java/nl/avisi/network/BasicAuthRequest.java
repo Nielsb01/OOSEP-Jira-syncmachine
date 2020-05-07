@@ -5,12 +5,16 @@ import kong.unirest.JsonNode;
 import kong.unirest.Unirest;
 import nl.avisi.network.authentication.BasicAuth;
 
+import javax.enterprise.inject.Default;
+
 /**
  * Send a request with the basic auth headers
  *
  * The basic auth credentials are set using
  * the constructor
  */
+
+@Default
 public class BasicAuthRequest implements IRequest<BasicAuth> {
 
     /**
