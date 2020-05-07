@@ -4,6 +4,7 @@ import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
 import kong.unirest.Unirest;
 import nl.avisi.network.IRequest;
+import nl.avisi.network.authentication.BasicAuth;
 
 import javax.inject.Inject;
 import javax.ws.rs.GET;
@@ -11,9 +12,9 @@ import javax.ws.rs.Path;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-
-
+import java.util.Map;
 
 
 @Path("send")
@@ -22,7 +23,7 @@ public class TimeWriteResource {
     private IRequest request;
 
     @Inject
-    public void setRequest(IRequest request) {
+    public void setRequest(IRequest<BasicAuth> request) {
         this.request = request;
     }
 
@@ -33,19 +34,18 @@ public class TimeWriteResource {
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate localDate = LocalDate.now();
         String currentDate = dtf.format(localDate);
-        System.out.println(currentDate);
 
         List<WorklogDTO> worklogs= new ArrayList<>();
         String basicAuthUserName = "Nielsb01";
         String basicAuthPass = "OOSEGENUA";
 
-        worklogs.add(new WorklogDTO("JIRAUSER10000", currentDate, 3960, "KNBPU-1"));
-        worklogs.add(new WorklogDTO("JIRAUSER10000", currentDate, 1800, "KNBPU-1"));
-        worklogs.add(new WorklogDTO("JIRAUSER10000", currentDate, 1800, "KNBPU-1"));
-        worklogs.add(new WorklogDTO("JIRAUSER10100", currentDate, 3600, "KNBPU-1"));
+        worklogs.add(new WorklogDTO().setWorker("JIRAUSER10000").setStarted(currentDate).setTimeSpentSeconds(600).setOriginTaskId("KNBPU-2"));
+        worklogs.add(new WorklogDTO().setWorker("JIRAUSER10000").setStarted(currentDate).setTimeSpentSeconds(600).setOriginTaskId("KNBPU-2"));
+        worklogs.add(new WorklogDTO().setWorker("JIRAUSER10000").setStarted(currentDate).setTimeSpentSeconds(600).setOriginTaskId("KNBPU-2"));
+        worklogs.add(new WorklogDTO().setWorker("JIRAUSER10100").setStarted(currentDate).setTimeSpentSeconds(600).setOriginTaskId("KNBPU-2"));
 
-
-        addWorklog(worklogs, basicAuthUserName, basicAuthPass);
+        String url = "http://127.0.0.1/rest/tempo-timesheets/4/worklogs";
+        addWorklog(worklogs, basicAuthUserName, basicAuthPass, url);
     }
 
     /**
@@ -57,19 +57,19 @@ public class TimeWriteResource {
      * @param username for basicAuth.
      * @param password for basicAuth.
      */
-    public void addWorklog(List<WorklogDTO> worklogs, String username, String password) {
+    public void addWorklog(List<WorklogDTO> worklogs, String username, String password, String url) {
 
-        String url = "http://127.0.0.1/rest/tempo-timesheets/4/worklogs";
+        request.setAuthentication(new BasicAuth().setUsername(username).setPassword(password));
+        Map<Integer,Integer> responseCodes = new HashMap<>();
 
         for(WorklogDTO worklog : worklogs){
-            HttpResponse<JsonNode> response = Unirest.post(url)
-                    .basicAuth(username, password)
-                    .header("Accept", "application/json")
-                    .header("Content-Type", "application/json")
-                    .body(worklog)
-                    .asJson();
-
+            HttpResponse<JsonNode> response = request.post(url,worklog);
+            responseCodes.put(response.getBody().getArray().getJSONObject(0).getInt("tempoWorklogId"),response.getStatus());
             System.out.println(response.getBody());
+
+        }
+        for(Map.Entry item : responseCodes.entrySet()){
+            System.out.println(item);
         }
     }
 

@@ -22,50 +22,49 @@ public class WorklogDTO {
      */
     private String originTaskId;
 
-    public WorklogDTO(String worker, String started, int timeSpentSeconds, String originTaskId) {
-        this.worker = worker;
-        this.started = started;
-        this.timeSpentSeconds = timeSpentSeconds;
-        this.originTaskId = originTaskId;
-    }
-
     public String getWorker() {
         return worker;
     }
 
-    public void setWorker(String worker) {
+
+    public WorklogDTO setWorker(String worker) {
         this.worker = worker;
-    }
-
-    public String getStarted() {
-        return started;
-    }
-
-    public void setStarted(String started) {
-        this.started = started;
-    }
-
-    public int getTimeSpentSeconds() {
-        return timeSpentSeconds;
-    }
-
-    public void setTimeSpentSeconds(int timeSpentSeconds) {
-        this.timeSpentSeconds = timeSpentSeconds;
-    }
-
-    public String getOriginTaskId() {
-        return originTaskId;
-    }
-
-    public void setOriginTaskId(String originTaskId) {
-        this.originTaskId = originTaskId;
+        return this;
     }
 
     public String getComment() {
         return comment;
     }
 
-    public void setComment(String comment) {
+    public WorklogDTO setComment(String comment) {
         this.comment = comment;
+        return this;
+    }
+
+    public String getStarted() {
+        return started;
+    }
+
+    public WorklogDTO setStarted(String started) {
+        this.started = started;
+        return this;
+    }
+
+    public int getTimeSpentSeconds() {
+        return timeSpentSeconds;
+    }
+
+    public WorklogDTO setTimeSpentSeconds(int timeSpentSeconds) {
+        this.timeSpentSeconds = timeSpentSeconds;
+        return this;
+    }
+
+    public String getOriginTaskId() {
+        return originTaskId;
+    }
+
+    public WorklogDTO setOriginTaskId(String originTaskId) {
+        this.originTaskId = originTaskId;
+        return this;
     }
 }
