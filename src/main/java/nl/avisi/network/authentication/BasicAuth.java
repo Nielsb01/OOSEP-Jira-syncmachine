@@ -12,11 +12,13 @@ public class BasicAuth {
         return password;
     }
 
-    public void setUsername(String username) {
+    public BasicAuth setUsername(String username) {
         this.username = username;
+        return this;
     }
 
-    public void setPassword(String password) {
+    public BasicAuth setPassword(String password) {
         this.password = password;
+        return this;
     }
 }
