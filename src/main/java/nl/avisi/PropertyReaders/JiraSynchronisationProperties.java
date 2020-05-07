@@ -1,11 +1,18 @@
 package nl.avisi.PropertyReaders;
 
+import javax.inject.Inject;
+
 public class JiraSynchronisationProperties {
 
     private PropertyReader propertyReader;
 
-    public JiraSynchronisationProperties() {
-        this.propertyReader = new PropertyReader("jiraSynchronisation.properties");
+    @Inject
+    public void setPropertyReader(PropertyReader propertyReader) {
+        this.propertyReader = propertyReader;
+    }
+
+    public void loadPropertyFile() {
+        propertyReader.loadPropertyFile("jiraSynchronisation.properties");
     }
 
     public String getOriginUrl() {

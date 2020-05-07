@@ -9,9 +9,11 @@ public class PropertyReader {
 
     private Properties properties;
 
-    public PropertyReader(String propertiesFileName) {
+    public PropertyReader() {
         properties = new Properties();
+    }
 
+    public void loadPropertyFile(String propertiesFileName) {
         try {
             properties.load(Objects
                     .requireNonNull(getClass()
@@ -19,7 +21,7 @@ public class PropertyReader {
                             .getResourceAsStream(propertiesFileName)));
         }
         catch (IOException e) {
-            throw new InternalServerErrorException("Error loading Jira synchronisation properties: ", e);
+            throw new InternalServerErrorException("Error loading properties: ", e);
         }
     }
 
