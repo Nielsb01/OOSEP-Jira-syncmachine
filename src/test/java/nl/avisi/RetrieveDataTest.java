@@ -21,12 +21,20 @@ class RetrieveDataTest {
 
     private RetrieveData sut;
     private IRequest mockedRequest;
+    private HttpResponse response;
+
+    private final String WORKER_VALUE = "ttt";
+    private final String STARTED_VALUE = "fff";
+    private final String ACCOUNT_KEY_VALUE = "kkk";
+    private final int TIME_SPENT_SECONDS_VALUE = 1234;
 
     @BeforeEach
     void setUp() {
 
         sut = new RetrieveData();
         mockedRequest = mock(IRequest.class);
+        response = mock(HttpResponse.class);
+
         sut.setUrl("http://127.0.0.1/");
         sut.setRequest(mockedRequest);
         sut.setBasicAuth(new BasicAuth());
@@ -34,20 +42,27 @@ class RetrieveDataTest {
 
     @Test
     void testRetrieveAllWorklogsCreatesListWithOneObject() {
-        HttpResponse response = mock(HttpResponse.class);
+        //Arrange
+        JSONObject jsonObject = new JSONObject()
+                .put("worker", WORKER_VALUE)
+                .put("started", STARTED_VALUE)
+                .put("issue", new JSONObject().put("accountKey", ACCOUNT_KEY_VALUE))
+                .put("timeSpentSeconds", TIME_SPENT_SECONDS_VALUE);
+
+        String jsonString = new JSONArray().put(jsonObject).toString();
 
         when(mockedRequest.post(any(), any())).thenReturn(response);
-        when(response.getBody()).thenReturn(new JsonNode(
-                "[{\"worker\": \"ttt\",\"started\": \"fff\",\"issue\": {\"accountKey\": \"kk\"},\"timeSpentSeconds\": 1234}]"));
+        when(response.getBody()).thenReturn(new JsonNode(jsonString));
 
+        //Act
         List<WorklogDTO> actualValue = sut.retrieveWorklogs("-", "-", new ArrayList<>());
 
+        //Assert
         assertEquals(1, actualValue.size());
     }
 
     @Test
     void testRetrieveAllWorklogsCreatesEmptyListIfResponseIsNull() {
-        HttpResponse response = mock(HttpResponse.class);
 
         when(mockedRequest.post(any(), any())).thenReturn(response);
         when(response.getBody()).thenReturn(null);
@@ -59,7 +74,6 @@ class RetrieveDataTest {
 
     @Test
     void testRetrieveAllWorklogsCreatesEmptyListWhenResponseIsEmpty() {
-        HttpResponse response = mock(HttpResponse.class);
 
         when(mockedRequest.post(any(), any())).thenReturn(response);
         when(response.getBody()).thenReturn(new JsonNode(
@@ -72,49 +86,47 @@ class RetrieveDataTest {
 
     @Test
     void testRetrieveAllWorklogsMapsValuesToCorrectVariablesOfObjectInList() {
+        //Arrange
+        JSONObject jsonObject = new JSONObject()
+                .put("worker", WORKER_VALUE)
+                .put("started", STARTED_VALUE)
+                .put("issue", new JSONObject().put("accountKey", ACCOUNT_KEY_VALUE))
+                .put("timeSpentSeconds", TIME_SPENT_SECONDS_VALUE);
 
-        String workerValue = "ttt";
-        String startedValue = "fff";
-        String accountKeyValue = "kkk";
-        int timeSpentSecondsValue = 1234;
+        String jsonString = new JSONArray().put(jsonObject).toString();
 
-        String json = String.format("[{\"worker\": \"%s\",\"started\": \"%s\",\"issue\": {\"accountKey\": \"%s\"},\"timeSpentSeconds\": %d}]", workerValue, startedValue, accountKeyValue, timeSpentSecondsValue);
-
-        HttpResponse response = mock(HttpResponse.class);
 
         when(mockedRequest.post(any(), any())).thenReturn(response);
-        when(response.getBody()).thenReturn(new JsonNode(json));
+        when(response.getBody()).thenReturn(new JsonNode(jsonString));
 
+        //Act
         List<WorklogDTO> actualValue = sut.retrieveWorklogs("-", "-", new ArrayList<>());
 
-        assertEquals(workerValue, actualValue.get(0).getWorker());
-        assertEquals(startedValue, actualValue.get(0).getStarted());
-        assertEquals(accountKeyValue, actualValue.get(0).getOriginTaskId());
-        assertEquals(timeSpentSecondsValue, actualValue.get(0).getTimeSpentSeconds());
+        //Assert
+        assertEquals(WORKER_VALUE, actualValue.get(0).getWorker());
+        assertEquals(STARTED_VALUE, actualValue.get(0).getStarted());
+        assertEquals(ACCOUNT_KEY_VALUE, actualValue.get(0).getOriginTaskId());
+        assertEquals(TIME_SPENT_SECONDS_VALUE, actualValue.get(0).getTimeSpentSeconds());
     }
 
     @Test
     void testRetrieveAllWorklogsCreatesEmptyListWhenAccountKeyIsMissing() {
-
-        String workerValue = "ttt";
-        String startedValue = "fff";
-        String accountKeyValue = "null";
-        int timeSpentSecondsValue = 1234;
-
+        //Arrange
         JSONObject jsonString = new JSONObject()
-                .put("worker", workerValue)
-                .put("started", startedValue)
-                .put("timeSpentSeconds", timeSpentSecondsValue);
+                .put("worker", WORKER_VALUE)
+                .put("started", STARTED_VALUE)
+                .put("timeSpentSeconds", TIME_SPENT_SECONDS_VALUE);
 
         String jsonArray = new JSONArray().put(jsonString).toString();
-
-
-        HttpResponse response = mock(HttpResponse.class);
 
         when(mockedRequest.post(any(), any())).thenReturn(response);
         when(response.getBody()).thenReturn(new JsonNode(jsonArray));
 
+        //Act
         List<WorklogDTO> actualValue = sut.retrieveWorklogs("-", "-", new ArrayList<>());
+
+
+        //Assert
         assertEquals(0, actualValue.size());
 
     }
