@@ -39,10 +39,10 @@ public class TimeWriteResource {
         String basicAuthUserName = "Nielsb01";
         String basicAuthPass = "OOSEGENUA";
 
-        worklogs.add(new WorklogDTO().setWorker("JIRAUSER10000").setStarted(currentDate).setTimeSpentSeconds(600).setOriginTaskId("KNBPU-2"));
-        worklogs.add(new WorklogDTO().setWorker("JIRAUSER10000").setStarted(currentDate).setTimeSpentSeconds(600).setOriginTaskId("KNBPU-2"));
-        worklogs.add(new WorklogDTO().setWorker("JIRAUSER10000").setStarted(currentDate).setTimeSpentSeconds(600).setOriginTaskId("KNBPU-2"));
-        worklogs.add(new WorklogDTO().setWorker("JIRAUSER10100").setStarted(currentDate).setTimeSpentSeconds(600).setOriginTaskId("KNBPU-2"));
+        worklogs.add(new WorklogDTO().setWorker("JIRAUSER10000").setStarted(currentDate).setTimeSpentSeconds(660).setOriginTaskId("KNBPU-2"));
+        worklogs.add(new WorklogDTO().setWorker("JIRAUSER10000").setStarted(currentDate).setTimeSpentSeconds(720).setOriginTaskId("KNBPU-2"));
+        worklogs.add(new WorklogDTO().setWorker("JIRAUSER10000").setStarted(currentDate).setTimeSpentSeconds(780).setOriginTaskId("KNBPU-4"));
+        worklogs.add(new WorklogDTO().setWorker("JIRAUSER10100").setStarted(currentDate).setTimeSpentSeconds(840).setOriginTaskId("KNBPU-2"));
 
         String url = "http://127.0.0.1/rest/tempo-timesheets/4/worklogs";
         addWorklog(worklogs, basicAuthUserName, basicAuthPass, url);
@@ -60,11 +60,11 @@ public class TimeWriteResource {
     public void addWorklog(List<WorklogDTO> worklogs, String username, String password, String url) {
 
         request.setAuthentication(new BasicAuth().setUsername(username).setPassword(password));
-        Map<Integer,Integer> responseCodes = new HashMap<>();
+        Map<WorklogDTO,Integer> responseCodes = new HashMap<>();
 
         for(WorklogDTO worklog : worklogs){
             HttpResponse<JsonNode> response = request.post(url,worklog);
-            responseCodes.put(response.getBody().getArray().getJSONObject(0).getInt("tempoWorklogId"),response.getStatus());
+            responseCodes.put(worklog,response.getStatus());
             System.out.println(response.getBody());
 
         }
