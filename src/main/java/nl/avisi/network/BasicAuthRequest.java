@@ -66,7 +66,7 @@ public class BasicAuthRequest implements IRequest<BasicAuth> {
      * @param data the object to be sent
      * @return the response of the post request
      */
-    public <PostData> HttpResponse<JsonNode> post(String url, PostData data) {
+    public <DATA> HttpResponse<JsonNode> post(String url, DATA data) {
         return Unirest.post(url)
                 .basicAuth(authentication.getUsername(), authentication.getPassword())
                 .header(acceptHeader, contentTypeJson)
