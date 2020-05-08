@@ -35,6 +35,7 @@
             <version>RELEASE</version>
             <scope>test</scope>
         </dependency>
+<<<<<<< HEAD
 
         <dependency>
             <groupId>com.konghq</groupId>
@@ -47,6 +48,8 @@
             <version>1.16.0-rc</version>
             <type>pom</type>
         </dependency>
+=======
+>>>>>>> 8f0299001840dcbece04587ca5f7ef92f3ec210c
     </dependencies>
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
@@ -114,5 +117,15 @@
                 </plugin>
             </plugins>
         </pluginManagement>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>7</source>
+                    <target>7</target>
+                </configuration>
+            </plugin>
+        </plugins>
     </build>
 </project>

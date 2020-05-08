@@ -11,11 +11,11 @@ import javax.ws.rs.core.MediaType;
 @Path("test")
 public class SyncController {
 
-    private RetrieveData retrieveData;
+    private WorklogSynchronisation worklogSynchronisation;
 
     @Inject
-    public void setRetrieveData(RetrieveData retrieveData) {
-        this.retrieveData = retrieveData;
+    public void setWorklogSynchronisation(WorklogSynchronisation worklogSynchronisation) {
+        this.worklogSynchronisation = worklogSynchronisation;
     }
 
     @GET
