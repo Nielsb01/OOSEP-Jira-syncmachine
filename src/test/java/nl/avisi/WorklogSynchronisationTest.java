@@ -154,7 +154,7 @@ class WorklogSynchronisationTest {
         when(response.getStatus()).thenReturn(200);
 
         // Act
-        Map actualvalue = sut.createWorklogsInAvisiServer(mockWorklogs);
+        Map actualvalue = sut.createWorklogsOnAvisiServer(mockWorklogs);
 
         //Assert
         assertEquals(2,actualvalue.size());
@@ -174,7 +174,7 @@ class WorklogSynchronisationTest {
         when(response.getStatus()).thenReturn(200,400);
 
         // Act
-        Map actualvalue = sut.createWorklogsInAvisiServer(mockWorklogs);
+        Map actualvalue = sut.createWorklogsOnAvisiServer(mockWorklogs);
 
         //Assert
         assertTrue(actualvalue.containsValue(400));

@@ -121,7 +121,7 @@ public class WorklogSynchronisation {
      *
      * @param worklogs ArrayList consisting of WorklogDTO's this list are all the worklogs retrieved from client Jira-server.
      */
-    public Map createWorklogsInAvisiServer(List<WorklogDTO> worklogs) {
+    public Map createWorklogsOnAvisiServer(List<WorklogDTO> worklogs) {
 
         Map<WorklogDTO,Integer> responseCodes = new HashMap<>();
 
