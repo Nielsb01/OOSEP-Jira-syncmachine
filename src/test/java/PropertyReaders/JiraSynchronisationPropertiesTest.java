@@ -1,7 +1,7 @@
 package PropertyReaders;
 
-import nl.avisi.PropertyReaders.JiraSynchronisationProperties;
-import nl.avisi.PropertyReaders.PropertyReader;
+import nl.avisi.propertyReaders.JiraSynchronisationProperties;
+import nl.avisi.propertyReaders.PropertyReader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -14,7 +14,7 @@ public class JiraSynchronisationPropertiesTest {
     PropertyReader mockedPropertyReader;
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         sut = new JiraSynchronisationProperties();
 
         mockedPropertyReader = Mockito.mock(PropertyReader.class);
@@ -22,7 +22,7 @@ public class JiraSynchronisationPropertiesTest {
     }
 
     @Test
-    public void testLoadPropertiesCallsPropertyReaderLoadProperties() {
+    void testLoadPropertiesCallsPropertyReaderLoadProperties() {
         // Arrange
 
         // Act
@@ -33,7 +33,7 @@ public class JiraSynchronisationPropertiesTest {
     }
 
     @Test
-    public void testGetOriginUrlReturnsPropertyReaderGetProperty() {
+    void testGetOriginUrlReturnsPropertyReaderGetProperty() {
         // Arrange
         String expected = "ORIGIN";
         Mockito.when(mockedPropertyReader.getProperty("originUrl")).thenReturn(expected);
@@ -46,7 +46,7 @@ public class JiraSynchronisationPropertiesTest {
     }
 
     @Test
-    public void testGetDestinationUrlReturnsPropertyReaderGetProperty() {
+    void testGetDestinationUrlReturnsPropertyReaderGetProperty() {
         // Arrange
         String expected = "DESTINATION";
         Mockito.when(mockedPropertyReader.getProperty("destinationUrl")).thenReturn(expected);
@@ -59,7 +59,7 @@ public class JiraSynchronisationPropertiesTest {
     }
 
     @Test
-    public void testGetAdminUsernameReturnsPropertyReaderGetProperty() {
+    void testGetAdminUsernameReturnsPropertyReaderGetProperty() {
         // Arrange
         String expected = "USERNAME";
         Mockito.when(mockedPropertyReader.getProperty("adminUsername")).thenReturn(expected);
@@ -72,7 +72,7 @@ public class JiraSynchronisationPropertiesTest {
     }
 
     @Test
-    public void testGetAdminPasswordReturnsPropertyReaderGetProperty() {
+    void testGetAdminPasswordReturnsPropertyReaderGetProperty() {
         // Arrange
         String expected = "PASSWORD";
         Mockito.when(mockedPropertyReader.getProperty("adminPassword")).thenReturn(expected);
@@ -85,7 +85,7 @@ public class JiraSynchronisationPropertiesTest {
     }
 
     @Test
-    public void testGetSynchronisationMomentReturnsPropertyReaderGetProperty() {
+    void testGetSynchronisationMomentReturnsPropertyReaderGetProperty() {
         // Arrange
         String expected = "MOMENT";
         Mockito.when(mockedPropertyReader.getProperty("synchronisationMoment")).thenReturn(expected);
@@ -96,5 +96,4 @@ public class JiraSynchronisationPropertiesTest {
         // Assert
         assertEquals(expected, actual);
     }
-
 }
