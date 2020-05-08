@@ -1,6 +1,7 @@
 package propertyReaders;
 
 import nl.avisi.propertyReaders.exceptions.EmptyPropertyException;
+import nl.avisi.propertyReaders.exceptions.PropertyFileNotFoundException;
 import nl.avisi.propertyReaders.exceptions.PropertyFileNotLoadedException;
 import nl.avisi.propertyReaders.PropertyReader;
 import nl.avisi.propertyReaders.exceptions.PropertyNotFoundException;
@@ -57,7 +58,7 @@ public class PropertyReaderTest {
     }
 
     @Test
-    void testGetPropertyWithoutPropertyFileLoaded() {
+    void testGetPropertyThrowsPropertyFileNotLoadedExceptionWithoutPropertyFileLoaded() {
         // Arrange
         String testValue = "testOne";
 
@@ -66,7 +67,7 @@ public class PropertyReaderTest {
     }
 
     @Test
-    void testGetPropertyEmpty() {
+    void testGetPropertyThrowsEmptyPropertyExceptionWhenPropertyIsEmpty() {
         // Arrange
         sut.loadPropertyFile(PROPERTY_FILE_NAME);
 
@@ -77,7 +78,7 @@ public class PropertyReaderTest {
     }
 
     @Test
-    void testPropertyDoesNotExist() {
+    void testGetPropertyThrowsPropertyNotFoundExceptionIfPropertyDoesNotExist() {
         // Arrange
         sut.loadPropertyFile(PROPERTY_FILE_NAME);
 
@@ -85,6 +86,14 @@ public class PropertyReaderTest {
 
         // Act & Assert
         assertThrows(PropertyNotFoundException.class, () -> sut.getProperty(testValue));
+    }
 
+    @Test
+    void testLoadPropertyThrowsPropertyFileNotFoundExceptionIfPropertyFileDoesNotExist() {
+        // Arrange
+        String testValue = "A property file that does not exist";
+
+        // Act & Assert
+        assertThrows(PropertyFileNotFoundException.class, () -> sut.loadPropertyFile(testValue));
     }
 }

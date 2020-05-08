@@ -4,6 +4,9 @@ import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
 import kong.unirest.json.JSONArray;
 import kong.unirest.json.JSONObject;
+import nl.avisi.dto.WorklogDTO;
+import nl.avisi.dto.WorklogRequestDTO;
+import nl.avisi.model.WorklogSynchronisation;
 import nl.avisi.network.IRequest;
 import nl.avisi.network.authentication.BasicAuth;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,8 +19,7 @@ import java.util.Map;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 class WorklogSynchronisationTest {
 
@@ -30,6 +32,8 @@ class WorklogSynchronisationTest {
     private final String ACCOUNT_KEY_VALUE = "kkk";
     private final int TIME_SPENT_SECONDS_VALUE = 1234;
 
+    private WorklogRequestDTO worklogRequestDTO;
+
     @BeforeEach
     void setUp() {
 
@@ -41,6 +45,8 @@ class WorklogSynchronisationTest {
         sut.setAvisiUrl("http://127.0.0.1/");
         sut.setRequest(mockedRequest);
         sut.setBasicAuth(new BasicAuth());
+
+        worklogRequestDTO = new WorklogRequestDTO();
     }
 
     @Test
@@ -58,7 +64,7 @@ class WorklogSynchronisationTest {
         when(response.getBody()).thenReturn(new JsonNode(jsonString));
 
         //Act
-        List<WorklogDTO> actualValue = sut.retrieveWorklogsFromClientServer("-", "-", new ArrayList<>());
+        List<WorklogDTO> actualValue = sut.retrieveWorklogsFromClientServer(worklogRequestDTO);
 
         //Assert
         assertEquals(1, actualValue.size());
@@ -70,7 +76,7 @@ class WorklogSynchronisationTest {
         when(mockedRequest.post(any(), any())).thenReturn(response);
         when(response.getBody()).thenReturn(null);
 
-        List<WorklogDTO> actualValue = sut.retrieveWorklogsFromClientServer("-", "-", new ArrayList<>());
+        List<WorklogDTO> actualValue = sut.retrieveWorklogsFromClientServer(worklogRequestDTO);
 
         assertEquals(0, actualValue.size());
     }
@@ -82,7 +88,7 @@ class WorklogSynchronisationTest {
         when(response.getBody()).thenReturn(new JsonNode(
                 "[]"));
 
-        List<WorklogDTO> actualValue = sut.retrieveWorklogsFromClientServer("-", "-", new ArrayList<>());
+        List<WorklogDTO> actualValue = sut.retrieveWorklogsFromClientServer(worklogRequestDTO);
 
         assertEquals(0, actualValue.size());
     }
@@ -103,7 +109,7 @@ class WorklogSynchronisationTest {
         when(response.getBody()).thenReturn(new JsonNode(jsonString));
 
         //Act
-        List<WorklogDTO> actualValue = sut.retrieveWorklogsFromClientServer("-", "-", new ArrayList<>());
+        List<WorklogDTO> actualValue = sut.retrieveWorklogsFromClientServer(worklogRequestDTO);
 
         //Assert
         assertEquals(WORKER_VALUE, actualValue.get(0).getWorker());
@@ -126,7 +132,7 @@ class WorklogSynchronisationTest {
         when(response.getBody()).thenReturn(new JsonNode(jsonArray));
 
         //Act
-        List<WorklogDTO> actualValue = sut.retrieveWorklogsFromClientServer("-", "-", new ArrayList<>());
+        List<WorklogDTO> actualValue = sut.retrieveWorklogsFromClientServer(worklogRequestDTO);
 
 
         //Assert
@@ -148,7 +154,7 @@ class WorklogSynchronisationTest {
         when(response.getStatus()).thenReturn(200);
 
         // Act
-        Map actualvalue = sut.createWorklogsInAvisiServer(mockWorklogs);
+        Map actualvalue = sut.createWorklogsOnAvisiServer(mockWorklogs);
 
         //Assert
         assertEquals(2,actualvalue.size());
@@ -168,7 +174,7 @@ class WorklogSynchronisationTest {
         when(response.getStatus()).thenReturn(200,400);
 
         // Act
-        Map actualvalue = sut.createWorklogsInAvisiServer(mockWorklogs);
+        Map actualvalue = sut.createWorklogsOnAvisiServer(mockWorklogs);
 
         //Assert
         assertTrue(actualvalue.containsValue(400));
