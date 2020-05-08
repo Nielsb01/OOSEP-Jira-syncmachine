@@ -1,9 +1,8 @@
-package propertyReaders;
+package nl.avisi.propertyReaders;
 
 import nl.avisi.propertyReaders.exceptions.EmptyPropertyException;
 import nl.avisi.propertyReaders.exceptions.PropertyFileNotFoundException;
 import nl.avisi.propertyReaders.exceptions.PropertyFileNotLoadedException;
-import nl.avisi.propertyReaders.PropertyReader;
 import nl.avisi.propertyReaders.exceptions.PropertyNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

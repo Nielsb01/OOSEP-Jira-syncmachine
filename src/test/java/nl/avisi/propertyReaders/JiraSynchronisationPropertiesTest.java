@@ -1,7 +1,5 @@
-package propertyReaders;
+package nl.avisi.propertyReaders;
 
-import nl.avisi.propertyReaders.JiraSynchronisationProperties;
-import nl.avisi.propertyReaders.PropertyReader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;

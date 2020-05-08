@@ -8,6 +8,7 @@ import nl.avisi.dto.WorklogDTO;
 import nl.avisi.dto.WorklogRequestDTO;
 import nl.avisi.network.IRequest;
 import nl.avisi.network.authentication.BasicAuth;
+import nl.avisi.propertyReaders.JiraSynchronisationProperties;
 
 import javax.enterprise.inject.Default;
 import javax.inject.Inject;
@@ -21,7 +22,7 @@ import java.util.Map;
  */
 
 @Default
-public class WorklogSynchronisation {
+public class JiraWorklog {
 
     /**
      * base URL where the Jira server of the client is being hosted
@@ -43,6 +44,12 @@ public class WorklogSynchronisation {
      */
     private BasicAuth basicAuth;
 
+    /**
+     * Used to read the necessary property information
+     */
+    private JiraSynchronisationProperties jiraSynchronisationProperties;
+
+
 
     @Inject
     public void setRequest(IRequest<BasicAuth> request) {
@@ -54,7 +61,7 @@ public class WorklogSynchronisation {
     }
 
     public void setAvisiUrl(String avisiUrl) {
-        avisiUrl = String.format("%s/rest/tempo-timesheets/4/worklogs", avisiUrl);
+        this.avisiUrl = String.format("%s/rest/tempo-timesheets/4/worklogs", avisiUrl);
     }
 
     public void setBasicAuth(BasicAuth basicAuth) {
@@ -109,6 +116,9 @@ public class WorklogSynchronisation {
      * @return httpResponse containing the worklogs in JsonNode form.
      */
     private HttpResponse<JsonNode> requestWorklogs(WorklogRequestDTO requestBody) {
+        setBasicAuth(new BasicAuth()
+                .setPassword(jiraSynchronisationProperties.getAdminPassword())
+                .setUsername(jiraSynchronisationProperties.getAdminUsername()));
         request.setAuthentication(basicAuth);
 
         return request.post(clientUrl, requestBody);
@@ -130,9 +140,7 @@ public class WorklogSynchronisation {
             responseCodes.put(worklog,response.getStatus());
 
         }
-        for(Map.Entry<WorklogDTO,Integer> item : responseCodes.entrySet()){
-            System.out.println(item);
-        }
+
         return responseCodes;
     }
 }
