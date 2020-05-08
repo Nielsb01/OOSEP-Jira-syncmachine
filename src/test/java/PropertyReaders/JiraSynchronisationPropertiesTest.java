@@ -2,7 +2,6 @@ package PropertyReaders;
 
 import nl.avisi.PropertyReaders.JiraSynchronisationProperties;
 import nl.avisi.PropertyReaders.PropertyReader;
-import org.junit.Test;
 
 public class JiraSynchronisationPropertiesTest {
 
@@ -12,7 +11,6 @@ public class JiraSynchronisationPropertiesTest {
     @BeforeEach
     public void setup() {
         sut = new JiraSynchronisationProperties();
-
 
         mockedPropertyReader = Mockito.mock(PropertyReader.class);
         sut.setPropertyReader(mockedPropertyReader);
