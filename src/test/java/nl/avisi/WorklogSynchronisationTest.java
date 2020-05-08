@@ -135,7 +135,7 @@ class WorklogSynchronisationTest {
     }
 
     @Test
-    public void whileAddingWorklogsCheckMapIsSameLengthAsWorklogs() {
+    public void testWhileAddingWorklogsCheckMapIsSameLengthAsWorklogs() {
         // Arrange
         List<WorklogDTO> mockWorklogs= new ArrayList<>();
         String adminAuthUserName = "Nielsb01";
@@ -155,7 +155,7 @@ class WorklogSynchronisationTest {
     }
 
     @Test
-    public void whileAddingWorklogsCheckMapNotAllStatuscodes200() {
+    public void testWhileAddingWorklogsCheckMapNotAllStatuscodes200() {
         // Arrange
         List<WorklogDTO> mockWorklogs= new ArrayList<>();
         String adminAuthUserName = "Nielsb01";
