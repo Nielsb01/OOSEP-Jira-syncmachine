@@ -58,7 +58,7 @@ public class PropertyReaderTest {
     }
 
     @Test
-    void testGetPropertyWithoutPropertyFileLoaded() {
+    void testGetPropertyThrowsPropertyFileNotLoadedExceptionWithoutPropertyFileLoaded() {
         // Arrange
         String testValue = "testOne";
 
@@ -67,7 +67,7 @@ public class PropertyReaderTest {
     }
 
     @Test
-    void testGetPropertyPropertyIsEmpty() {
+    void testGetPropertyThrowsEmptyPropertyExceptionWhenPropertyIsEmpty() {
         // Arrange
         sut.loadPropertyFile(PROPERTY_FILE_NAME);
 
@@ -78,7 +78,7 @@ public class PropertyReaderTest {
     }
 
     @Test
-    void testGetPropertyPropertyDoesNotExist() {
+    void testGetPropertyThrowsPropertyNotFoundExceptionIfPropertyDoesNotExist() {
         // Arrange
         sut.loadPropertyFile(PROPERTY_FILE_NAME);
 
@@ -89,7 +89,7 @@ public class PropertyReaderTest {
     }
 
     @Test
-    void testLoadPropertyPropertyFileDoesNotExist() {
+    void testLoadPropertyThrowsPropertyFileNotFoundExceptionIfPropertyFileDoesNotExist() {
         // Arrange
         String testValue = "A property file that does not exist";
 
