@@ -1,9 +1,11 @@
-package nl.avisi;
+package nl.avisi.model;
 
 import kong.unirest.*;
 import kong.unirest.json.JSONArray;
 import kong.unirest.json.JSONException;
 import kong.unirest.json.JSONObject;
+import nl.avisi.dto.WorklogDTO;
+import nl.avisi.dto.WorklogRequestDTO;
 import nl.avisi.network.IRequest;
 import nl.avisi.network.authentication.BasicAuth;
 

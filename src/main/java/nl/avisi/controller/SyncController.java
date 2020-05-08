@@ -1,5 +1,7 @@
-package nl.avisi;
+package nl.avisi.controller;
 
+
+import nl.avisi.model.RetrieveData;
 
 import javax.inject.Inject;
 import javax.ws.rs.GET;
@@ -8,7 +10,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 
-@Path("test")
+@Path("sync")
 public class SyncController {
 
     private RetrieveData retrieveData;

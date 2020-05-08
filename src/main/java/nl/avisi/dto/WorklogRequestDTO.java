@@ -1,4 +1,4 @@
-package nl.avisi;
+package nl.avisi.dto;
 
 import java.util.List;
 

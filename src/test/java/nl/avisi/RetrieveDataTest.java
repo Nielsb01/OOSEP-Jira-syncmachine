@@ -4,6 +4,9 @@ import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
 import kong.unirest.json.JSONArray;
 import kong.unirest.json.JSONObject;
+import nl.avisi.dto.WorklogDTO;
+import nl.avisi.dto.WorklogRequestDTO;
+import nl.avisi.model.RetrieveData;
 import nl.avisi.network.IRequest;
 import nl.avisi.network.authentication.BasicAuth;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,8 +17,7 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 class RetrieveDataTest {
 
