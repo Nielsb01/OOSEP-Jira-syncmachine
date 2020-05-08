@@ -4,4 +4,8 @@ target
 
 # Files
 *.iml
-*.properties
+
+src/main/resources/database.properties
+src/main/resources/jiraSynchronisation.properties
+
+src/test/resources/test.properties
