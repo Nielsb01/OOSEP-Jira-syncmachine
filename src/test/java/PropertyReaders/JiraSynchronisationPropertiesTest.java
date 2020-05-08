@@ -2,6 +2,11 @@ package PropertyReaders;
 
 import nl.avisi.PropertyReaders.JiraSynchronisationProperties;
 import nl.avisi.PropertyReaders.PropertyReader;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+
+import static org.junit.Assert.assertEquals;
 
 public class JiraSynchronisationPropertiesTest {
 
@@ -19,18 +24,77 @@ public class JiraSynchronisationPropertiesTest {
     @Test
     public void testLoadPropertiesCallsPropertyReaderLoadProperties() {
         // Arrange
-        var expected = "com.mysql.cj.jdbc.Driver";
 
         // Act
-        var actual = sut.getDriver();
+        sut.loadPropertyFile();
+
+        // Assert
+        Mockito.verify(mockedPropertyReader).loadPropertyFile("jiraSynchronisation.properties");
+    }
+
+    @Test
+    public void testGetOriginUrlReturnsPropertyReaderGetProperty() {
+        // Arrange
+        String expected = "ORIGIN";
+        Mockito.when(mockedPropertyReader.getProperty("originUrl")).thenReturn(expected);
+
+        // Act
+        String actual = sut.getOriginUrl();
 
         // Assert
         assertEquals(expected, actual);
     }
 
-    testGetOriginUrlCallsPropertyReaderGetProperty()
-    testGetDestinationUrlCallsPropertyReaderGetProperty()
-    testGetAdminUsernameCallsPropertyReaderGetProperty()
-    testGetAdminPasswordCallsPropertyReaderGetProperty()
-    testGetSynchronisationMomentCallsPropertyReaderGetProperty()
+    @Test
+    public void testGetDestinationUrlReturnsPropertyReaderGetProperty() {
+        // Arrange
+        String expected = "DESTINATION";
+        Mockito.when(mockedPropertyReader.getProperty("destinationUrl")).thenReturn(expected);
+
+        // Act
+        String actual = sut.getDestinationUrl();
+
+        // Assert
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void testGetAdminUsernameReturnsPropertyReaderGetProperty() {
+        // Arrange
+        String expected = "USERNAME";
+        Mockito.when(mockedPropertyReader.getProperty("adminUsername")).thenReturn(expected);
+
+        // Act
+        String actual = sut.getAdminUsername();
+
+        // Assert
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void testGetAdminPasswordReturnsPropertyReaderGetProperty() {
+        // Arrange
+        String expected = "PASSWORD";
+        Mockito.when(mockedPropertyReader.getProperty("adminPassword")).thenReturn(expected);
+
+        // Act
+        String actual = sut.getAdminPassword();
+
+        // Assert
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void testGetSynchronisationMomentReturnsPropertyReaderGetProperty() {
+        // Arrange
+        String expected = "MOMENT";
+        Mockito.when(mockedPropertyReader.getProperty("synchronisationMoment")).thenReturn(expected);
+
+        // Act
+        String actual = sut.getSynchronisationMoment();
+
+        // Assert
+        assertEquals(expected, actual);
+    }
+
 }
