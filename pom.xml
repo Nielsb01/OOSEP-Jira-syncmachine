@@ -5,7 +5,6 @@
     <artifactId>Genua</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>war</packaging>
-
     <dependencies>
         <dependency>
             <groupId>org.mockito</groupId>
@@ -37,6 +36,17 @@
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>com.konghq</groupId>
+            <artifactId>unirest-java</artifactId>
+            <version>3.7.02</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.oauth-client</groupId>
+            <artifactId>google-oauth-client-assembly</artifactId>
+            <version>1.16.0-rc</version>
+            <type>pom</type>
+        </dependency>
     </dependencies>
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
