@@ -1,28 +1,32 @@
 package nl.avisi.controller;
 
 
-import nl.avisi.model.RetrieveData;
+import nl.avisi.dto.WorklogRequestDTO;
+import nl.avisi.model.WorklogSynchronisation;
 
 import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 
 @Path("sync")
 public class SyncController {
 
-    private RetrieveData retrieveData;
+    private WorklogSynchronisation worklogSynchronisation;
 
     @Inject
-    public void setRetrieveData(RetrieveData retrieveData) {
-        this.retrieveData = retrieveData;
+    public void setWorklogSynchronisation(WorklogSynchronisation worklogSynchronisation) {
+        this.worklogSynchronisation = worklogSynchronisation;
     }
 
     @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    public void syncWorklogs() {
+    @Produces(MediaType.TEXT_PLAIN)
+    public Response synchroniseWorklogsFromClientToAvisi(WorklogRequestDTO worklogRequestDTO) {
 
+        worklogSynchronisation.createWorklogsInAvisiServer(worklogSynchronisation.retrieveWorklogsFromClientServer(worklogRequestDTO));
+        return Response.status(200).entity("Synchronisatie succesvol").build();
     }
 }

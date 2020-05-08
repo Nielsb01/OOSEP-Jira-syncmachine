@@ -6,7 +6,7 @@ public class temp {
 
     public void synchroniseWorklogsFromClientToAvisi(WorklogRequestDTO worklogRequestDTO) {
 
-        createWorklogsInAvisiServer(retrieveWorklogsFromClientServer(worklogRequestDTO));
+
 
     }
 }

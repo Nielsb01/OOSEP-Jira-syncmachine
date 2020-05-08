@@ -6,7 +6,7 @@ import kong.unirest.json.JSONArray;
 import kong.unirest.json.JSONObject;
 import nl.avisi.dto.WorklogDTO;
 import nl.avisi.dto.WorklogRequestDTO;
-import nl.avisi.model.RetrieveData;
+import nl.avisi.model.WorklogSynchronisation;
 import nl.avisi.network.IRequest;
 import nl.avisi.network.authentication.BasicAuth;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,14 +14,16 @@ import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
-class RetrieveDataTest {
+class WorklogSynchronisationTest {
 
-    private RetrieveData sut;
+    private WorklogSynchronisation sut;
     private IRequest mockedRequest;
     private HttpResponse response;
 
@@ -30,16 +32,21 @@ class RetrieveDataTest {
     private final String ACCOUNT_KEY_VALUE = "kkk";
     private final int TIME_SPENT_SECONDS_VALUE = 1234;
 
+    private WorklogRequestDTO worklogRequestDTO;
+
     @BeforeEach
     void setUp() {
 
-        sut = new RetrieveData();
+        sut = new WorklogSynchronisation();
         mockedRequest = mock(IRequest.class);
         response = mock(HttpResponse.class);
 
-        sut.setUrl("http://127.0.0.1/");
+        sut.setClientUrl("http://127.0.0.1/");
+        sut.setAvisiUrl("http://127.0.0.1/");
         sut.setRequest(mockedRequest);
         sut.setBasicAuth(new BasicAuth());
+
+        worklogRequestDTO = new WorklogRequestDTO();
     }
 
     @Test
@@ -57,7 +64,7 @@ class RetrieveDataTest {
         when(response.getBody()).thenReturn(new JsonNode(jsonString));
 
         //Act
-        List<WorklogDTO> actualValue = sut.retrieveWorklogs("-", "-", new ArrayList<>());
+        List<WorklogDTO> actualValue = sut.retrieveWorklogsFromClientServer(worklogRequestDTO);
 
         //Assert
         assertEquals(1, actualValue.size());
@@ -69,7 +76,7 @@ class RetrieveDataTest {
         when(mockedRequest.post(any(), any())).thenReturn(response);
         when(response.getBody()).thenReturn(null);
 
-        List<WorklogDTO> actualValue = sut.retrieveWorklogs("-", "-", new ArrayList<>());
+        List<WorklogDTO> actualValue = sut.retrieveWorklogsFromClientServer(worklogRequestDTO);
 
         assertEquals(0, actualValue.size());
     }
@@ -81,7 +88,7 @@ class RetrieveDataTest {
         when(response.getBody()).thenReturn(new JsonNode(
                 "[]"));
 
-        List<WorklogDTO> actualValue = sut.retrieveWorklogs("-", "-", new ArrayList<>());
+        List<WorklogDTO> actualValue = sut.retrieveWorklogsFromClientServer(worklogRequestDTO);
 
         assertEquals(0, actualValue.size());
     }
@@ -102,7 +109,7 @@ class RetrieveDataTest {
         when(response.getBody()).thenReturn(new JsonNode(jsonString));
 
         //Act
-        List<WorklogDTO> actualValue = sut.retrieveWorklogs("-", "-", new ArrayList<>());
+        List<WorklogDTO> actualValue = sut.retrieveWorklogsFromClientServer(worklogRequestDTO);
 
         //Assert
         assertEquals(WORKER_VALUE, actualValue.get(0).getWorker());
@@ -125,11 +132,52 @@ class RetrieveDataTest {
         when(response.getBody()).thenReturn(new JsonNode(jsonArray));
 
         //Act
-        List<WorklogDTO> actualValue = sut.retrieveWorklogs("-", "-", new ArrayList<>());
+        List<WorklogDTO> actualValue = sut.retrieveWorklogsFromClientServer(worklogRequestDTO);
 
 
         //Assert
         assertEquals(0, actualValue.size());
 
+    }
+
+    @Test
+    public void testWhileAddingWorklogsCheckMapIsSameLengthAsWorklogs() {
+        // Arrange
+        List<WorklogDTO> mockWorklogs= new ArrayList<>();
+        String adminAuthUserName = "Nielsb01";
+        String adminAuthPass = "OOSEGENUA";
+
+        mockWorklogs.add(new WorklogDTO().setWorker("JIRAUSER10000").setStarted("2020-05-07").setTimeSpentSeconds(660).setOriginTaskId("KNBPU-2"));
+        mockWorklogs.add(new WorklogDTO().setWorker("JIRAUSER10100").setStarted("2020-05-07").setTimeSpentSeconds(840).setOriginTaskId("KNBPU-2"));
+
+        when(mockedRequest.post(any(),any())).thenReturn(response);
+        when(response.getStatus()).thenReturn(200);
+
+        // Act
+        Map actualvalue = sut.createWorklogsInAvisiServer(mockWorklogs);
+
+        //Assert
+        assertEquals(2,actualvalue.size());
+    }
+
+    @Test
+    public void testWhileAddingWorklogsCheckMapNotAllStatuscodes200() {
+        // Arrange
+        List<WorklogDTO> mockWorklogs= new ArrayList<>();
+        String adminAuthUserName = "Nielsb01";
+        String adminAuthPass = "OOSEGENUA";
+
+        mockWorklogs.add(new WorklogDTO().setWorker("JIRAUSER10000").setStarted("2020-05-07").setTimeSpentSeconds(660).setOriginTaskId("KNBPU-2"));
+        mockWorklogs.add(new WorklogDTO().setWorker("JIRAUSER10100").setStarted("2020-05-07").setTimeSpentSeconds(840).setOriginTaskId("KNBPU-4"));
+
+        when(mockedRequest.post(any(),any())).thenReturn(response);
+        when(response.getStatus()).thenReturn(200,400);
+
+        // Act
+        Map actualvalue = sut.createWorklogsInAvisiServer(mockWorklogs);
+
+        //Assert
+        assertTrue(actualvalue.containsValue(400));
+        assertTrue(actualvalue.containsValue(200));
     }
 }
