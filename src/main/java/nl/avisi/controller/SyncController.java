@@ -1,5 +1,7 @@
-package nl.avisi;
+package nl.avisi.controller;
 
+
+import nl.avisi.WorklogSynchronisation;
 
 import javax.inject.Inject;
 import javax.ws.rs.GET;
