@@ -1,9 +1,11 @@
-package nl.avisi;
+package nl.avisi.model;
 
 import kong.unirest.*;
 import kong.unirest.json.JSONArray;
 import kong.unirest.json.JSONException;
 import kong.unirest.json.JSONObject;
+import nl.avisi.dto.WorklogDTO;
+import nl.avisi.dto.WorklogRequestDTO;
 import nl.avisi.network.IRequest;
 import nl.avisi.network.authentication.BasicAuth;
 
@@ -15,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Responsible for retrieving worklogs from the Jira server through the Tempo API with HTTP requests
+ * Responsible for retrieving and creating worklogs on the specified Jira server through the Tempo API with HTTP requests
  */
 
 @Default
@@ -60,13 +62,12 @@ public class WorklogSynchronisation {
     }
 
     /**
-     * @param from    Date to be used in retrieving the worklogs from a certain point in time.
-     * @param to      Date to be used in retrieving the worklogs to a certain point in time.
-     * @param workers The workers that will have their worklogs retrieved.
-     * @return List of all worklogs that were retrieved between the two given dates for the specified workers.
+     *
+     * @param worklogRequestDTO Contains the parameters to specify the worklogs to be retrieved during the HTTP request.
+     * @return List of all worklogs that were retrieved from the client server between the two given dates for the specified workers.
      */
-    public List<WorklogDTO> retrieveWorklogsFromClientServer(String from, String to, List<String> workers) {
-        WorklogRequestDTO worklogRequestDTO = new WorklogRequestDTO().setFrom(from).setTo(to).setWorker(workers);
+    public List<WorklogDTO> retrieveWorklogsFromClientServer(WorklogRequestDTO worklogRequestDTO) {
+
         HttpResponse<JsonNode> JSONWorklogs = requestWorklogs(worklogRequestDTO);
 
         if (JSONWorklogs.getBody() == null || !JSONWorklogs.getBody().isArray()) {
@@ -120,7 +121,7 @@ public class WorklogSynchronisation {
      *
      * @param worklogs ArrayList consisting of WorklogDTO's this list are all the worklogs retrieved from client Jira-server.
      */
-    public Map createWorklogsInAvisiServer(List<WorklogDTO> worklogs) {
+    public Map createWorklogsOnAvisiServer(List<WorklogDTO> worklogs) {
 
         Map<WorklogDTO,Integer> responseCodes = new HashMap<>();
 
