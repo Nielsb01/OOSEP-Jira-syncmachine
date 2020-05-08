@@ -20,6 +20,7 @@ import javax.ws.rs.core.Response;
 public class LoginController {
 
     /**
+     * Responsible for processing the login request
      *
      * @param loginDTO contains the login information of the user
      *                 needed to verify their identity
