@@ -18,7 +18,7 @@ public class Database {
     /**
      * Inject the database properties dependency
      *
-     * @param databaseProperties
+     * @param databaseProperties database properties file
      */
     @Inject
     public void setDatabaseProperties(DatabaseProperties databaseProperties) {
