@@ -60,7 +60,7 @@ class WorklogSynchronisationTest {
 
         String jsonString = new JSONArray().put(jsonObject).toString();
 
-        when(mockedRequest.post(any(), any())).thenReturn(response);
+        when(mockedRequest.post(anyString(), any())).thenReturn(response);
         when(response.getBody()).thenReturn(new JsonNode(jsonString));
 
         //Act
@@ -73,7 +73,7 @@ class WorklogSynchronisationTest {
     @Test
     void testRetrieveAllWorklogsCreatesEmptyListIfResponseIsNull() {
 
-        when(mockedRequest.post(any(), any())).thenReturn(response);
+        when(mockedRequest.post(anyString(), any())).thenReturn(response);
         when(response.getBody()).thenReturn(null);
 
         List<WorklogDTO> actualValue = sut.retrieveWorklogsFromClientServer(worklogRequestDTO);
@@ -84,7 +84,7 @@ class WorklogSynchronisationTest {
     @Test
     void testRetrieveAllWorklogsCreatesEmptyListWhenResponseIsEmpty() {
 
-        when(mockedRequest.post(any(), any())).thenReturn(response);
+        when(mockedRequest.post(anyString(), any())).thenReturn(response);
         when(response.getBody()).thenReturn(new JsonNode(
                 "[]"));
 
@@ -105,7 +105,7 @@ class WorklogSynchronisationTest {
         String jsonString = new JSONArray().put(jsonObject).toString();
 
 
-        when(mockedRequest.post(any(), any())).thenReturn(response);
+        when(mockedRequest.post(anyString(), any())).thenReturn(response);
         when(response.getBody()).thenReturn(new JsonNode(jsonString));
 
         //Act
@@ -128,7 +128,7 @@ class WorklogSynchronisationTest {
 
         String jsonArray = new JSONArray().put(jsonString).toString();
 
-        when(mockedRequest.post(any(), any())).thenReturn(response);
+        when(mockedRequest.post(anyString(), any())).thenReturn(response);
         when(response.getBody()).thenReturn(new JsonNode(jsonArray));
 
         //Act
@@ -150,7 +150,7 @@ class WorklogSynchronisationTest {
         mockWorklogs.add(new WorklogDTO().setWorker("JIRAUSER10000").setStarted("2020-05-07").setTimeSpentSeconds(660).setOriginTaskId("KNBPU-2"));
         mockWorklogs.add(new WorklogDTO().setWorker("JIRAUSER10100").setStarted("2020-05-07").setTimeSpentSeconds(840).setOriginTaskId("KNBPU-2"));
 
-        when(mockedRequest.post(any(),any())).thenReturn(response);
+        when(mockedRequest.post(anyString(),any())).thenReturn(response);
         when(response.getStatus()).thenReturn(200);
 
         // Act
@@ -170,7 +170,7 @@ class WorklogSynchronisationTest {
         mockWorklogs.add(new WorklogDTO().setWorker("JIRAUSER10000").setStarted("2020-05-07").setTimeSpentSeconds(660).setOriginTaskId("KNBPU-2"));
         mockWorklogs.add(new WorklogDTO().setWorker("JIRAUSER10100").setStarted("2020-05-07").setTimeSpentSeconds(840).setOriginTaskId("KNBPU-4"));
 
-        when(mockedRequest.post(any(),any())).thenReturn(response);
+        when(mockedRequest.post(anyString(),any())).thenReturn(response);
         when(response.getStatus()).thenReturn(200,400);
 
         // Act

@@ -1,7 +1,7 @@
 package nl.avisi.controller;
 
 
-import nl.avisi.LoginDTO;
+import nl.avisi.dto.LoginDTO;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
