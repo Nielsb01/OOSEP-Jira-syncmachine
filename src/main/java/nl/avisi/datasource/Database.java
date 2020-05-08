@@ -4,7 +4,6 @@ import nl.avisi.exception.DatabaseDriverNotFoundException;
 import nl.avisi.propertyreaders.DatabaseProperties;
 
 import javax.inject.Inject;
-import javax.ws.rs.InternalServerErrorException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
