@@ -41,8 +41,6 @@ class JiraUserTest {
                 .put("key", "JIRAUSER1000");
         String jsonString = new JSONArray().put(jsonObject).toString();
 
-        when(mockedProperties.getAdminPassword()).thenReturn("");
-        when(mockedProperties.getAdminUsername()).thenReturn("");
         when(mockedRequest.get(any())).thenReturn(mockedResponse);
         when(mockedResponse.getBody()).thenReturn(new JsonNode(jsonString));
 
@@ -56,8 +54,6 @@ class JiraUserTest {
     @Test
     void testRetrieveJiraUserKeyByEmailThrowsInvalidEmailExceptionWhenJSONExceptionOccurs() {
         //Arrange
-        when(mockedProperties.getAdminPassword()).thenReturn("");
-        when(mockedProperties.getAdminUsername()).thenReturn("");
         when(mockedRequest.get(any())).thenReturn(mockedResponse);
         when(mockedResponse.getBody()).thenReturn(new JsonNode("[]"));
 
@@ -75,8 +71,6 @@ class JiraUserTest {
                 .put("key", "");
         String jsonString = new JSONArray().put(jsonObject).toString();
 
-        when(mockedProperties.getAdminPassword()).thenReturn("");
-        when(mockedProperties.getAdminUsername()).thenReturn("");
         when(mockedRequest.get(any())).thenReturn(mockedResponse);
         when(mockedResponse.getBody()).thenReturn(new JsonNode(jsonString));
 

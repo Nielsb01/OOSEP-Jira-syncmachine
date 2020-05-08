@@ -30,7 +30,7 @@ public class JiraWorklog {
     private String clientUrl;
 
     /**
-     *  base URL where the Jira server of Avisi is being hosted
+     * base URL where the Jira server of Avisi is being hosted
      */
     private String avisiUrl;
 
@@ -45,11 +45,14 @@ public class JiraWorklog {
     private BasicAuth basicAuth;
 
     /**
-     * Used to read the necessary property information
+     * is used to read the necessary property information
      */
     private JiraSynchronisationProperties jiraSynchronisationProperties;
 
-
+    @Inject
+    public void setJiraSynchronisationProperties(JiraSynchronisationProperties jiraSynchronisationProperties) {
+        this.jiraSynchronisationProperties = jiraSynchronisationProperties;
+    }
 
     @Inject
     public void setRequest(IRequest<BasicAuth> request) {
@@ -69,19 +72,19 @@ public class JiraWorklog {
     }
 
     /**
-     *
      * @param worklogRequestDTO Contains the parameters to specify the worklogs to be retrieved during the HTTP request.
      * @return List of all worklogs that were retrieved from the client server between the two given dates for the specified workers.
      */
     public List<WorklogDTO> retrieveWorklogsFromClientServer(WorklogRequestDTO worklogRequestDTO) {
+        setClientUrl(jiraSynchronisationProperties.getOriginUrl());
 
-        HttpResponse<JsonNode> JSONWorklogs = requestWorklogs(worklogRequestDTO);
+        HttpResponse<JsonNode> jsonWorklogs = requestWorklogs(worklogRequestDTO);
 
-        if (JSONWorklogs.getBody() == null || !JSONWorklogs.getBody().isArray()) {
+        if (jsonWorklogs.getBody() == null || !jsonWorklogs.getBody().isArray()) {
             return new ArrayList<>();
         }
 
-        JSONArray jsonArray = JSONWorklogs.getBody().getArray();
+        JSONArray jsonArray = jsonWorklogs.getBody().getArray();
 
         return createWorklogDTOs(jsonArray);
     }
@@ -130,14 +133,16 @@ public class JiraWorklog {
      * the standard comment of the {@link WorklogDTO} will be "Logging from JavaSyncApp"
      *
      * @param worklogs ArrayList consisting of WorklogDTO's this list are all the worklogs retrieved from client Jira-server.
+     * @return A map of worklogDTO's with their corresponding status codes after being posted.
      */
     public Map createWorklogsOnAvisiServer(List<WorklogDTO> worklogs) {
+        setAvisiUrl(jiraSynchronisationProperties.getDestinationUrl());
 
-        Map<WorklogDTO,Integer> responseCodes = new HashMap<>();
+        Map<WorklogDTO, Integer> responseCodes = new HashMap<>();
 
-        for(WorklogDTO worklog : worklogs){
-            HttpResponse<JsonNode> response = request.post(avisiUrl,worklog);
-            responseCodes.put(worklog,response.getStatus());
+        for (WorklogDTO worklog : worklogs) {
+            HttpResponse<JsonNode> response = request.post(avisiUrl, worklog);
+            responseCodes.put(worklog, response.getStatus());
 
         }
 

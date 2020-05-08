@@ -1,4 +1,4 @@
-package nl.avisi;
+package nl.avisi.model;
 
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
@@ -6,9 +6,9 @@ import kong.unirest.json.JSONArray;
 import kong.unirest.json.JSONObject;
 import nl.avisi.dto.WorklogDTO;
 import nl.avisi.dto.WorklogRequestDTO;
-import nl.avisi.model.JiraWorklog;
 import nl.avisi.network.IRequest;
 import nl.avisi.network.authentication.BasicAuth;
+import nl.avisi.propertyReaders.JiraSynchronisationProperties;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -26,6 +26,7 @@ class JiraWorklogTest {
     private JiraWorklog sut;
     private IRequest mockedRequest;
     private HttpResponse mockedResponse;
+    private JiraSynchronisationProperties mockedProperties;
 
     private final String WORKER_VALUE = "ttt";
     private final String STARTED_VALUE = "fff";
@@ -40,11 +41,13 @@ class JiraWorklogTest {
         sut = new JiraWorklog();
         mockedRequest = mock(IRequest.class);
         mockedResponse = mock(HttpResponse.class);
+        mockedProperties = mock(JiraSynchronisationProperties.class);
 
         sut.setClientUrl("http://127.0.0.1/");
         sut.setAvisiUrl("http://127.0.0.1/");
         sut.setRequest(mockedRequest);
         sut.setBasicAuth(new BasicAuth());
+        sut.setJiraSynchronisationProperties(mockedProperties);
 
         worklogRequestDTO = new WorklogRequestDTO();
     }
@@ -72,6 +75,7 @@ class JiraWorklogTest {
 
     @Test
     void testRetrieveAllWorklogsCreatesEmptyListIfResponseIsNull() {
+
 
         when(mockedRequest.post(any(), any())).thenReturn(mockedResponse);
         when(mockedResponse.getBody()).thenReturn(null);
