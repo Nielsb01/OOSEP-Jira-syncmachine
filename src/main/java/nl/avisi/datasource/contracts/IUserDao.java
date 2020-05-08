@@ -1,4 +1,4 @@
-package nl.avisi.datasource;
+package nl.avisi.datasource.contracts;
 
 import nl.avisi.model.UserSyncDTO;
 
