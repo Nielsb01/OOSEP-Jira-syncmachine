@@ -1,6 +1,6 @@
 package nl.avisi.datasource;
 
-import nl.avisi.PropertyReaders.DatabaseProperties;
+import nl.avisi.propertyreaders.DatabaseProperties;
 
 import javax.inject.Inject;
 import java.sql.Connection;

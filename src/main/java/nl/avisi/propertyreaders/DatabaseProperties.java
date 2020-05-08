@@ -1,4 +1,4 @@
-package nl.avisi.PropertyReaders;
+package nl.avisi.propertyreaders;
 
 import javax.inject.Inject;
 
