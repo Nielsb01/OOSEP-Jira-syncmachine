@@ -1,4 +1,4 @@
-package PropertyReaders;
+package propertyReaders;
 
 import nl.avisi.propertyReaders.JiraSynchronisationProperties;
 import nl.avisi.propertyReaders.PropertyReader;

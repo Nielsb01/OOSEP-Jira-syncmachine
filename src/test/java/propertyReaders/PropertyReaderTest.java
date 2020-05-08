@@ -1,4 +1,4 @@
-package PropertyReaders;
+package propertyReaders;
 
 import nl.avisi.propertyReaders.exceptions.EmptyPropertyException;
 import nl.avisi.propertyReaders.exceptions.PropertyFileNotLoadedException;
