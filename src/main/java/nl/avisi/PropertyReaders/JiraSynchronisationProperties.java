@@ -11,6 +11,9 @@ public class JiraSynchronisationProperties {
         this.propertyReader = propertyReader;
     }
 
+    /**
+     * Loads the given property file so it can be read using the class' other methods. Run this before using any other methods in this class.
+     */
     public void loadPropertyFile() {
         propertyReader.loadPropertyFile("jiraSynchronisation.properties");
     }

@@ -13,6 +13,10 @@ public class PropertyReader {
         properties = new Properties();
     }
 
+    /**
+     * Loads the given property file so it can be read using the class' other methods. Run this before using any other methods in this class.
+     * @param propertiesFileName The name of the properties file that is to be read, including the file extension
+     */
     public void loadPropertyFile(String propertiesFileName) {
         try {
             properties.load(Objects
