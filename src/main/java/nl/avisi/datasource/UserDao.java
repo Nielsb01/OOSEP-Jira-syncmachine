@@ -1,6 +1,7 @@
 package nl.avisi.datasource;
 
 import nl.avisi.datasource.contracts.IUserDao;
+import nl.avisi.exception.DatabaseDriverNotFoundException;
 import nl.avisi.model.UserSyncDTO;
 
 import javax.inject.Inject;
@@ -83,6 +84,8 @@ public class UserDao implements IUserDao {
 
         } catch(SQLException e) {
             System.err.printf("Error occurred fetching all users which have enabled auto sync: %s\n", e.getMessage());
+        } catch(DatabaseDriverNotFoundException e) {
+            System.err.printf("The database driver %s cannot be found on the system\n", e.getMessage());
         } finally {
             if (stmt != null) stmt.close();
             if (connection != null) connection.close();

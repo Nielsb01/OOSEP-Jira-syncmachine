@@ -1,5 +1,6 @@
 package nl.avisi.datasource;
 
+import nl.avisi.exception.DatabaseDriverNotFoundException;
 import nl.avisi.model.UserSyncDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -45,9 +46,10 @@ public class UserDaoTest {
 
            // Assert
            assertEquals(expectedResultSize, results.size());
-       } catch (SQLException e) {
+       } catch (SQLException | DatabaseDriverNotFoundException e) {
            // Explicitly set the assertTrue to false so the
-           // test will fail when a SQLException occurs
+           // test will fail when a SQLException or
+           // DatabaseDriverNotFoundException occurs
            assertTrue(false);
        }
     }
@@ -65,9 +67,10 @@ public class UserDaoTest {
 
             // Assert
             assertEquals(expectedResultSize, results.size());
-        } catch (SQLException e) {
+        } catch (SQLException | DatabaseDriverNotFoundException e) {
             // Explicitly set the assertTrue to false so the
-            // test will fail when a SQLException occurs
+            // test will fail when a SQLException or
+            // DatabaseDriverNotFoundException occurs
             assertTrue(false);
         }
     }
@@ -102,25 +105,11 @@ public class UserDaoTest {
             assertEquals(firstSyncUserToWorker, results.get(0).getToWorker());
             assertEquals(secondSyncUserFromWorker, results.get(1).getFromWorker());
             assertEquals(secondSyncUserToWorker, results.get(1).getToWorker());
-        } catch (SQLException e) {
+        } catch (SQLException | DatabaseDriverNotFoundException e) {
             // Explicitly set the assertTrue to false so the
-            // test will fail when a SQLException occurs
+            // test will fail when a SQLException or
+            // DatabaseDriverNotFoundException occurs
             assertTrue(false);
         }
-    }
-
-    public void testGetAllAutoSyncUsersDoesntCloseStatementWhenItsNotInitialized() throws SQLException {
-        // Arrange
-        when(mockedDatabase.connect()).thenThrow(new SQLException());
-
-        // Act
-        sut.getAllAutoSyncUsers();
-
-        // Assert
-//        verify()
-    }
-
-    void testGetAllAutoSyncUsersDoesntCloseConnectionWhenItsNotInitialized() {
-
     }
 }
