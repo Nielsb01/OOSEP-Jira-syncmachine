@@ -1,6 +1,7 @@
 package nl.avisi.propertyReaders;
 
 import nl.avisi.propertyReaders.exceptions.EmptyPropertyException;
+import nl.avisi.propertyReaders.exceptions.PropertyFileNotFoundException;
 import nl.avisi.propertyReaders.exceptions.PropertyFileNotLoadedException;
 import nl.avisi.propertyReaders.exceptions.PropertyNotFoundException;
 
@@ -28,6 +29,9 @@ public class PropertyReader {
                     .requireNonNull(getClass()
                             .getClassLoader()
                             .getResourceAsStream(propertiesFileName)));
+        }
+        catch (NullPointerException e) {
+            throw new PropertyFileNotFoundException();
         }
         catch (IOException e) {
             throw new InternalServerErrorException("Error loading properties: ", e);
