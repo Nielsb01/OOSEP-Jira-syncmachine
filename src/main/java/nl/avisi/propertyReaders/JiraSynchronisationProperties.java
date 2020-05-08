@@ -2,6 +2,9 @@ package nl.avisi.propertyReaders;
 
 import javax.inject.Inject;
 
+/**
+ * Used for querying jiraSyncrhonisation.properties
+ */
 public class JiraSynchronisationProperties {
 
     private PropertyReader propertyReader;

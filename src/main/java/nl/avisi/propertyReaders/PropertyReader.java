@@ -9,6 +9,9 @@ import java.io.IOException;
 import java.util.Objects;
 import java.util.Properties;
 
+/**
+ * Responsible for querying property files
+ */
 public class PropertyReader {
 
     private Properties properties;
