@@ -4,3 +4,4 @@ target
 
 # Files
 *.iml
+src/main/resources/database.properties
