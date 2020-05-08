@@ -7,6 +7,8 @@ import javax.inject.Inject;
  */
 public class JiraSynchronisationProperties {
 
+    private final String JIRA_PROPERTIES_FILE_NAME = "jiraSynchronisation.properties";
+
     private PropertyReader propertyReader;
 
     @Inject
@@ -18,7 +20,7 @@ public class JiraSynchronisationProperties {
      * Loads the given property file so it can be read using the class' other methods. Run this before using any other methods in this class.
      */
     public void loadPropertyFile() {
-        propertyReader.loadPropertyFile("jiraSynchronisation.properties");
+        propertyReader.loadPropertyFile(JIRA_PROPERTIES_FILE_NAME);
     }
 
     public String getOriginUrl() {
