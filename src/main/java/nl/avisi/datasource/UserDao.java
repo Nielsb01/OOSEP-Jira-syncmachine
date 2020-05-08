@@ -67,7 +67,7 @@ public class UserDao implements IUserDao {
         Connection connection = null;
 
         try {
-            connection = database.conect();
+            connection = database.connect();
             stmt = connection.prepareStatement(getAllAutoSyncUsersSql);
             stmt.setString(1, autoSyncStatusValue);
 

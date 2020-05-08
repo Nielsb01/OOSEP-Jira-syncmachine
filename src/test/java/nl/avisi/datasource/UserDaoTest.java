@@ -35,7 +35,7 @@ public class UserDaoTest {
         Connection mockedConnection = mock(Connection.class);
 
        try {
-           when(mockedDatabase.conect()).thenReturn(mockedConnection);
+           when(mockedDatabase.connect()).thenReturn(mockedConnection);
            when(mockedConnection.prepareStatement(anyString())).thenReturn(mockedStatement);
            when(mockedStatement.executeQuery()).thenReturn(mockedResultSet);
            when(mockedResultSet.next()).thenReturn(false);
@@ -58,7 +58,7 @@ public class UserDaoTest {
         final int expectedResultSize = 0;
 
         try {
-            when(mockedDatabase.conect()).thenThrow(new SQLException());
+            when(mockedDatabase.connect()).thenThrow(new SQLException());
 
             // Act
             List<UserSyncDTO> results = sut.getAllAutoSyncUsers();
@@ -85,7 +85,7 @@ public class UserDaoTest {
         Connection mockedConnection = mock(Connection.class);
 
         try {
-            when(mockedDatabase.conect()).thenReturn(mockedConnection);
+            when(mockedDatabase.connect()).thenReturn(mockedConnection);
             when(mockedConnection.prepareStatement(anyString())).thenReturn(mockedStatement);
             when(mockedStatement.executeQuery()).thenReturn(mockedResultSet);
             when(mockedResultSet.next()).thenReturn(true, true, false);
@@ -111,7 +111,7 @@ public class UserDaoTest {
 
     public void testGetAllAutoSyncUsersDoesntCloseStatementWhenItsNotInitialized() throws SQLException {
         // Arrange
-        when(mockedDatabase.conect()).thenThrow(new SQLException());
+        when(mockedDatabase.connect()).thenThrow(new SQLException());
 
         // Act
         sut.getAllAutoSyncUsers();
