@@ -2,7 +2,9 @@ package nl.avisi.controller;
 
 
 import nl.avisi.dto.LoginDTO;
+import nl.avisi.model.Login;
 
+import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -18,6 +20,12 @@ import javax.ws.rs.core.Response;
 
 @Path("/login")
 public class LoginController {
+    private Login login;
+
+    @Inject
+    public void setLogin(Login login) {
+        this.login = login;
+    }
 
     /**
      * Responsible for processing the login request
@@ -31,6 +39,7 @@ public class LoginController {
     @Produces(MediaType.APPLICATION_JSON)
     public Response login(LoginDTO loginDTO) {
         //entity is momenteel nog een placeholder tot we weten wat er daadwerkelijk teruggeven moet worden.
+        login.validateCredentials(loginDTO);
         return Response.status(201).entity("nader te bepalen aanroep naar loginDAO").build();
     }
 }

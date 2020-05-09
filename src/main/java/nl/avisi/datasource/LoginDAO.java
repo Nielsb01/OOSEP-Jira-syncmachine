@@ -31,7 +31,6 @@ public class LoginDAO implements ILoginDAO {
     public LoginDTO getLoginInfo(String userLogin) {
 
         try (Connection connection = database.connect(); PreparedStatement stmt = connection.prepareStatement(getLoginDataSql)) {
-
             stmt.setString(1, userLogin);
 
             return loginDataMapper.toDTO(stmt.executeQuery());
@@ -40,11 +39,4 @@ public class LoginDAO implements ILoginDAO {
         }
     }
 
-    private ResultSet getLoginResultSet(String userLogin) throws SQLException {
-        preparedStatement = connection.prepareStatement("SELECT * FROM logi" +
-                "n WHERE user_login = ?");
-        preparedStatement.setString(1, userLogin);
-
-        return preparedStatement.executeQuery();
-    }
 }

@@ -1,6 +1,6 @@
 package nl.avisi.model;
 
-import nl.avisi.datasource.LoginDAO;
+import nl.avisi.datasource.contracts.ILoginDAO;
 import nl.avisi.dto.LoginDTO;
 import org.apache.commons.codec.digest.DigestUtils;
 
@@ -9,10 +9,10 @@ import javax.ws.rs.NotAuthorizedException;
 
 public class Login {
 
-    private LoginDAO loginDAO;
+    private ILoginDAO loginDAO;
 
     @Inject
-    public void setLoginDAO(LoginDAO loginDAO) {
+    public void setLoginDAO(ILoginDAO loginDAO) {
         this.loginDAO = loginDAO;
     }
 
