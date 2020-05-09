@@ -1,4 +1,4 @@
-package nl.avisi.datasource.datamapper;
+package nl.avisi.datasource.datamappers;
 
 import nl.avisi.dto.LoginDTO;
 
