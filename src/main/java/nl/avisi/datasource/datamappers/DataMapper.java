@@ -1,4 +1,4 @@
-package nl.avisi.datasource.datamapper;
+package nl.avisi.datasource.datamappers;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

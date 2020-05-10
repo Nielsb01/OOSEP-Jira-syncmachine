@@ -1,7 +1,7 @@
 package nl.avisi.datasource.contracts;
 
-import nl.avisi.dto.LoginDTO;
+import nl.avisi.dto.UserDTO;
 
 public interface ILoginDAO {
-    LoginDTO getLoginInfo(String userLogin);
+    UserDTO getLoginInfo(String username);
 }

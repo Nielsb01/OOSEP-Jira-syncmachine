@@ -32,14 +32,14 @@ public class LoginController {
      *
      * @param loginDTO contains the login information of the user
      *                 needed to verify their identity
-     * @return return value is currently a placeholder and determined at a later date
+     * @return Response containing the UserID corresponding to the
+     *         supplied login information and the appropriate status code 201.
      */
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response login(LoginDTO loginDTO) {
-        //entity is momenteel nog een placeholder tot we weten wat er daadwerkelijk teruggeven moet worden.
         login.validateCredentials(loginDTO);
-        return Response.status(201).entity("nader te bepalen aanroep naar loginDAO").build();
+        return Response.status(201).entity(login.validateCredentials(loginDTO)).build();
     }
 }

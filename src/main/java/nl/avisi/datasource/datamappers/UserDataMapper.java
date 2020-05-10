@@ -1,21 +1,21 @@
 package nl.avisi.datasource.datamappers;
 
-import nl.avisi.dto.LoginDTO;
+import nl.avisi.dto.UserDTO;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class LoginDataMapper implements DataMapper<LoginDTO> {
+public class UserDataMapper implements DataMapper<UserDTO> {
     @Override
-    public LoginDTO toDTO(ResultSet resultSet) throws SQLException {
-        LoginDTO loginDTO = new LoginDTO();
+    public UserDTO toDTO(ResultSet resultSet) throws SQLException {
+        UserDTO userDTO = new UserDTO();
 
         while (resultSet.next()) {
-            loginDTO = new LoginDTO().
-                    setUsername(resultSet.getString("Username"))
-                    .setPassword(resultSet.getString("Password"));
+            userDTO.setUsername(resultSet.getString("Username"))
+                    .setPassword(resultSet.getString("Password"))
+                    .setUserID(resultSet.getInt("UserID"));
 
         }
-        return loginDTO;
+        return userDTO ;
     }
 }

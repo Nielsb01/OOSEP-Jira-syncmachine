@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.NotAuthorizedException;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.when;
 
@@ -27,29 +28,40 @@ class LoginTest {
 
     @Test
     void testValidateCredentialsCallsGetLoginInfoWithCorrectParameter() {
-        // Setup
-        final LoginDTO loginDTO = new LoginDTO();
-        loginDTO.setUsername("username");
-        loginDTO.setPassword("password");
+        //Arrange
+        final LoginDTO loginDTO = new LoginDTO().setUsername("username").setPassword("password");
 
-        // Run the test
+        //Act
         sut.validateCredentials(loginDTO);
 
-        // Verify the results
+        //Assert
         verify(mockedLoginDAO).getLoginInfo(loginDTO.getUsername());
     }
 
     @Test
-    void testValidateCredentialsThrowsException() {
-        // Setup
-        final LoginDTO loginDTO = new LoginDTO();
-        loginDTO.setUsername("username");
-        loginDTO.setPassword("password");
-        when(mockedLoginDAO.getLoginInfo("ruben")).thenReturn(new LoginDTO("nebur", "droowthcaw"));
+    void testValidateCredentialsThrowsExceptionWhenPasswordsDontMatch() {
+        //Arrange
+        final LoginDTO loginDTO = new LoginDTO().setUsername("username").setPassword("password");
 
+        when(mockedLoginDAO.getLoginInfo("username"))
+                .thenReturn(new LoginDTO().setUsername("ruben").setPassword("wrong password"));
 
-        // Run the test
-        // Verify the results
-        Assertions.assertThrows(NotAuthorizedException.class, () -> loginDomainUnderTest.validateCredentials(loginDTO));
+        //Act & Assert
+        Assertions.assertThrows(NotAuthorizedException.class, () -> sut.validateCredentials(loginDTO));
+    }
+
+    @Test
+    void testValidateCredentialsReturnsWhenPasswordMatches() {
+        //Arrange
+        final LoginDTO loginDTO = new LoginDTO().setUsername("username").setPassword("password");
+
+        when(mockedLoginDAO.getLoginInfo("username"))
+                .thenReturn(new LoginDTO().setUsername("ruben").setPassword("dc00c903852bb19eb250aeba05e534a6d211629d77d055033806b783bae09937"));
+
+        //Act
+        String actualValue = sut.validateCredentials(loginDTO);
+
+       //Assert
+        assertEquals("Succes", actualValue);
     }
 }

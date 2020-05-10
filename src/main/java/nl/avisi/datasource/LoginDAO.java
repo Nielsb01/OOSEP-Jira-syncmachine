@@ -1,21 +1,36 @@
 package nl.avisi.datasource;
 
 import nl.avisi.datasource.contracts.ILoginDAO;
-import nl.avisi.datasource.datamapper.DataMapper;
-import nl.avisi.dto.LoginDTO;
+import nl.avisi.datasource.datamappers.DataMapper;
+import nl.avisi.dto.UserDTO;
 
 import javax.inject.Inject;
 import javax.ws.rs.InternalServerErrorException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/**
+ * Responsible for anything that has to do with the users login
+ * information.
+ */
 public class LoginDAO implements ILoginDAO {
-    private DataMapper<LoginDTO> loginDataMapper;
+    /**
+     * DataMapper is used to convert
+     * a resultset to a DTO
+     */
+    private DataMapper<UserDTO> loginDataMapper;
+
+    /**
+     * Class to manage the database connection
+     */
     private Database database;
 
-    private final static String getLoginDataSql = "SELECT * FROM SyncMachineAccounts WHERE UserID = ?";
+    /**
+     * SQL query for retrieving the users
+     * login information based on the supplied username
+     */
+    private final static String GET_LOGIN_DATA_SQL = "SELECT * FROM SyncMachineAccounts WHERE Username = ?";
 
     @Inject
     public void setDatabase(Database database) {
@@ -23,15 +38,23 @@ public class LoginDAO implements ILoginDAO {
     }
 
     @Inject
-    public void setLoginDataMapper(DataMapper<LoginDTO> loginDataMapper) {
+    public void setLoginDataMapper(DataMapper<UserDTO> loginDataMapper) {
         this.loginDataMapper = loginDataMapper;
     }
 
+    /**
+     * Retrieves all login information corresponding to
+     * the supplied username.
+     *
+     * @param username Supplied by the user. Used for retrieving all the
+     *                 corresponding information like password and UserID.
+     * @return UserDTO containing all the retrieved information like username, password and UserID.
+     */
     @Override
-    public LoginDTO getLoginInfo(String userLogin) {
+    public UserDTO getLoginInfo(String username) {
 
-        try (Connection connection = database.connect(); PreparedStatement stmt = connection.prepareStatement(getLoginDataSql)) {
-            stmt.setString(1, userLogin);
+        try (Connection connection = database.connect(); PreparedStatement stmt = connection.prepareStatement(GET_LOGIN_DATA_SQL)) {
+            stmt.setString(1, username);
 
             return loginDataMapper.toDTO(stmt.executeQuery());
         } catch (SQLException e) {
