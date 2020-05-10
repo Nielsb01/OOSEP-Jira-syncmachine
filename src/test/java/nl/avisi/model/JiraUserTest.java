@@ -4,7 +4,7 @@ import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
 import kong.unirest.json.JSONArray;
 import kong.unirest.json.JSONObject;
-import nl.avisi.InvalidEmailException;
+import nl.avisi.InvalidUsernameException;
 import nl.avisi.network.IRequest;
 import nl.avisi.propertyReaders.JiraSynchronisationProperties;
 import org.junit.jupiter.api.BeforeEach;
@@ -35,7 +35,7 @@ class JiraUserTest {
     }
 
     @Test
-    void testRetrieveJiraUserKeyByEmailReturnsCorrectJiraUserKey() {
+    void testRetrieveJiraUserKeyByUsernameReturnsCorrectJiraUserKey() {
         //Arrange
         JSONObject jsonObject = new JSONObject()
                 .put("key", "JIRAUSER1000");
@@ -45,27 +45,27 @@ class JiraUserTest {
         when(mockedResponse.getBody()).thenReturn(new JsonNode(jsonString));
 
         //Act
-        final String result = sut.retrieveJiraUserKeyByEmail("email", "server");
+        final String result = sut.retrieveJiraUserKeyByUsername("email", "server");
 
         //Assert
         assertEquals("JIRAUSER1000", result);
     }
 
     @Test
-    void testRetrieveJiraUserKeyByEmailThrowsInvalidEmailExceptionWhenJSONExceptionOccurs() {
+    void testRetrieveJiraUserKeyByUsernameThrowsInvalidUsernameExceptionWhenJSONExceptionOccurs() {
         //Arrange
         when(mockedRequest.get(any())).thenReturn(mockedResponse);
         when(mockedResponse.getBody()).thenReturn(new JsonNode("[]"));
 
         //Assert
-        assertThrows(InvalidEmailException.class, () ->
+        assertThrows(InvalidUsernameException.class, () ->
 
                 //Act
-                sut.retrieveJiraUserKeyByEmail("email", "server"));
+                sut.retrieveJiraUserKeyByUsername("email", "server"));
     }
 
     @Test
-    void testRetrieveJiraUserKeyByEmailThrowsInvalidEmailExceptionWhenKeyIsEmpty() {
+    void testRetrieveJiraUserKeyByUsernameThrowsInvalidUsernameExceptionWhenKeyIsEmpty() {
         //Arrange
         JSONObject jsonObject = new JSONObject()
                 .put("key", "");
@@ -75,9 +75,9 @@ class JiraUserTest {
         when(mockedResponse.getBody()).thenReturn(new JsonNode(jsonString));
 
         //Assert
-        assertThrows(InvalidEmailException.class, () ->
+        assertThrows(InvalidUsernameException.class, () ->
 
                 //Act
-                sut.retrieveJiraUserKeyByEmail("email", "server"));
+                sut.retrieveJiraUserKeyByUsername("email", "server"));
     }
 }

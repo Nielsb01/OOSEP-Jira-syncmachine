@@ -3,7 +3,9 @@ package nl.avisi.model;
 import kong.unirest.*;
 
 import kong.unirest.json.JSONException;
-import nl.avisi.InvalidEmailException;
+import nl.avisi.InvalidUsernameException;
+import nl.avisi.dto.JiraUserKeyDTO;
+import nl.avisi.dto.JiraUsernameDTO;
 import nl.avisi.network.IRequest;
 import nl.avisi.network.authentication.BasicAuth;
 import nl.avisi.propertyReaders.JiraSynchronisationProperties;
@@ -64,38 +66,37 @@ public class JiraUser {
     }
 
     /**
-     * Retrieves and returns the Jira user key that
-     * corresponds to the given email address.
+     * Retrieves the Jira user keys corresponding to
+     * the given usernames, by doing a request
+     * to the Jira API.
      *
-     * @param email  the email address supplied by the user that is
-     *               linked to a Jira account. This will
-     *               be used to retrieve the Jira user key linked to it.
-     * @param server The server of which the user wishes to retrieve their
-     *               user key. In this instance it's either "Avisi" or "Client".
-     * @return the corresponding user key. For example: "JIRAUSER10100"
+     * @param jiraUsernameDTO contains usernames for both jira servers.
+     *                        Both the username as well as the email address will
+     *                        be accepted.
+     * @return JiraUserKeyDTO contains the matching user keys to the given usernames.
      */
-    public String retrieveJiraUserKeyByEmail(String email, String server) {
+    public JiraUserKeyDTO retrieveJiraUserKeyByUsername(JiraUsernameDTO jiraUsernameDTO) {
         setAvisiUrl(jiraSynchronisationProperties.getDestinationUrl());
         setClientUrl(jiraSynchronisationProperties.getOriginUrl());
 
-        String jiraUserKey = "";
+        JiraUserKeyDTO jiraUserKeyDTO = new JiraUserKeyDTO();
 
         setBasicAuth(new BasicAuth()
                 .setPassword(jiraSynchronisationProperties.getAdminPassword())
                 .setUsername(jiraSynchronisationProperties.getAdminUsername()));
         request.setAuthentication(basicAuth);
 
-        String requestUrl = determineUrl(server) + email;
+        HttpResponse<JsonNode> JSONClientJiraUser = request.get(clientUrl + jiraUsernameDTO.getClientUsername());
+        HttpResponse<JsonNode> JSONAvisiJiraUser = request.get(avisiUrl + jiraUsernameDTO.getAvisiUsername());
 
-        HttpResponse<JsonNode> JSONJiraUser = request.get(requestUrl);
+        jiraUserKeyDTO.setAvisiUserKey(getJiraUserKeyFromJson(JSONAvisiJiraUser));
+        jiraUserKeyDTO.setClientUserKey(getJiraUserKeyFromJson(JSONClientJiraUser));
 
-        jiraUserKey = getJiraUserKeyFromJson(JSONJiraUser);
-
-        if (jiraUserKey.isEmpty()) {
-            throw new InvalidEmailException();
+        if (jiraUserKeyDTO.getAvisiUserKey().isEmpty() || jiraUserKeyDTO.getClientUserKey().isEmpty()) {
+            throw new InvalidUsernameException();
         }
 
-        return jiraUserKey;
+        return jiraUserKeyDTO;
     }
 
     /**
@@ -111,21 +112,9 @@ public class JiraUser {
         try {
             jiraUserKey = JSONJiraUser.getBody().getArray().getJSONObject(0).getString("key");
         } catch (JSONException e) {
-            throw new InvalidEmailException();
+            throw new InvalidUsernameException();
         }
 
         return jiraUserKey;
-    }
-
-    /**
-     * Determines which url to use for the HTTP request based on the input
-     * from the user.
-     *
-     * @param server The server of which the user wishes to retrieve their
-     *               user key. In this instance it's either "Avisi" or "Client".
-     * @return The correct url based on which server was passed in by the user.
-     */
-    private String determineUrl(String server) {
-        return server.equalsIgnoreCase("Avisi") ? avisiUrl : clientUrl;
     }
 }
