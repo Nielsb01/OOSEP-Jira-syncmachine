@@ -5,10 +5,13 @@ import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.core.Response;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 class UserControllerTest {
 
+    public static final int HTTP_STATUS_OK = 200;
     private UserController sut;
     private JiraUser mockedJiraUser;
 
@@ -20,13 +23,26 @@ class UserControllerTest {
     }
 
     @Test
-    void testSetJiraUserKeys() {
-        // Setup
+    void testSetJiraUserKeysResponseStatus() {
+        //Arrange
         final JiraUsernameDTO jiraUsernameDTO = new JiraUsernameDTO();
 
-        // Run the test
-        final Response result = sut.setJiraUserKeys(jiraUsernameDTO);
+        //Act
+        final Response actualValue = sut.setJiraUserKeys(jiraUsernameDTO);
 
-        // Verify the results
+        //Assert
+        assertEquals(HTTP_STATUS_OK, actualValue.getStatus());
+    }
+
+    @Test
+    void testSetJiraUserKeysCallsSetJiraUserKeys() {
+        //Arrange
+        final JiraUsernameDTO jiraUsernameDTO = new JiraUsernameDTO();
+
+        //Act
+        final Response actualValue = sut.setJiraUserKeys(jiraUsernameDTO);
+
+        //Assert
+        verify(mockedJiraUser).setJiraUserKeys(jiraUsernameDTO);
     }
 }

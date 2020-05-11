@@ -9,6 +9,11 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+/**
+ * Responsible for dealing with all incoming
+ * HTTP requests that related to the user
+ */
+
 @Path("user")
 public class UserController {
     private JiraUser jiraUser;
@@ -18,6 +23,12 @@ public class UserController {
         this.jiraUser = jiraUser;
     }
 
+    /**
+     * Responsible for catching the
+     *
+     * @param jiraUsernameDTO
+     * @return
+     */
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
