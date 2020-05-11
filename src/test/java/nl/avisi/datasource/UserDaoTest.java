@@ -8,8 +8,7 @@ import org.junit.jupiter.api.Test;
 import java.sql.*;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -47,10 +46,10 @@ public class UserDaoTest {
            // Assert
            assertEquals(expectedResultSize, results.size());
        } catch (SQLException | DatabaseDriverNotFoundException e) {
-           // Explicitly set the assertTrue to false so the
+           // Explicitly fail the test so the
            // test will fail when a SQLException or
            // DatabaseDriverNotFoundException occurs
-           assertTrue(false);
+           fail();
        }
     }
 
@@ -68,10 +67,10 @@ public class UserDaoTest {
             // Assert
             assertEquals(expectedResultSize, results.size());
         } catch (SQLException | DatabaseDriverNotFoundException e) {
-            // Explicitly set the assertTrue to false so the
+            // Explicitly fail the test so the
             // test will fail when a SQLException or
             // DatabaseDriverNotFoundException occurs
-            assertTrue(false);
+            fail();
         }
     }
 
@@ -106,10 +105,10 @@ public class UserDaoTest {
             assertEquals(secondSyncUserFromWorker, results.get(1).getFromWorker());
             assertEquals(secondSyncUserToWorker, results.get(1).getToWorker());
         } catch (SQLException | DatabaseDriverNotFoundException e) {
-            // Explicitly set the assertTrue to false so the
+            // Explicitly fail the test so the
             // test will fail when a SQLException or
             // DatabaseDriverNotFoundException occurs
-            assertTrue(false);
+            fail();
         }
     }
 }
