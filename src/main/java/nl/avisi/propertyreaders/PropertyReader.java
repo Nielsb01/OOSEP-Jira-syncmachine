@@ -1,9 +1,9 @@
-package nl.avisi.propertyReaders;
+package nl.avisi.propertyreaders;
 
-import nl.avisi.propertyReaders.exceptions.EmptyPropertyException;
-import nl.avisi.propertyReaders.exceptions.PropertyFileNotFoundException;
-import nl.avisi.propertyReaders.exceptions.PropertyFileNotLoadedException;
-import nl.avisi.propertyReaders.exceptions.PropertyNotFoundException;
+import nl.avisi.propertyreaders.exceptions.EmptyPropertyException;
+import nl.avisi.propertyreaders.exceptions.PropertyFileNotFoundException;
+import nl.avisi.propertyreaders.exceptions.PropertyFileNotLoadedException;
+import nl.avisi.propertyreaders.exceptions.PropertyNotFoundException;
 
 import javax.ws.rs.InternalServerErrorException;
 import java.io.IOException;
