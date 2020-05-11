@@ -6,7 +6,6 @@ import nl.avisi.dto.UserDTO;
 import nl.avisi.propertyreaders.exceptions.DatabaseDriverNotFoundException;
 
 import javax.inject.Inject;
-import javax.ws.rs.InternalServerErrorException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
