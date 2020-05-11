@@ -5,13 +5,10 @@ import nl.avisi.propertyReaders.DatabaseProperties;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.sql.SQLException;
-
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 public class DatabaseTest {
-    private final static String DATABASE_CLASS_NAME = "com.mysql.jdbc.Driver";
     private Database sut;
     private DatabaseProperties mockedDatabaseProperties;
 
