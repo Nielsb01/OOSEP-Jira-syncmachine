@@ -8,7 +8,7 @@ import nl.avisi.dto.JiraUserKeyDTO;
 import nl.avisi.dto.JiraUsernameDTO;
 import nl.avisi.network.IRequest;
 import nl.avisi.network.authentication.BasicAuth;
-import nl.avisi.propertyReaders.JiraSynchronisationProperties;
+import nl.avisi.propertyreaders.JiraSynchronisationProperties;
 
 import javax.inject.Inject;
 

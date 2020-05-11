@@ -8,7 +8,7 @@ import nl.avisi.dto.WorklogDTO;
 import nl.avisi.dto.WorklogRequestDTO;
 import nl.avisi.network.IRequest;
 import nl.avisi.network.authentication.BasicAuth;
-import nl.avisi.propertyReaders.JiraSynchronisationProperties;
+import nl.avisi.propertyreaders.JiraSynchronisationProperties;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

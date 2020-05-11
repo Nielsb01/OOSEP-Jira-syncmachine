@@ -8,7 +8,7 @@ import nl.avisi.InvalidUsernameException;
 import nl.avisi.dto.JiraUserKeyDTO;
 import nl.avisi.dto.JiraUsernameDTO;
 import nl.avisi.network.IRequest;
-import nl.avisi.propertyReaders.JiraSynchronisationProperties;
+import nl.avisi.propertyreaders.JiraSynchronisationProperties;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

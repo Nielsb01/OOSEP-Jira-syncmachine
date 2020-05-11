@@ -1,4 +1,4 @@
-package nl.avisi.propertyReaders;
+package nl.avisi.propertyreaders;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
