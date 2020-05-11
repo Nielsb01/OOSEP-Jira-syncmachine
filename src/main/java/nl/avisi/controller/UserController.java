@@ -1,6 +1,9 @@
 
 package nl.avisi.controller;
 
+import nl.avisi.dto.JiraUsernameDTO;
+import nl.avisi.model.JiraUser;
+
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -33,7 +36,7 @@ public class UserController {
      *                        and client instance of the Jira server.
      * @return A HTTP response with the appropriate response code.
      */
-    @Path("/userKey")
+    @Path("/jiraUserKey")
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)

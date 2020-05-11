@@ -1,5 +1,7 @@
 package nl.avisi.controller;
 
+import nl.avisi.dto.JiraUsernameDTO;
+import nl.avisi.model.JiraUser;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
