@@ -8,19 +8,19 @@ public class DatabaseProperties {
      * File which contains the properties for the
      * database
      */
-    private final static String propertiesFile = "database.properties";
+    private final static String PROPERTIES_FILE = "database.properties";
 
     /**
      * Configuration property which contains the
      * connection string
      */
-    private final static String connectionPropertyName = "connection";
+    private final static String CONNECTION_PROPERTY_NAME = "connection";
 
     /**
      * Configuration property which contains the
      * driver class name
      */
-    private final static String driverPropertyName = "driver";
+    private final static String DRIVER_PROPERTY_NAME = "driver";
 
     /**
      * Class to read the actual properties from
@@ -44,7 +44,7 @@ public class DatabaseProperties {
      *
      */
     public void loadPropertyFile() {
-        propertyReader.loadPropertyFile(propertiesFile);
+        propertyReader.loadPropertyFile(PROPERTIES_FILE);
     }
 
     /**
@@ -53,7 +53,7 @@ public class DatabaseProperties {
      * @return the connection string for the database
      */
     public String getConnectionString() {
-        return propertyReader.getProperty(connectionPropertyName);
+        return propertyReader.getProperty(CONNECTION_PROPERTY_NAME);
     }
 
     /**
@@ -62,6 +62,6 @@ public class DatabaseProperties {
      * @return the class name of the database driver
      */
     public String getDriverName() {
-        return propertyReader.getProperty(driverPropertyName);
+        return propertyReader.getProperty(DRIVER_PROPERTY_NAME);
     }
 }
