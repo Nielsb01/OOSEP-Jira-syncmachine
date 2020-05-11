@@ -1,4 +1,4 @@
-package nl.avisi;
+package nl.avisi.model;
 
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
@@ -6,9 +6,9 @@ import kong.unirest.json.JSONArray;
 import kong.unirest.json.JSONObject;
 import nl.avisi.dto.WorklogDTO;
 import nl.avisi.dto.WorklogRequestDTO;
-import nl.avisi.model.WorklogSynchronisation;
 import nl.avisi.network.IRequest;
 import nl.avisi.network.authentication.BasicAuth;
+import nl.avisi.propertyreaders.JiraSynchronisationProperties;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -21,11 +21,12 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
-class WorklogSynchronisationTest {
+class JiraWorklogTest {
 
-    private WorklogSynchronisation sut;
+    private JiraWorklog sut;
     private IRequest mockedRequest;
-    private HttpResponse response;
+    private HttpResponse mockedResponse;
+    private JiraSynchronisationProperties mockedProperties;
 
     private final String WORKER_VALUE = "ttt";
     private final String STARTED_VALUE = "fff";
@@ -37,14 +38,16 @@ class WorklogSynchronisationTest {
     @BeforeEach
     void setUp() {
 
-        sut = new WorklogSynchronisation();
+        sut = new JiraWorklog();
         mockedRequest = mock(IRequest.class);
-        response = mock(HttpResponse.class);
+        mockedResponse = mock(HttpResponse.class);
+        mockedProperties = mock(JiraSynchronisationProperties.class);
 
         sut.setClientUrl("http://127.0.0.1/");
         sut.setAvisiUrl("http://127.0.0.1/");
         sut.setRequest(mockedRequest);
         sut.setBasicAuth(new BasicAuth());
+        sut.setJiraSynchronisationProperties(mockedProperties);
 
         worklogRequestDTO = new WorklogRequestDTO();
     }
@@ -60,8 +63,8 @@ class WorklogSynchronisationTest {
 
         String jsonString = new JSONArray().put(jsonObject).toString();
 
-        when(mockedRequest.post(any(), any())).thenReturn(response);
-        when(response.getBody()).thenReturn(new JsonNode(jsonString));
+        when(mockedRequest.post(any(), any())).thenReturn(mockedResponse);
+        when(mockedResponse.getBody()).thenReturn(new JsonNode(jsonString));
 
         //Act
         List<WorklogDTO> actualValue = sut.retrieveWorklogsFromClientServer(worklogRequestDTO);
@@ -73,8 +76,9 @@ class WorklogSynchronisationTest {
     @Test
     void testRetrieveAllWorklogsCreatesEmptyListIfResponseIsNull() {
 
-        when(mockedRequest.post(any(), any())).thenReturn(response);
-        when(response.getBody()).thenReturn(null);
+
+        when(mockedRequest.post(any(), any())).thenReturn(mockedResponse);
+        when(mockedResponse.getBody()).thenReturn(null);
 
         List<WorklogDTO> actualValue = sut.retrieveWorklogsFromClientServer(worklogRequestDTO);
 
@@ -84,8 +88,8 @@ class WorklogSynchronisationTest {
     @Test
     void testRetrieveAllWorklogsCreatesEmptyListWhenResponseIsEmpty() {
 
-        when(mockedRequest.post(any(), any())).thenReturn(response);
-        when(response.getBody()).thenReturn(new JsonNode(
+        when(mockedRequest.post(any(), any())).thenReturn(mockedResponse);
+        when(mockedResponse.getBody()).thenReturn(new JsonNode(
                 "[]"));
 
         List<WorklogDTO> actualValue = sut.retrieveWorklogsFromClientServer(worklogRequestDTO);
@@ -105,8 +109,8 @@ class WorklogSynchronisationTest {
         String jsonString = new JSONArray().put(jsonObject).toString();
 
 
-        when(mockedRequest.post(any(), any())).thenReturn(response);
-        when(response.getBody()).thenReturn(new JsonNode(jsonString));
+        when(mockedRequest.post(any(), any())).thenReturn(mockedResponse);
+        when(mockedResponse.getBody()).thenReturn(new JsonNode(jsonString));
 
         //Act
         List<WorklogDTO> actualValue = sut.retrieveWorklogsFromClientServer(worklogRequestDTO);
@@ -128,8 +132,8 @@ class WorklogSynchronisationTest {
 
         String jsonArray = new JSONArray().put(jsonString).toString();
 
-        when(mockedRequest.post(any(), any())).thenReturn(response);
-        when(response.getBody()).thenReturn(new JsonNode(jsonArray));
+        when(mockedRequest.post(any(), any())).thenReturn(mockedResponse);
+        when(mockedResponse.getBody()).thenReturn(new JsonNode(jsonArray));
 
         //Act
         List<WorklogDTO> actualValue = sut.retrieveWorklogsFromClientServer(worklogRequestDTO);
@@ -150,8 +154,8 @@ class WorklogSynchronisationTest {
         mockWorklogs.add(new WorklogDTO().setWorker("JIRAUSER10000").setStarted("2020-05-07").setTimeSpentSeconds(660).setOriginTaskId("KNBPU-2"));
         mockWorklogs.add(new WorklogDTO().setWorker("JIRAUSER10100").setStarted("2020-05-07").setTimeSpentSeconds(840).setOriginTaskId("KNBPU-2"));
 
-        when(mockedRequest.post(any(),any())).thenReturn(response);
-        when(response.getStatus()).thenReturn(200);
+        when(mockedRequest.post(any(),any())).thenReturn(mockedResponse);
+        when(mockedResponse.getStatus()).thenReturn(200);
 
         // Act
         Map actualvalue = sut.createWorklogsOnAvisiServer(mockWorklogs);
@@ -170,8 +174,8 @@ class WorklogSynchronisationTest {
         mockWorklogs.add(new WorklogDTO().setWorker("JIRAUSER10000").setStarted("2020-05-07").setTimeSpentSeconds(660).setOriginTaskId("KNBPU-2"));
         mockWorklogs.add(new WorklogDTO().setWorker("JIRAUSER10100").setStarted("2020-05-07").setTimeSpentSeconds(840).setOriginTaskId("KNBPU-4"));
 
-        when(mockedRequest.post(any(),any())).thenReturn(response);
-        when(response.getStatus()).thenReturn(200,400);
+        when(mockedRequest.post(any(),any())).thenReturn(mockedResponse);
+        when(mockedResponse.getStatus()).thenReturn(200,400);
 
         // Act
         Map actualvalue = sut.createWorklogsOnAvisiServer(mockWorklogs);

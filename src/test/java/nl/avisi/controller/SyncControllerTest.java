@@ -2,7 +2,7 @@ package nl.avisi.controller;
 
 import nl.avisi.dto.WorklogDTO;
 import nl.avisi.dto.WorklogRequestDTO;
-import nl.avisi.model.WorklogSynchronisation;
+import nl.avisi.model.JiraWorklog;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -11,7 +11,6 @@ import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
@@ -20,13 +19,13 @@ class SyncControllerTest {
 
     public static final int HTTP_STATUS_OK = 200;
     private SyncController sut;
-    private WorklogSynchronisation mockedWorklogSynchronisation;
+    private JiraWorklog mockedJiraWorklog;
 
     @BeforeEach
     void setUp() {
         sut = new SyncController();
-        mockedWorklogSynchronisation = mock(WorklogSynchronisation.class);
-        sut.setWorklogSynchronisation(mockedWorklogSynchronisation);
+        mockedJiraWorklog = mock(JiraWorklog.class);
+        sut.setJiraWorklog(mockedJiraWorklog);
     }
 
     @Test
@@ -46,14 +45,14 @@ class SyncControllerTest {
         // Setup
         List<WorklogDTO> worklogs = new ArrayList<>();
         WorklogRequestDTO worklogRequestDTO = new WorklogRequestDTO();
-        when(mockedWorklogSynchronisation.retrieveWorklogsFromClientServer(worklogRequestDTO)).thenReturn(worklogs);
-        when(mockedWorklogSynchronisation.createWorklogsOnAvisiServer(worklogs)).thenReturn(new HashMap());
+        when(mockedJiraWorklog.retrieveWorklogsFromClientServer(worklogRequestDTO)).thenReturn(worklogs);
+        when(mockedJiraWorklog.createWorklogsOnAvisiServer(worklogs)).thenReturn(new HashMap());
 
         // Run the test
         Response actualValue = sut.synchroniseWorklogsFromClientToAvisi(worklogRequestDTO);
 
         // Verify the results
-        verify(mockedWorklogSynchronisation).retrieveWorklogsFromClientServer(worklogRequestDTO);
+        verify(mockedJiraWorklog).retrieveWorklogsFromClientServer(worklogRequestDTO);
     }
 
     @Test
@@ -61,14 +60,14 @@ class SyncControllerTest {
         // Setup
         List<WorklogDTO> worklogs = new ArrayList<>();
         WorklogRequestDTO worklogRequestDTO = new WorklogRequestDTO();
-        when(mockedWorklogSynchronisation.retrieveWorklogsFromClientServer(worklogRequestDTO)).thenReturn(worklogs);
-        when(mockedWorklogSynchronisation.createWorklogsOnAvisiServer(worklogs)).thenReturn(new HashMap());
+        when(mockedJiraWorklog.retrieveWorklogsFromClientServer(worklogRequestDTO)).thenReturn(worklogs);
+        when(mockedJiraWorklog.createWorklogsOnAvisiServer(worklogs)).thenReturn(new HashMap());
 
         // Run the test
         Response actualValue = sut.synchroniseWorklogsFromClientToAvisi(worklogRequestDTO);
 
         // Verify the results
-        verify(mockedWorklogSynchronisation).createWorklogsOnAvisiServer(worklogs);
+        verify(mockedJiraWorklog).createWorklogsOnAvisiServer(worklogs);
     }
 
     @Test
