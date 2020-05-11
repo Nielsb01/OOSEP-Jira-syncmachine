@@ -5,6 +5,8 @@ import kong.unirest.JsonNode;
 import kong.unirest.json.JSONArray;
 import kong.unirest.json.JSONObject;
 import nl.avisi.InvalidUsernameException;
+import nl.avisi.dto.JiraUserKeyDTO;
+import nl.avisi.dto.JiraUsernameDTO;
 import nl.avisi.network.IRequest;
 import nl.avisi.propertyReaders.JiraSynchronisationProperties;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,6 +24,7 @@ class JiraUserTest {
     private JiraSynchronisationProperties mockedProperties;
     private IRequest mockedRequest;
     private HttpResponse mockedResponse;
+    private JiraUsernameDTO jiraUsernameDTO;
 
     @BeforeEach
     void setUp() {
@@ -32,23 +35,33 @@ class JiraUserTest {
 
         sut.setJiraSynchronisationProperties(mockedProperties);
         sut.setRequest(mockedRequest);
+
+        jiraUsernameDTO = new JiraUsernameDTO()
+                .setAvisiUsername("AvisiUsername")
+                .setClientUsername("ClientUsername");
     }
 
     @Test
-    void testRetrieveJiraUserKeyByUsernameReturnsCorrectJiraUserKey() {
+    void testRetrieveJiraUserKeyByUsernameReturnsCorrectJiraUserKeys() {
         //Arrange
-        JSONObject jsonObject = new JSONObject()
+        JSONObject avisiJsonObject = new JSONObject()
                 .put("key", "JIRAUSER1000");
-        String jsonString = new JSONArray().put(jsonObject).toString();
+        String avisiJsonString = new JSONArray().put(avisiJsonObject).toString();
+
+        JSONObject clientJsonObject = new JSONObject()
+                .put("key", "JIRAUSER1010");
+        String clientJsonString = new JSONArray().put(clientJsonObject).toString();
 
         when(mockedRequest.get(any())).thenReturn(mockedResponse);
-        when(mockedResponse.getBody()).thenReturn(new JsonNode(jsonString));
+        when(mockedResponse.getBody()).thenReturn(new JsonNode(avisiJsonString), new JsonNode(clientJsonString));
 
         //Act
-        final String result = sut.retrieveJiraUserKeyByUsername("email", "server");
+        final JiraUserKeyDTO result = sut.retrieveJiraUserKeyByUsername(jiraUsernameDTO);
 
         //Assert
-        assertEquals("JIRAUSER1000", result);
+        assertEquals("JIRAUSER1000", result.getAvisiUserKey());
+        assertEquals("JIRAUSER1010", result.getClientUserKey());
+
     }
 
     @Test
@@ -61,7 +74,7 @@ class JiraUserTest {
         assertThrows(InvalidUsernameException.class, () ->
 
                 //Act
-                sut.retrieveJiraUserKeyByUsername("email", "server"));
+                sut.retrieveJiraUserKeyByUsername(jiraUsernameDTO));
     }
 
     @Test
@@ -78,6 +91,7 @@ class JiraUserTest {
         assertThrows(InvalidUsernameException.class, () ->
 
                 //Act
-                sut.retrieveJiraUserKeyByUsername("email", "server"));
+                sut.retrieveJiraUserKeyByUsername(jiraUsernameDTO));
     }
+
 }

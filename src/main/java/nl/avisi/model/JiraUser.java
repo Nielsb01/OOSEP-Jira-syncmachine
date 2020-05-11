@@ -71,8 +71,8 @@ public class JiraUser {
      * to the Jira API.
      *
      * @param jiraUsernameDTO contains usernames for both jira servers.
-     *                        Both the username as well as the email address will
-     *                        be accepted.
+     *                        Both the username as well as the email address can
+     *                        be used.
      * @return JiraUserKeyDTO contains the matching user keys to the given usernames.
      */
     public JiraUserKeyDTO retrieveJiraUserKeyByUsername(JiraUsernameDTO jiraUsernameDTO) {
