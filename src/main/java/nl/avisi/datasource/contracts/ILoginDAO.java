@@ -1,5 +1,3 @@
-
-
 package nl.avisi.datasource.contracts;
 
 import nl.avisi.dto.UserDTO;

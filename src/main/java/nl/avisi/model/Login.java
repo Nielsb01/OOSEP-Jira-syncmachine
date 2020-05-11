@@ -1,6 +1,9 @@
 package nl.avisi.model;
 
 
+import nl.avisi.datasource.contracts.ILoginDAO;
+import nl.avisi.dto.LoginDTO;
+import nl.avisi.dto.UserDTO;
 import org.apache.commons.codec.digest.DigestUtils;
 
 import javax.inject.Inject;
