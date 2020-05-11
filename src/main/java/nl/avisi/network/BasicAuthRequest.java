@@ -51,9 +51,9 @@ public class BasicAuthRequest implements IRequest<BasicAuth> {
     }
 
     /**
-     * Send a get request to the give url
+     * Send a get request to the given url
      *
-     * @param url the eddpoint to send a get request to
+     * @param url the endpoint to send a get request to
      * @return the response of the get request
      */
     public HttpResponse<JsonNode> get(String url) {
