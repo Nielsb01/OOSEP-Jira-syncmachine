@@ -13,13 +13,13 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class UserDaoTest {
-    private UserDao sut;
+public class UserDAOTest {
+    private UserDAO sut;
     private Database mockedDatabase;
 
     @BeforeEach
     void setUp() {
-        sut = new UserDao();
+        sut = new UserDAO();
         mockedDatabase = mock(Database.class);
 
         sut.setDatabase(mockedDatabase);

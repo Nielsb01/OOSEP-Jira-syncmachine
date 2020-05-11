@@ -1,6 +1,6 @@
 package nl.avisi.datasource;
 
-import nl.avisi.datasource.contracts.IUserDao;
+import nl.avisi.datasource.contracts.IUserDAO;
 import nl.avisi.propertyreaders.exceptions.DatabaseDriverNotFoundException;
 import nl.avisi.model.UserSyncDTO;
 
@@ -13,7 +13,7 @@ import java.util.List;
  * Dao to manage the various user objects
  * in the database
  */
-public class UserDao implements IUserDao {
+public class UserDAO implements IUserDAO {
 
     /**
      * Value of the syncStatus field when
