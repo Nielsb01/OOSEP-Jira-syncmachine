@@ -3,7 +3,7 @@ package nl.avisi.model;
 import kong.unirest.*;
 
 import kong.unirest.json.JSONException;
-import nl.avisi.InvalidUsernameException;
+import nl.avisi.exceptions.InvalidUsernameException;
 import nl.avisi.dto.JiraUserKeyDTO;
 import nl.avisi.dto.JiraUsernameDTO;
 import nl.avisi.network.IRequest;

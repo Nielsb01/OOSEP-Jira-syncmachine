@@ -4,7 +4,7 @@ import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
 import kong.unirest.json.JSONArray;
 import kong.unirest.json.JSONObject;
-import nl.avisi.InvalidUsernameException;
+import nl.avisi.exceptions.InvalidUsernameException;
 import nl.avisi.dto.JiraUserKeyDTO;
 import nl.avisi.dto.JiraUsernameDTO;
 import nl.avisi.network.IRequest;
