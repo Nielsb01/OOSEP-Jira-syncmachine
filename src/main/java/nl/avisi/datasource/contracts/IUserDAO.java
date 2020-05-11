@@ -1,6 +1,6 @@
 package nl.avisi.datasource.contracts;
 
-import nl.avisi.model.UserSyncDTO;
+import nl.avisi.dto.UserSyncDTO;
 
 import java.sql.SQLException;
 import java.util.List;

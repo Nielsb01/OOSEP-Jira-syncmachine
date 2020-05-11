@@ -1,4 +1,4 @@
-package nl.avisi.model;
+package nl.avisi.dto;
 
 /**
  * Object to check which JIRA
