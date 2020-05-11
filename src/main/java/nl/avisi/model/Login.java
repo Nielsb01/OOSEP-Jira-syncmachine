@@ -31,9 +31,11 @@ public class Login {
      * stored password that corresponds with the given username from the
      * database and compares this to the given password.
      *
-     * @param loginDTO contains the login information of the user
+     * @param loginDTO Contains the login information of the user
      *                 needed to verify their identity
-     * @return the UserID the corresponds to the supplied login information
+     * @return The UserID the corresponds to the supplied login information
+     * @throws NotAuthorizedException When passwords don't match. This will produce
+     * a 401 status code response.
      */
     public int validateCredentials(LoginDTO loginDTO) {
         UserDTO userDTO = loginDAO.getLoginInfo(loginDTO.getUsername());
