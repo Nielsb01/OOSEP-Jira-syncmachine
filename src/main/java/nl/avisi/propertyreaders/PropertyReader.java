@@ -1,13 +1,5 @@
-package nl.avisi.propertyReaders;
+package nl.avisi.propertyreaders;
 
-import nl.avisi.propertyReaders.exceptions.EmptyPropertyException;
-import nl.avisi.propertyReaders.exceptions.PropertyFileNotLoadedException;
-import nl.avisi.propertyReaders.exceptions.PropertyNotFoundException;
-
-import javax.ws.rs.InternalServerErrorException;
-import java.io.IOException;
-import java.util.Objects;
-import java.util.Properties;
 
 /**
  * Responsible for querying property files
