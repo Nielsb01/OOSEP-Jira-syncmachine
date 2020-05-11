@@ -1,7 +1,7 @@
 package nl.avisi.datasource;
 
 import nl.avisi.datasource.contracts.IUserDao;
-import nl.avisi.propertyReaders.exceptions.DatabaseDriverNotFoundException;
+import nl.avisi.propertyreaders.exceptions.DatabaseDriverNotFoundException;
 import nl.avisi.model.UserSyncDTO;
 
 import javax.inject.Inject;
