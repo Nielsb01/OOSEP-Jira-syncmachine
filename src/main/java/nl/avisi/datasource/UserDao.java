@@ -20,25 +20,25 @@ public class UserDao implements IUserDao {
      * the user has chosen to use the auto
      * sync feature
      */
-    private static String autoSyncStatusValue = "auto";
+    private final static boolean autoSyncStatusValue = true;
 
     /**
      * Column name for the worker of the from
      * JIRA instance
      */
-    private static String jiraFromWorkerColumnName = "JiraInstantie1Worker";
+    private final static String jiraFromWorkerColumnName = "JiraInstantie1Worker";
 
     /**
      * Column name for the worker of the to
      * JIRA instance
      */
-    private static String jiraToWorkerColumnName = "Jirainstantie2Worker";
+    private final static String jiraToWorkerColumnName = "Jirainstantie2Worker";
 
     /**
      * SQL Query to retrieve all users who
      * have chosen to use the auto sync feature
      */
-    private static String getAllAutoSyncUsersSql = String.format("SELECT %s, %s FROM Jirausers WHERE syncStatus = ?", jiraFromWorkerColumnName, jiraToWorkerColumnName);
+    private final static String getAllAutoSyncUsersSql = String.format("SELECT %s, %s FROM Jirausers WHERE syncStatus = ?", jiraFromWorkerColumnName, jiraToWorkerColumnName);
 
     /**
      * Class to manage the database connection
@@ -58,19 +58,13 @@ public class UserDao implements IUserDao {
     /**
      * Get all JIRA users which have auto sync enabled
      *
-     * @return all JIRA users with auto syc
-     * @throws SQLException when the connection to the database cannot be closed
+     * @return all JIRA users with auto sync
      */
-    public List<UserSyncDTO> getAllAutoSyncUsers() throws SQLException {
+    public List<UserSyncDTO> getAllAutoSyncUsers() {
         List<UserSyncDTO> autoSyncUsers = new ArrayList<>();
 
-        PreparedStatement stmt = null;
-        Connection connection = null;
-
-        try {
-            connection = database.connect();
-            stmt = connection.prepareStatement(getAllAutoSyncUsersSql);
-            stmt.setString(1, autoSyncStatusValue);
+        try (Connection connection = database.connect(); PreparedStatement stmt = connection.prepareStatement(getAllAutoSyncUsersSql)) {
+            stmt.setBoolean(1, autoSyncStatusValue);
 
             ResultSet result = stmt.executeQuery();
 
@@ -81,14 +75,10 @@ public class UserDao implements IUserDao {
                                 .setToWorker(result.getString(jiraToWorkerColumnName))
                 );
             }
-
-        } catch(SQLException e) {
+        } catch (SQLException e) {
             System.err.printf("Error occurred fetching all users which have enabled auto sync: %s\n", e.getMessage());
-        } catch(DatabaseDriverNotFoundException e) {
+        } catch (DatabaseDriverNotFoundException e) {
             System.err.printf("The database driver %s cannot be found on the system\n", e.getMessage());
-        } finally {
-            if (stmt != null) stmt.close();
-            if (connection != null) connection.close();
         }
 
         return autoSyncUsers;
