@@ -13,6 +13,7 @@ import static org.mockito.Mockito.*;
 class LoginControllerTest {
 
     public static final int HTTP_STATUS_OK = 200;
+    public static final int USER_ID = 1;
     private LoginController sut;
     private Login mockedLogin;
 
@@ -25,44 +26,45 @@ class LoginControllerTest {
 
     @Test
     void testLoginResponseEntity() {
-        // Setup
+        //Arrange
         final LoginDTO loginDTO = new LoginDTO();
         loginDTO.setUsername("username");
         loginDTO.setPassword("password");
 
-        when(mockedLogin.validateCredentials(loginDTO)).thenReturn(1);
-        // Run the test
+        when(mockedLogin.validateCredentials(loginDTO)).thenReturn(USER_ID);
+
+        //Act
         final Response actualValue = sut.login(loginDTO);
 
-        // Verify the results
-        assertEquals(1, actualValue.getEntity());
+        //Assert
+        assertEquals(USER_ID, actualValue.getEntity());
     }
 
     @Test
     void testLoginResponseStatus() {
-        // Setup
+        //Arrange
         final LoginDTO loginDTO = new LoginDTO();
         loginDTO.setUsername("username");
         loginDTO.setPassword("password");
 
-        // Run the test
+        //Act
         final Response actualValue = sut.login(loginDTO);
 
-        // Verify the results
+        //Assert
         assertEquals(HTTP_STATUS_OK, actualValue.getStatus());
     }
 
     @Test
     void testLoginCallsValidateCredentials() {
-        // Setup
+        //Arrange
         final LoginDTO loginDTO = new LoginDTO();
         loginDTO.setUsername("username");
         loginDTO.setPassword("password");
 
-        // Run the test
+        //Act
         final Response actualValue = sut.login(loginDTO);
 
-        // Verify the results
+        //Assert
         verify(mockedLogin).validateCredentials(loginDTO);
     }
 }
