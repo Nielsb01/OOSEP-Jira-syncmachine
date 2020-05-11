@@ -1,7 +1,10 @@
 package nl.avisi.propertyReaders;
 
+import nl.avisi.propertyReaders.exceptions.InvalidConfigFormatException;
+
 import javax.inject.Inject;
 import java.util.Calendar;
+import java.util.InvalidPropertiesFormatException;
 
 /**
  * Used for querying jiraSyncrhonisation.properties
@@ -40,59 +43,59 @@ public class JiraSynchronisationProperties {
         return propertyReader.getProperty("adminPassword");
     }
 
-    public String getSynchronisationMoment() {
-        return propertyReader.getProperty("synchronisationMoment");
+    public Calendar getSynchronisationMoment() {
+        return convertStringToCalendar(propertyReader.getProperty("synchronisationMoment"));
     }
 
-    private Calendar convertStringToCalendar(String dateTimeString) {
-        final char SEPARATOR = ':';
+    private Calendar convertStringToCalendar(String dayTimeString) {
+
+        if (!dayTimeString.matches("[A-Za-z]* [0-9]+:[0-9]+:[0-9]+")) {
+            throw new InvalidConfigFormatException();
+        }
+
+        String[] separatedDayTimeStrings = dayTimeString.split("[ :]");
 
         Calendar calendar = Calendar.getInstance();
 
-        calendar.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
-        calendar.set(Calendar.HOUR, extractIntFromString(dateTimeString, SEPARATOR, 1));
-        calendar.set(Calendar.MINUTE, extractIntFromString(dateTimeString, SEPARATOR, 2));
-        calendar.set(Calendar.SECOND, extractIntFromString(dateTimeString, SEPARATOR, 3));
+        calendar.set(Calendar.DAY_OF_WEEK, convertDayToCalendarDay(separatedDayTimeStrings[0]));
+        calendar.set(Calendar.HOUR, Integer.parseInt(separatedDayTimeStrings[1]));
+        calendar.set(Calendar.MINUTE, Integer.parseInt(separatedDayTimeStrings[2]));
+        calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MILLISECOND, 0);
 
         return calendar;
     }
 
-    private int extractCalendarDayFromString(String dateTimeString) {
-        int weekday;
+    private int convertDayToCalendarDay(String day) {
+        int numeratedDay;
 
-        switch (dateTimeString) {
+        switch (day) {
             case "Zondag":
-                weekday = Calendar.SUNDAY;
+                numeratedDay = Calendar.SUNDAY;
                 break;
             case "Maandag":
-                weekday = Calendar.MONDAY;
+                numeratedDay = Calendar.MONDAY;
                 break;
             case "Dinsdag":
-                weekday = Calendar.TUESDAY;
+                numeratedDay = Calendar.TUESDAY;
                 break;
             case "Woensdag":
-                weekday = Calendar.WEDNESDAY;
+                numeratedDay = Calendar.WEDNESDAY;
                 break;
             case "Donderdag":
-                weekday = Calendar.THURSDAY;
+                numeratedDay = Calendar.THURSDAY;
                 break;
             case "Vrijdag":
-                weekday = Calendar.FRIDAY;
+                numeratedDay = Calendar.FRIDAY;
                 break;
             case "Zaterdag":
-                weekday = Calendar.SATURDAY;
+                numeratedDay = Calendar.SATURDAY;
                 break;
             default:
-
+                numeratedDay = Calendar.SUNDAY;
+                break;
         }
 
-        return weekday;
-    }
-
-    private int extractIntFromString(String dateTimeString, char separator, int position) {
-
-        return int;
-        Zondag 00:00:00
+        return numeratedDay;
     }
 }
