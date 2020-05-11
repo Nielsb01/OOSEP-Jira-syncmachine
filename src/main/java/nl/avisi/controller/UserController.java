@@ -11,7 +11,7 @@ import javax.ws.rs.core.Response;
 
 /**
  * Responsible for dealing with all incoming
- * HTTP requests that related to the user
+ * HTTP requests that are related to the user
  */
 
 @Path("user")
@@ -24,11 +24,16 @@ public class UserController {
     }
 
     /**
-     * Responsible for catching the
+     * Responsible for dealing with the
+     * HTTP request to set the jira user
+     * keys that correspond with the
+     * supplied Jira usernames.
      *
-     * @param jiraUsernameDTO
-     * @return
+     * @param jiraUsernameDTO Contain the usernames given by the user for both the Avisi
+     *                        and client instance of the Jira server.
+     * @return A HTTP response with the appropriate response code.
      */
+    @Path("/userKey")
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
