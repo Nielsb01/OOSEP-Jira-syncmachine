@@ -1,7 +1,8 @@
 package nl.avisi.controller;
 
+
 import nl.avisi.dto.WorklogRequestDTO;
-import nl.avisi.model.WorklogSynchronisation;
+import nl.avisi.model.JiraWorklog;
 
 import javax.inject.Inject;
 import javax.ws.rs.*;
@@ -16,11 +17,11 @@ import javax.ws.rs.core.Response;
 @Path("sync")
 public class SyncController {
 
-    private WorklogSynchronisation worklogSynchronisation;
+    private JiraWorklog jiraWorklog;
 
     @Inject
-    public void setWorklogSynchronisation(WorklogSynchronisation worklogSynchronisation) {
-        this.worklogSynchronisation = worklogSynchronisation;
+    public void setJiraWorklog(JiraWorklog jiraWorklog) {
+        this.jiraWorklog = jiraWorklog;
     }
 
     /**
@@ -33,7 +34,8 @@ public class SyncController {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response synchroniseWorklogsFromClientToAvisi(WorklogRequestDTO worklogRequestDTO) {
-        worklogSynchronisation.createWorklogsOnAvisiServer(worklogSynchronisation.retrieveWorklogsFromClientServer(worklogRequestDTO));
+
+        jiraWorklog.createWorklogsOnAvisiServer(jiraWorklog.retrieveWorklogsFromClientServer(worklogRequestDTO));
         return Response.status(200).entity("Synchronisatie succesvol").build();
     }
 }

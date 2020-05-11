@@ -1,6 +1,5 @@
 package nl.avisi.datasource;
 
-import nl.avisi.datasource.datamappers.DataMapper;
 import nl.avisi.dto.LoginDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

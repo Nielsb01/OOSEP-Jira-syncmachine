@@ -1,6 +1,5 @@
 package nl.avisi.model;
 
-import nl.avisi.datasource.contracts.ILoginDAO;
 import nl.avisi.dto.LoginDTO;
 import nl.avisi.dto.UserDTO;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -18,13 +17,13 @@ public class Login {
      * Resource responsible for communicating
      * with the database
      */
-    private ILoginDAO loginDAO;
+  /*  private ILoginDAO loginDAO;
 
     @Inject
     public void setLoginDAO(ILoginDAO loginDAO) {
         this.loginDAO = loginDAO;
     }
-
+*/
     /**
      * Validates the login information given by the user. Retrieves the
      * stored password that corresponds with the given username from the
@@ -35,12 +34,13 @@ public class Login {
      * @return the UserID the corresponds to the supplied login information
      */
     public int validateCredentials(LoginDTO loginDTO) {
-        UserDTO userDTO = loginDAO.getLoginInfo(loginDTO.getUsername());
 
-        if (DigestUtils.sha256Hex(loginDTO.getPassword()).equals(userDTO.getPassword())) {
-           return userDTO.getUserID();
-        } else {
-            throw new NotAuthorizedException("Either the username and/or password wasn't correct!");
-        }
+        /*
+        Deze lege methode staat hier om de controller te kunnen testen en zal
+        verder uitgewerkt moeten worden in een andere branch.
+         */
+
+        return 0;
+
     }
 }

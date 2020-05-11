@@ -8,12 +8,11 @@ import org.junit.jupiter.api.Test;
 import javax.ws.rs.core.Response;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 class LoginControllerTest {
 
-    public static final int HTTP_STATUS_CREATED = 201;
+    public static final int HTTP_STATUS_OK = 200;
     private LoginController sut;
     private Login mockedLogin;
 
@@ -31,12 +30,12 @@ class LoginControllerTest {
         loginDTO.setUsername("username");
         loginDTO.setPassword("password");
 
-        when(mockedLogin.validateCredentials(loginDTO)).thenReturn("Succes");
+        when(mockedLogin.validateCredentials(loginDTO)).thenReturn(1);
         // Run the test
         final Response actualValue = sut.login(loginDTO);
 
         // Verify the results
-        assertEquals("Succes", actualValue.getEntity());
+        assertEquals(1, actualValue.getEntity());
     }
 
     @Test
@@ -50,6 +49,20 @@ class LoginControllerTest {
         final Response actualValue = sut.login(loginDTO);
 
         // Verify the results
-        assertEquals(HTTP_STATUS_CREATED, actualValue.getStatus());
+        assertEquals(HTTP_STATUS_OK, actualValue.getStatus());
+    }
+
+    @Test
+    void testLoginCallsValidateCredentials() {
+        // Setup
+        final LoginDTO loginDTO = new LoginDTO();
+        loginDTO.setUsername("username");
+        loginDTO.setPassword("password");
+
+        // Run the test
+        final Response actualValue = sut.login(loginDTO);
+
+        // Verify the results
+        verify(mockedLogin).validateCredentials(loginDTO);
     }
 }
