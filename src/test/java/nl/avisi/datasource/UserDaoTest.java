@@ -26,7 +26,7 @@ public class UserDaoTest {
     }
 
     @Test
-    void testGetAllAutoSyncUsersReturnsEmptyListWhenNoResultsAreFound() {
+    void testGetAllAutoSyncUsersReturnsEmptyListWhenNoResultsAreFound() throws SQLException, DatabaseDriverNotFoundException {
         // Arrange
         final int expectedResultSize = 0;
 
@@ -34,48 +34,34 @@ public class UserDaoTest {
         PreparedStatement mockedStatement = mock(PreparedStatement.class);
         Connection mockedConnection = mock(Connection.class);
 
-       try {
-           when(mockedDatabase.connect()).thenReturn(mockedConnection);
-           when(mockedConnection.prepareStatement(anyString())).thenReturn(mockedStatement);
-           when(mockedStatement.executeQuery()).thenReturn(mockedResultSet);
-           when(mockedResultSet.next()).thenReturn(false);
+       when(mockedDatabase.connect()).thenReturn(mockedConnection);
+       when(mockedConnection.prepareStatement(anyString())).thenReturn(mockedStatement);
+       when(mockedStatement.executeQuery()).thenReturn(mockedResultSet);
+       when(mockedResultSet.next()).thenReturn(false);
 
-           // Act
-           List<UserSyncDTO> results = sut.getAllAutoSyncUsers();
+       // Act
+       List<UserSyncDTO> results = sut.getAllAutoSyncUsers();
 
-           // Assert
-           assertEquals(expectedResultSize, results.size());
-       } catch (SQLException | DatabaseDriverNotFoundException e) {
-           // Explicitly fail the test so the
-           // test will fail when a SQLException or
-           // DatabaseDriverNotFoundException occurs
-           fail();
-       }
+       // Assert
+       assertEquals(expectedResultSize, results.size());
     }
 
     @Test
-    void testGetAllAutoSyncUsersReturnsEmptyListWhenSQLExceptionIsThrown() {
+    void testGetAllAutoSyncUsersReturnsEmptyListWhenSQLExceptionIsThrown() throws SQLException, DatabaseDriverNotFoundException {
         // Arrange
         final int expectedResultSize = 0;
 
-        try {
-            when(mockedDatabase.connect()).thenThrow(new SQLException());
+        when(mockedDatabase.connect()).thenThrow(new SQLException());
 
-            // Act
-            List<UserSyncDTO> results = sut.getAllAutoSyncUsers();
+        // Act
+        List<UserSyncDTO> results = sut.getAllAutoSyncUsers();
 
-            // Assert
-            assertEquals(expectedResultSize, results.size());
-        } catch (SQLException | DatabaseDriverNotFoundException e) {
-            // Explicitly fail the test so the
-            // test will fail when a SQLException or
-            // DatabaseDriverNotFoundException occurs
-            fail();
-        }
+        // Assert
+        assertEquals(expectedResultSize, results.size());
     }
 
     @Test
-    void testGetAllAutoSyncUsersReturnsListWithObjectsFromDatabase() {
+    void testGetAllAutoSyncUsersReturnsListWithObjectsFromDatabase() throws SQLException, DatabaseDriverNotFoundException {
         // Arrange
         final String firstSyncUserFromWorker = "from1";
         final String firstSyncUserToWorker = "to1";
@@ -86,29 +72,22 @@ public class UserDaoTest {
         PreparedStatement mockedStatement = mock(PreparedStatement.class);
         Connection mockedConnection = mock(Connection.class);
 
-        try {
-            when(mockedDatabase.connect()).thenReturn(mockedConnection);
-            when(mockedConnection.prepareStatement(anyString())).thenReturn(mockedStatement);
-            when(mockedStatement.executeQuery()).thenReturn(mockedResultSet);
-            when(mockedResultSet.next()).thenReturn(true, true, false);
-            when(mockedResultSet.getString(anyString())).thenReturn(firstSyncUserFromWorker,
-                    firstSyncUserToWorker,
-                    secondSyncUserFromWorker,
-                    secondSyncUserToWorker);
+        when(mockedDatabase.connect()).thenReturn(mockedConnection);
+        when(mockedConnection.prepareStatement(anyString())).thenReturn(mockedStatement);
+        when(mockedStatement.executeQuery()).thenReturn(mockedResultSet);
+        when(mockedResultSet.next()).thenReturn(true, true, false);
+        when(mockedResultSet.getString(anyString())).thenReturn(firstSyncUserFromWorker,
+                firstSyncUserToWorker,
+                secondSyncUserFromWorker,
+                secondSyncUserToWorker);
 
-            // Act
-            List<UserSyncDTO> results = sut.getAllAutoSyncUsers();
+        // Act
+        List<UserSyncDTO> results = sut.getAllAutoSyncUsers();
 
-            // Assert
-            assertEquals(firstSyncUserFromWorker, results.get(0).getFromWorker());
-            assertEquals(firstSyncUserToWorker, results.get(0).getToWorker());
-            assertEquals(secondSyncUserFromWorker, results.get(1).getFromWorker());
-            assertEquals(secondSyncUserToWorker, results.get(1).getToWorker());
-        } catch (SQLException | DatabaseDriverNotFoundException e) {
-            // Explicitly fail the test so the
-            // test will fail when a SQLException or
-            // DatabaseDriverNotFoundException occurs
-            fail();
-        }
+        // Assert
+        assertEquals(firstSyncUserFromWorker, results.get(0).getFromWorker());
+        assertEquals(firstSyncUserToWorker, results.get(0).getToWorker());
+        assertEquals(secondSyncUserFromWorker, results.get(1).getFromWorker());
+        assertEquals(secondSyncUserToWorker, results.get(1).getToWorker());
     }
 }
