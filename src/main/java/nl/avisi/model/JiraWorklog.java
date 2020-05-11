@@ -148,4 +148,8 @@ public class JiraWorklog {
 
         return responseCodes;
     }
+
+    public void synchronise() {
+        // wordt verder uitgewerkt in andere branch
+    }
 }

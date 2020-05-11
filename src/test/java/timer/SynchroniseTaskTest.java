@@ -1,5 +1,6 @@
 package timer;
 
+import nl.avisi.model.JiraWorklog;
 import nl.avisi.timer.SynchroniseTask;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -9,9 +10,14 @@ public class SynchroniseTaskTest {
 
     SynchroniseTask sut;
 
+    JiraWorklog mockedJiraWorklog;
+
     @BeforeEach
     void setUp() {
         sut = new SynchroniseTask();
+
+        mockedJiraWorklog = Mockito.mock(JiraWorklog.class);
+        sut.setJiraWorklog(mockedJiraWorklog);
     }
 
     @Test
@@ -22,5 +28,6 @@ public class SynchroniseTaskTest {
         sut.run();
 
         // Assert
+        Mockito.verify(mockedJiraWorklog).synchronise();
     }
 }

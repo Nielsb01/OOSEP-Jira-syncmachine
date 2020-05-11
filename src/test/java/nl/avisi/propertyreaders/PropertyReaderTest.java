@@ -3,10 +3,6 @@ package nl.avisi.propertyreaders;
 import nl.avisi.propertyreaders.exceptions.EmptyPropertyException;
 import nl.avisi.propertyreaders.exceptions.PropertyFileNotFoundException;
 import nl.avisi.propertyreaders.exceptions.PropertyFileNotLoadedException;
-<<<<<<< HEAD:src/test/java/propertyReaders/PropertyReaderTest.java
-import nl.avisi.propertyreaders.PropertyReader;
-=======
->>>>>>> a7bb7ba6c19d3e9900dd265ee4410391806dd32e:src/test/java/nl/avisi/propertyreaders/PropertyReaderTest.java
 import nl.avisi.propertyreaders.exceptions.PropertyNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

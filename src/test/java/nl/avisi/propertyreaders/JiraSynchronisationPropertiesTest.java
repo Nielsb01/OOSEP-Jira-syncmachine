@@ -1,11 +1,6 @@
 package nl.avisi.propertyreaders;
 
-<<<<<<< HEAD:src/test/java/propertyReaders/JiraSynchronisationPropertiesTest.java
-import nl.avisi.propertyreaders.JiraSynchronisationProperties;
-import nl.avisi.propertyreaders.PropertyReader;
 import nl.avisi.propertyreaders.exceptions.InvalidConfigFormatException;
-=======
->>>>>>> a7bb7ba6c19d3e9900dd265ee4410391806dd32e:src/test/java/nl/avisi/propertyreaders/JiraSynchronisationPropertiesTest.java
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
