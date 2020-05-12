@@ -6,6 +6,7 @@ import nl.avisi.dto.UserDTO;
 import nl.avisi.propertyreaders.exceptions.DatabaseDriverNotFoundException;
 
 import javax.inject.Inject;
+import javax.ws.rs.InternalServerErrorException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -50,20 +51,20 @@ public class LoginDAO implements ILoginDAO {
      * @param username Supplied by the user. Used for retrieving all the
      *                 corresponding information like password and UserID.
      * @return UserDTO containing all the retrieved information like username, password and UserID.
+     * @throws InternalServerErrorException when a SQLException is thrown. This will be caught
+     * by the jax-rs ExceptionMapper and produce a response with status code 500.
      */
     @Override
     public UserDTO getLoginInfo(String username) {
 
-        UserDTO userDTO = new UserDTO();
+        UserDTO userDTO;
 
         try (Connection connection = database.connect(); PreparedStatement stmt = connection.prepareStatement(GET_LOGIN_DATA_SQL)) {
             stmt.setString(1, username);
 
            userDTO = userDataMapper.toDTO(stmt.executeQuery());
         } catch (SQLException e) {
-            System.err.printf("Error occurred fetching all users which have enabled auto sync: %s\n", e.getMessage());
-        } catch (DatabaseDriverNotFoundException e) {
-            System.err.printf("The database driver %s cannot be found on the system\n", e.getMessage());
+            throw new InternalServerErrorException(e.getMessage());
         }
 
         return userDTO;
