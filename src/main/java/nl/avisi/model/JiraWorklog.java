@@ -4,7 +4,7 @@ import kong.unirest.*;
 import kong.unirest.json.JSONArray;
 import kong.unirest.json.JSONException;
 import kong.unirest.json.JSONObject;
-import nl.avisi.dto.WorklogDTO;
+import nl.avisi.dto.DestinationWorklogDTO;
 import nl.avisi.dto.WorklogRequestDTO;
 import nl.avisi.network.IRequest;
 import nl.avisi.network.authentication.BasicAuth;
@@ -73,7 +73,7 @@ public class JiraWorklog {
      * @param worklogRequestDTO Contains the parameters to specify the worklogs to be retrieved during the HTTP request.
      * @return List of all worklogs that were retrieved from the client server between the two given dates for the specified workers.
      */
-    public List<WorklogDTO> retrieveWorklogsFromClientServer(WorklogRequestDTO worklogRequestDTO) {
+    public List<DestinationWorklogDTO> retrieveWorklogsFromClientServer(WorklogRequestDTO worklogRequestDTO) {
         setClientUrl(jiraSynchronisationProperties.getOriginUrl());
 
         HttpResponse<JsonNode> jsonWorklogs = requestWorklogs(worklogRequestDTO);
@@ -91,8 +91,8 @@ public class JiraWorklog {
      * @param jsonArray All retrieved worklogs in jsonArray form.
      * @return List of all worklogs that were retrieved between the two given dates for the specified workers.
      */
-    private List<WorklogDTO> createWorklogDTOs(JSONArray jsonArray) {
-        List<WorklogDTO> worklogs = new ArrayList<>();
+    private List<DestinationWorklogDTO> createWorklogDTOs(JSONArray jsonArray) {
+        List<DestinationWorklogDTO> worklogs = new ArrayList<>();
 
         for (int i = 0; i < jsonArray.length(); i++) {
             JSONObject jsonObject = jsonArray.getJSONObject(i);
@@ -103,7 +103,7 @@ public class JiraWorklog {
                 String originTaskId = jsonObject.getJSONObject("issue").getString("accountKey");
                 int timeSpentSeconds = jsonObject.getInt("timeSpentSeconds");
 
-                worklogs.add(new WorklogDTO().setWorker(worker).setStarted(started).setOriginTaskId(originTaskId).setTimeSpentSeconds(timeSpentSeconds));
+                worklogs.add(new DestinationWorklogDTO().setWorker(worker).setStarted(started).setOriginTaskId(originTaskId).setTimeSpentSeconds(timeSpentSeconds));
             } catch (JSONException e) {
                 return new ArrayList<>();
             }
@@ -127,18 +127,18 @@ public class JiraWorklog {
 
     /**
      * Method creates worklog for a user by sending a post request to the Tempo API,
-     * the location of where the worklog should be created is specified by the originTaskId in the {@link WorklogDTO}.
-     * the standard comment of the {@link WorklogDTO} will be "Logging from JavaSyncApp"
+     * the location of where the worklog should be created is specified by the originTaskId in the {@link DestinationWorklogDTO}.
+     * the standard comment of the {@link DestinationWorklogDTO} will be "Logging from JavaSyncApp"
      *
      * @param worklogs ArrayList consisting of WorklogDTO's this list are all the worklogs retrieved from client Jira-server.
      * @return A map of worklogDTO's with their corresponding status codes after being posted.
      */
-    public Map createWorklogsOnAvisiServer(List<WorklogDTO> worklogs) {
+    public Map createWorklogsOnAvisiServer(List<DestinationWorklogDTO> worklogs) {
         setAvisiUrl(jiraSynchronisationProperties.getDestinationUrl());
 
-        Map<WorklogDTO, Integer> responseCodes = new HashMap<>();
+        Map<DestinationWorklogDTO, Integer> responseCodes = new HashMap<>();
 
-        for (WorklogDTO worklog : worklogs) {
+        for (DestinationWorklogDTO worklog : worklogs) {
             HttpResponse<JsonNode> response = request.post(avisiUrl, worklog);
             responseCodes.put(worklog, response.getStatus());
 
