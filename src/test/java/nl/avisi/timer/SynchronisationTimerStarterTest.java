@@ -1,9 +1,6 @@
-package timer;
+package nl.avisi.timer;
 
 import nl.avisi.propertyreaders.JiraSynchronisationProperties;
-import nl.avisi.timer.SynchronisationTimerStarter;
-import nl.avisi.timer.SynchroniseTask;
-import nl.avisi.timer.TimerStarter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -43,10 +40,5 @@ public class SynchronisationTimerStarterTest {
 
         // Assert
         Mockito.verify(mockedTimerStarter).startTimer(any(SynchroniseTask.class), eq(expectedCalendar), eq(expectedInterval));
-    }
-
-    @Test
-    void test() {
-        sut.startSynchronisationTimer();
     }
 }

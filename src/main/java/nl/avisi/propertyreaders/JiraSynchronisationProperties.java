@@ -10,7 +10,7 @@ import java.util.Calendar;
  */
 public class JiraSynchronisationProperties {
 
-    private final String JIRA_PROPERTIES_FILE_NAME = "jiraSynchronisation.properties";
+    private static final String JIRA_PROPERTIES_FILE_NAME = "jiraSynchronisation.properties";
 
     private PropertyReader propertyReader;
 

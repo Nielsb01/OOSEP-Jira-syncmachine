@@ -9,6 +9,7 @@ public class SynchronisationTimerStarter {
 
     private JiraSynchronisationProperties synchronisationProperties;
     private TimerStarter timerStarter;
+    private SynchroniseTask synchroniseTask;
 
     @Inject
     public void setSynchronisationProperties(JiraSynchronisationProperties synchronisationProperties) {
@@ -20,30 +21,18 @@ public class SynchronisationTimerStarter {
         this.timerStarter = timerStarter;
     }
 
+    @Inject
+    public void setSynchroniseTask(SynchroniseTask synchroniseTask) {
+        this.synchroniseTask = synchroniseTask;
+    }
+
+    /**
+     * Starts the synchronisation nl.avisi.timer based on the jira synchronisation config file.
+     */
     public void startSynchronisationTimer() {
+        Calendar synchronisationMoment = synchronisationProperties.getSynchronisationMoment();
+        long interval = 1000 * 60 * 60 * 24 * 7;
 
-        if (timerStarter == null) {
-            System.out.println("timerStarter is null");
-        }
-        if (synchronisationProperties == null) {
-            System.out.println("syncprops is null");
-        }
-
-        SynchroniseTask synchroniseTask = new SynchroniseTask();
-        Calendar synchronisationMoment = Calendar.getInstance(); //synchronisationProperties.getSynchronisationMoment();
-        long interval = 1000 * 10; //60 * 60 * 24 * 7;
-
-        if (timerStarter == null) {
-            System.out.println("timerStarter is null");
-        }
-        if (synchronisationProperties == null) {
-            System.out.println("syncprops is null");
-        }
-
-        if (synchroniseTask == null || synchronisationMoment == null) {
-            System.out.println("poepseks");
-        }
-
-//        timerStarter.startTimer(synchroniseTask, synchronisationMoment, interval);
+        timerStarter.startTimer(synchroniseTask, synchronisationMoment, interval);
     }
 }

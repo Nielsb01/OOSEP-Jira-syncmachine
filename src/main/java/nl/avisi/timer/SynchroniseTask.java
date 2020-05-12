@@ -14,6 +14,9 @@ public class SynchroniseTask extends TimerTask {
         this.jiraWorklog = jiraWorklog;
     }
 
+    /**
+     * Is called when the auto sync is scheduled. Runs the jira worklog synchronise method
+     */
     @Override
     public void run() {
         jiraWorklog.synchronise();

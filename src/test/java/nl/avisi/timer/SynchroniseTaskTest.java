@@ -1,7 +1,6 @@
-package timer;
+package nl.avisi.timer;
 
 import nl.avisi.model.JiraWorklog;
-import nl.avisi.timer.SynchroniseTask;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
