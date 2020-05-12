@@ -4,7 +4,7 @@ import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
 import kong.unirest.json.JSONArray;
 import kong.unirest.json.JSONObject;
-import nl.avisi.dto.WorklogDTO;
+import nl.avisi.dto.DestinationWorklogDTO;
 import nl.avisi.dto.WorklogRequestDTO;
 import nl.avisi.network.IRequest;
 import nl.avisi.network.authentication.BasicAuth;
@@ -67,7 +67,7 @@ class JiraWorklogTest {
         when(mockedResponse.getBody()).thenReturn(new JsonNode(jsonString));
 
         //Act
-        List<WorklogDTO> actualValue = sut.retrieveWorklogsFromClientServer(worklogRequestDTO);
+        List<DestinationWorklogDTO> actualValue = sut.retrieveWorklogsFromClientServer(worklogRequestDTO);
 
         //Assert
         assertEquals(1, actualValue.size());
@@ -80,7 +80,7 @@ class JiraWorklogTest {
         when(mockedRequest.post(any(), any())).thenReturn(mockedResponse);
         when(mockedResponse.getBody()).thenReturn(null);
 
-        List<WorklogDTO> actualValue = sut.retrieveWorklogsFromClientServer(worklogRequestDTO);
+        List<DestinationWorklogDTO> actualValue = sut.retrieveWorklogsFromClientServer(worklogRequestDTO);
 
         assertEquals(0, actualValue.size());
     }
@@ -92,7 +92,7 @@ class JiraWorklogTest {
         when(mockedResponse.getBody()).thenReturn(new JsonNode(
                 "[]"));
 
-        List<WorklogDTO> actualValue = sut.retrieveWorklogsFromClientServer(worklogRequestDTO);
+        List<DestinationWorklogDTO> actualValue = sut.retrieveWorklogsFromClientServer(worklogRequestDTO);
 
         assertEquals(0, actualValue.size());
     }
@@ -113,7 +113,7 @@ class JiraWorklogTest {
         when(mockedResponse.getBody()).thenReturn(new JsonNode(jsonString));
 
         //Act
-        List<WorklogDTO> actualValue = sut.retrieveWorklogsFromClientServer(worklogRequestDTO);
+        List<DestinationWorklogDTO> actualValue = sut.retrieveWorklogsFromClientServer(worklogRequestDTO);
 
         //Assert
         assertEquals(WORKER_VALUE, actualValue.get(0).getWorker());
@@ -136,7 +136,7 @@ class JiraWorklogTest {
         when(mockedResponse.getBody()).thenReturn(new JsonNode(jsonArray));
 
         //Act
-        List<WorklogDTO> actualValue = sut.retrieveWorklogsFromClientServer(worklogRequestDTO);
+        List<DestinationWorklogDTO> actualValue = sut.retrieveWorklogsFromClientServer(worklogRequestDTO);
 
 
         //Assert
@@ -147,12 +147,12 @@ class JiraWorklogTest {
     @Test
     public void testWhileAddingWorklogsCheckMapIsSameLengthAsWorklogs() {
         // Arrange
-        List<WorklogDTO> mockWorklogs= new ArrayList<>();
+        List<DestinationWorklogDTO> mockWorklogs= new ArrayList<>();
         String adminAuthUserName = "Nielsb01";
         String adminAuthPass = "OOSEGENUA";
 
-        mockWorklogs.add(new WorklogDTO().setWorker("JIRAUSER10000").setStarted("2020-05-07").setTimeSpentSeconds(660).setOriginTaskId("KNBPU-2"));
-        mockWorklogs.add(new WorklogDTO().setWorker("JIRAUSER10100").setStarted("2020-05-07").setTimeSpentSeconds(840).setOriginTaskId("KNBPU-2"));
+        mockWorklogs.add(new DestinationWorklogDTO().setWorker("JIRAUSER10000").setStarted("2020-05-07").setTimeSpentSeconds(660).setOriginTaskId("KNBPU-2"));
+        mockWorklogs.add(new DestinationWorklogDTO().setWorker("JIRAUSER10100").setStarted("2020-05-07").setTimeSpentSeconds(840).setOriginTaskId("KNBPU-2"));
 
         when(mockedRequest.post(any(),any())).thenReturn(mockedResponse);
         when(mockedResponse.getStatus()).thenReturn(200);
@@ -167,12 +167,12 @@ class JiraWorklogTest {
     @Test
     public void testWhileAddingWorklogsCheckMapNotAllStatuscodes200() {
         // Arrange
-        List<WorklogDTO> mockWorklogs= new ArrayList<>();
+        List<DestinationWorklogDTO> mockWorklogs= new ArrayList<>();
         String adminAuthUserName = "Nielsb01";
         String adminAuthPass = "OOSEGENUA";
 
-        mockWorklogs.add(new WorklogDTO().setWorker("JIRAUSER10000").setStarted("2020-05-07").setTimeSpentSeconds(660).setOriginTaskId("KNBPU-2"));
-        mockWorklogs.add(new WorklogDTO().setWorker("JIRAUSER10100").setStarted("2020-05-07").setTimeSpentSeconds(840).setOriginTaskId("KNBPU-4"));
+        mockWorklogs.add(new DestinationWorklogDTO().setWorker("JIRAUSER10000").setStarted("2020-05-07").setTimeSpentSeconds(660).setOriginTaskId("KNBPU-2"));
+        mockWorklogs.add(new DestinationWorklogDTO().setWorker("JIRAUSER10100").setStarted("2020-05-07").setTimeSpentSeconds(840).setOriginTaskId("KNBPU-4"));
 
         when(mockedRequest.post(any(),any())).thenReturn(mockedResponse);
         when(mockedResponse.getStatus()).thenReturn(200,400);

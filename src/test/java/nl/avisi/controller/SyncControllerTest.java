@@ -1,6 +1,6 @@
 package nl.avisi.controller;
 
-import nl.avisi.dto.WorklogDTO;
+import nl.avisi.dto.DestinationWorklogDTO;
 import nl.avisi.dto.WorklogRequestDTO;
 import nl.avisi.model.JiraWorklog;
 import org.junit.jupiter.api.BeforeEach;
@@ -43,7 +43,7 @@ class SyncControllerTest {
     @Test
     void testsynchroniseWorklogsFromClientToAvisiCallsRetrieveWorklogs() {
         // Setup
-        List<WorklogDTO> worklogs = new ArrayList<>();
+        List<DestinationWorklogDTO> worklogs = new ArrayList<>();
         WorklogRequestDTO worklogRequestDTO = new WorklogRequestDTO();
         when(mockedJiraWorklog.retrieveWorklogsFromClientServer(worklogRequestDTO)).thenReturn(worklogs);
         when(mockedJiraWorklog.createWorklogsOnAvisiServer(worklogs)).thenReturn(new HashMap());
@@ -58,7 +58,7 @@ class SyncControllerTest {
     @Test
     void testsynchroniseWorklogsFromClientToAvisiCallsCreateWorklogsOnAvisiServer() {
         // Setup
-        List<WorklogDTO> worklogs = new ArrayList<>();
+        List<DestinationWorklogDTO> worklogs = new ArrayList<>();
         WorklogRequestDTO worklogRequestDTO = new WorklogRequestDTO();
         when(mockedJiraWorklog.retrieveWorklogsFromClientServer(worklogRequestDTO)).thenReturn(worklogs);
         when(mockedJiraWorklog.createWorklogsOnAvisiServer(worklogs)).thenReturn(new HashMap());
