@@ -6,13 +6,13 @@ import java.util.TimerTask;
 
 public class EventTimer {
 
-    public EventTimer(TimerTask task, Calendar dateTime, long delay) {
+    public EventTimer(TimerTask task, Calendar dateTime, long interval) {
         Timer timer = new Timer();
 
         timer.scheduleAtFixedRate(
                 task,
                 dateTime.getTime(),
-                delay
+                interval
         );
     }
 }

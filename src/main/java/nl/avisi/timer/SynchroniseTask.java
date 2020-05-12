@@ -7,7 +7,7 @@ import java.util.TimerTask;
 
 public class SynchroniseTask extends TimerTask {
 
-    JiraWorklog jiraWorklog;
+    private JiraWorklog jiraWorklog;
 
     @Inject
     public void setJiraWorklog(JiraWorklog jiraWorklog) {
