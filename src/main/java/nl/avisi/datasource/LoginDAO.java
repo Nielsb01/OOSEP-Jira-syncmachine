@@ -1,7 +1,7 @@
 package nl.avisi.datasource;
 
 import nl.avisi.datasource.contracts.ILoginDAO;
-import nl.avisi.datasource.datamappers.DataMapper;
+import nl.avisi.datasource.datamappers.IDataMapper;
 import nl.avisi.dto.UserDTO;
 import nl.avisi.propertyreaders.exceptions.DatabaseDriverNotFoundException;
 
@@ -20,7 +20,7 @@ public class LoginDAO implements ILoginDAO {
      * DataMapper is used to convert
      * a resultset to a DTO
      */
-    private DataMapper<UserDTO> loginDataMapper;
+    private IDataMapper<UserDTO> userDataMapper;
 
     /**
      * Class to manage the database connection
@@ -31,7 +31,7 @@ public class LoginDAO implements ILoginDAO {
      * SQL query for retrieving the users
      * login information based on the supplied username
      */
-    private final static String GET_LOGIN_DATA_SQL = "SELECT * FROM sync_machine_accounts WHERE username = ?";
+    private final static String GET_LOGIN_DATA_SQL = "SELECT * FROM sync_machine_account WHERE username = ?";
 
     @Inject
     public void setDatabase(Database database) {
@@ -39,8 +39,8 @@ public class LoginDAO implements ILoginDAO {
     }
 
     @Inject
-    public void setLoginDataMapper(DataMapper<UserDTO> loginDataMapper) {
-        this.loginDataMapper = loginDataMapper;
+    public void setUserDataMapper(IDataMapper<UserDTO> userDataMapper) {
+        this.userDataMapper = userDataMapper;
     }
 
     /**
@@ -59,7 +59,7 @@ public class LoginDAO implements ILoginDAO {
         try (Connection connection = database.connect(); PreparedStatement stmt = connection.prepareStatement(GET_LOGIN_DATA_SQL)) {
             stmt.setString(1, username);
 
-           userDTO = loginDataMapper.toDTO(stmt.executeQuery());
+           userDTO = userDataMapper.toDTO(stmt.executeQuery());
         } catch (SQLException e) {
             System.err.printf("Error occurred fetching all users which have enabled auto sync: %s\n", e.getMessage());
         } catch (DatabaseDriverNotFoundException e) {
