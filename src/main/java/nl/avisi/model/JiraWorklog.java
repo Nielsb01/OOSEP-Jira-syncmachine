@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Responsible for retrieving and creating worklogs on the specified Jira server through the Tempo API with HTTP requests
@@ -135,7 +136,7 @@ public class JiraWorklog {
      * @param worklogs ArrayList consisting of WorklogDTO's this list are all the worklogs retrieved from client Jira-server.
      * @return A map of worklogDTO's with their corresponding status codes after being posted.
      */
-    public Map createWorklogsOnAvisiServer(List<WorklogDTO> worklogs) {
+    public Map<WorklogDTO, Integer> createWorklogsOnAvisiServer(List<WorklogDTO> worklogs) {
         setAvisiUrl(jiraSynchronisationProperties.getDestinationUrl());
 
         Map<WorklogDTO, Integer> responseCodes = new HashMap<>();
@@ -143,9 +144,18 @@ public class JiraWorklog {
         for (WorklogDTO worklog : worklogs) {
             HttpResponse<JsonNode> response = request.post(avisiUrl, worklog);
             responseCodes.put(worklog, response.getStatus());
-
         }
 
         return responseCodes;
+    }
+
+    public void filterWorklogIds(List<Integer> allWorklogIdsInDatabase, List<WorklogDTO> retrievedWorklogsFromOriginServer) {
+
+        List<WorklogDTO> worklogsToBeSynced = retrievedWorklogsFromOriginServer
+                .stream()
+                .filter(worklog ->
+                        allWorklogIdsInDatabase.stream()
+                                .anyMatch(worklogId -> worklogId == worklog.getWorklogId()))
+                .collect(Collectors.toList());
     }
 }
