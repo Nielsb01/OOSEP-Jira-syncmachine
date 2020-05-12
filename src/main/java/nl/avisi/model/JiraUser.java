@@ -31,7 +31,7 @@ public class JiraUser {
     /**
      * Method by which HTTP requests are sent
      */
-    private IRequest request;
+    private IRequest<BasicAuth> request;
 
     /**
      * Used for interacting with the database
@@ -63,7 +63,7 @@ public class JiraUser {
     }
 
     @Inject
-    public void setRequest(IRequest request) {
+    public void setRequest(IRequest<BasicAuth> request) {
         this.request = request;
     }
 

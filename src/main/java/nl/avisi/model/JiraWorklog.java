@@ -37,7 +37,7 @@ public class JiraWorklog {
     /**
      * Method by which HTTP requests are sent
      */
-    private IRequest request;
+    private IRequest<BasicAuth> request;
 
     /**
      * Contains information for the authentication required to make a HTTP request
