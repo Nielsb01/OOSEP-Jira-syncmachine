@@ -1,6 +1,6 @@
 package nl.avisi.propertyreaders.exceptions;
 
-public class DatabaseDriverNotFoundException extends Exception {
+public class DatabaseDriverNotFoundException extends RuntimeException {
     private String driverName;
 
     public DatabaseDriverNotFoundException(String driverName) {

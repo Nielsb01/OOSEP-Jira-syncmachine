@@ -1,7 +1,7 @@
 package nl.avisi.datasource;
 
 import nl.avisi.propertyreaders.exceptions.DatabaseDriverNotFoundException;
-import nl.avisi.model.UserSyncDTO;
+import nl.avisi.dto.UserSyncDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
