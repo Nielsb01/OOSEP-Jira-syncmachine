@@ -150,6 +150,7 @@ public class JiraWorklog {
     }
 
     public void synchronise() {
+        System.out.println("Hij print");
         // wordt verder uitgewerkt in andere branch
     }
 }

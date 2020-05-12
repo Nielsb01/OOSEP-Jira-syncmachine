@@ -14,7 +14,6 @@ import javax.enterprise.inject.Default;
  * the constructor
  */
 
-@Default
 public class BasicAuthRequest implements IRequest<BasicAuth> {
 
     /**
