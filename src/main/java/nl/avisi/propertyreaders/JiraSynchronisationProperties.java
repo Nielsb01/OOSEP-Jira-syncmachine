@@ -17,12 +17,13 @@ public class JiraSynchronisationProperties {
     @Inject
     public void setPropertyReader(PropertyReader propertyReader) {
         this.propertyReader = propertyReader;
+        loadPropertyFile();
     }
 
     /**
      * Loads the given property file so it can be read using the class' other methods. Run this before using any other methods in this class.
      */
-    public void loadPropertyFile() {
+    private void loadPropertyFile() {
         propertyReader.loadPropertyFile(JIRA_PROPERTIES_FILE_NAME);
     }
 

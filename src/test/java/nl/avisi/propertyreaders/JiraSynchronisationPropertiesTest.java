@@ -10,6 +10,7 @@ import java.util.Date;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Matchers.anyString;
 
 public class JiraSynchronisationPropertiesTest {
 
@@ -25,14 +26,13 @@ public class JiraSynchronisationPropertiesTest {
     }
 
     @Test
-    void testLoadPropertiesCallsPropertyReaderLoadProperties() {
+    void testSetPropertyReaderCallsPropertyReaderLoadProperties() {
         // Arrange
 
         // Act
-        sut.loadPropertyFile();
 
         // Assert
-        Mockito.verify(mockedPropertyReader).loadPropertyFile("jiraSynchronisation.properties");
+        Mockito.verify(mockedPropertyReader).loadPropertyFile(anyString());
     }
 
     @Test
