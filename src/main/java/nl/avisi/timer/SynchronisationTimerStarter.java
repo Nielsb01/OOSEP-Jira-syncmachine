@@ -25,7 +25,6 @@ public class SynchronisationTimerStarter {
     @Inject
     public void setSynchronisationProperties(JiraSynchronisationProperties synchronisationProperties) {
         this.synchronisationProperties = synchronisationProperties;
-        synchronisationProperties.loadPropertyFile();
     }
 
     @Inject
