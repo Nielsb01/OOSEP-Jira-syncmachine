@@ -13,7 +13,6 @@ import javax.enterprise.inject.Default;
  * The basic auth credentials are set using
  * the constructor
  */
-
 public class BasicAuthRequest implements IRequest<BasicAuth> {
 
     /**

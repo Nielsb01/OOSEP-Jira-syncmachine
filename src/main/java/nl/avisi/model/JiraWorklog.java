@@ -20,8 +20,6 @@ import java.util.Map;
 /**
  * Responsible for retrieving and creating worklogs on the specified Jira server through the Tempo API with HTTP requests
  */
-
-@Default
 public class JiraWorklog {
 
     /**
