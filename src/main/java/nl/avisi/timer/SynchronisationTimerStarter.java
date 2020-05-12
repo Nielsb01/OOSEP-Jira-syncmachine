@@ -7,8 +7,19 @@ import java.util.Calendar;
 
 public class SynchronisationTimerStarter {
 
+    /**
+     * Used to get synchronisation moment
+     */
     private JiraSynchronisationProperties synchronisationProperties;
+
+    /**
+     * Used to start the synchronisation timer
+     */
     private TimerStarter timerStarter;
+
+    /**
+     * Contains the task that is to be performed by the timer
+     */
     private SynchroniseTask synchroniseTask;
 
     @Inject

@@ -9,6 +9,9 @@ import javax.inject.Inject;
 @Singleton
 public class TimerMain {
 
+    /**
+     * Organises the synchronisation timer to be created
+     */
     private SynchronisationTimerStarter synchronisationTimerStarter;
 
     @Inject

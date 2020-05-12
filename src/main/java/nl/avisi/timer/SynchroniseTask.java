@@ -7,6 +7,9 @@ import java.util.TimerTask;
 
 public class SynchroniseTask extends TimerTask {
 
+    /**
+     * Is the owner of the method that is to be performed when the timer finishes
+     */
     private JiraWorklog jiraWorklog;
 
     @Inject
