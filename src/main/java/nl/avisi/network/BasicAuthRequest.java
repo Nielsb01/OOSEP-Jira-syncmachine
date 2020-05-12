@@ -5,7 +5,6 @@ import kong.unirest.JsonNode;
 import kong.unirest.Unirest;
 import nl.avisi.network.authentication.BasicAuth;
 
-import javax.enterprise.inject.Default;
 
 /**
  * Send a request with the basic auth headers
@@ -14,7 +13,6 @@ import javax.enterprise.inject.Default;
  * the constructor
  */
 
-@Default
 public class BasicAuthRequest implements IRequest<BasicAuth> {
 
     /**

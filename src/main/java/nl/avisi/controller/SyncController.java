@@ -29,7 +29,6 @@ public class SyncController {
      * @param worklogRequestDTO Contains the necessary information needed to retrieve worklogs from the server.
      * @return HTTP response with corresponding status code and entity to the request that was made.
      */
-
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
