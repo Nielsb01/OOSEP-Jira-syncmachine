@@ -63,7 +63,7 @@ public class JiraUser {
     }
 
     @Inject
-    public void setRequest(IRequest request) {
+    public void setRequest(IRequest<BasicAuth> request) {
         this.request = request;
     }
 
