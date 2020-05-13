@@ -1,6 +1,10 @@
 package nl.avisi.dto;
 
-public class WorklogDTO {
+/**
+ * Class contains the necessary information to
+ * post a worklog to the destination server
+ */
+public class DestinationWorklogDTO {
 
     /**
      * is the id of a user the worklog will be created for. "JIRAUSER10000"
@@ -31,7 +35,7 @@ public class WorklogDTO {
         return worker;
     }
 
-    public WorklogDTO setWorker(String worker) {
+    public DestinationWorklogDTO setWorker(String worker) {
         this.worker = worker;
         return this;
     }
@@ -40,7 +44,7 @@ public class WorklogDTO {
         return comment;
     }
 
-    public WorklogDTO setComment(String comment) {
+    public DestinationWorklogDTO setComment(String comment) {
         this.comment = comment;
         return this;
     }
@@ -49,7 +53,7 @@ public class WorklogDTO {
         return started;
     }
 
-    public WorklogDTO setStarted(String started) {
+    public DestinationWorklogDTO setStarted(String started) {
         this.started = started;
         return this;
     }
@@ -58,7 +62,7 @@ public class WorklogDTO {
         return timeSpentSeconds;
     }
 
-    public WorklogDTO setTimeSpentSeconds(int timeSpentSeconds) {
+    public DestinationWorklogDTO setTimeSpentSeconds(int timeSpentSeconds) {
         this.timeSpentSeconds = timeSpentSeconds;
         return this;
     }
@@ -67,7 +71,7 @@ public class WorklogDTO {
         return originTaskId;
     }
 
-    public WorklogDTO setOriginTaskId(String originTaskId) {
+    public DestinationWorklogDTO setOriginTaskId(String originTaskId) {
         this.originTaskId = originTaskId;
         return this;
     }

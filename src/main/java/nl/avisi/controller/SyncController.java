@@ -34,7 +34,16 @@ public class SyncController {
     @Produces(MediaType.APPLICATION_JSON)
     public Response synchroniseWorklogsFromClientToAvisi(WorklogRequestDTO worklogRequestDTO) {
 
-        jiraWorklog.createWorklogsOnAvisiServer(jiraWorklog.retrieveWorklogsFromClientServer(worklogRequestDTO));
+        /*
+        todo tussenstap maken voor handmatig synchroniseren in één methode.
+           Deze onderstaande 3 methodes aan elkaar knopen is lelijk,
+           filteren moet ook nog.
+         */
+
+       jiraWorklog.createWorklogsOnAvisiServer(
+               jiraWorklog.transformFromOriginToDestination(
+                       jiraWorklog.retrieveWorklogsFromClientServer(worklogRequestDTO)));
+
         return Response.status(200).entity("Synchronisatie succesvol").build();
     }
 }
