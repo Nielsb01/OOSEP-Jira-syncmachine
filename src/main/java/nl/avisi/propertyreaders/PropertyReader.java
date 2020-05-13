@@ -5,7 +5,6 @@ import nl.avisi.propertyreaders.exceptions.PropertyFileNotFoundException;
 import nl.avisi.propertyreaders.exceptions.PropertyFileNotLoadedException;
 import nl.avisi.propertyreaders.exceptions.PropertyNotFoundException;
 
-import javax.ws.rs.InternalServerErrorException;
 import java.io.IOException;
 import java.util.Objects;
 import java.util.Properties;

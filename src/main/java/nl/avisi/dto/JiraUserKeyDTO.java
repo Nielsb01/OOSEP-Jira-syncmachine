@@ -2,7 +2,7 @@ package nl.avisi.dto;
 
 public class JiraUserKeyDTO {
     private String clientUserKey;
-    private String AvisiUserKey;
+    private String avisiUserKey;
 
     public String getClientUserKey() {
         return clientUserKey;
@@ -14,11 +14,11 @@ public class JiraUserKeyDTO {
     }
 
     public String getAvisiUserKey() {
-        return AvisiUserKey;
+        return avisiUserKey;
     }
 
     public JiraUserKeyDTO setAvisiUserKey(String avisiUserKey) {
-        AvisiUserKey = avisiUserKey;
+        this.avisiUserKey = avisiUserKey;
         return this;
     }
 }
