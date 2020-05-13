@@ -10,7 +10,6 @@ import nl.avisi.network.IRequest;
 import nl.avisi.network.authentication.BasicAuth;
 import nl.avisi.propertyreaders.JiraSynchronisationProperties;
 
-import javax.enterprise.inject.Default;
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.HashMap;
