@@ -34,7 +34,7 @@ public class Database {
      * @throws DatabaseDriverNotFoundException when the database driver isn't installed on the system
      * @throws SQLException when no connection to the database could be established
      */
-    public Connection connect() throws SQLException, DatabaseDriverNotFoundException {
+    public Connection connect() throws SQLException {
         this.databaseProperties.loadPropertyFile();
 
         final String driverName = databaseProperties.getDriverName();

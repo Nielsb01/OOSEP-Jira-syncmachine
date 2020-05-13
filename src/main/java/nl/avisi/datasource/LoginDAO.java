@@ -3,7 +3,6 @@ package nl.avisi.datasource;
 import nl.avisi.datasource.contracts.ILoginDAO;
 import nl.avisi.datasource.datamappers.IDataMapper;
 import nl.avisi.dto.UserDTO;
-import nl.avisi.propertyreaders.exceptions.DatabaseDriverNotFoundException;
 
 import javax.inject.Inject;
 import javax.ws.rs.InternalServerErrorException;
@@ -32,7 +31,7 @@ public class LoginDAO implements ILoginDAO {
      * SQL query for retrieving the users
      * login information based on the supplied username
      */
-    private final static String GET_LOGIN_DATA_SQL = "SELECT * FROM sync_machine_account WHERE username = ?";
+    private static final String GET_LOGIN_DATA_SQL = "SELECT * FROM sync_machine_account WHERE username = ?";
 
     @Inject
     public void setDatabase(Database database) {

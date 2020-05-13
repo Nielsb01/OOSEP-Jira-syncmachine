@@ -8,19 +8,19 @@ public class DatabaseProperties {
      * File which contains the properties for the
      * database
      */
-    private final static String PROPERTIES_FILE = "database.properties";
+    private static final String PROPERTIES_FILE = "database.properties";
 
     /**
      * Configuration property which contains the
      * connection string
      */
-    private final static String CONNECTION_PROPERTY_NAME = "connection";
+    private static final String CONNECTION_PROPERTY_NAME = "connection";
 
     /**
      * Configuration property which contains the
      * driver class name
      */
-    private final static String DRIVER_PROPERTY_NAME = "driver";
+    private static final String DRIVER_PROPERTY_NAME = "driver";
 
     /**
      * Class to read the actual properties from

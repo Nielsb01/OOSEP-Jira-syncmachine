@@ -92,11 +92,11 @@ public class JiraUser {
                 .setUsername(jiraSynchronisationProperties.getAdminUsername()));
         request.setAuthentication(basicAuth);
 
-        HttpResponse<JsonNode> JSONClientJiraUser = request.get(clientUrl + jiraUsernameDTO.getClientUsername());
-        HttpResponse<JsonNode> JSONAvisiJiraUser = request.get(avisiUrl + jiraUsernameDTO.getAvisiUsername());
+        HttpResponse<JsonNode> jsonOriginJiraUser = request.get(clientUrl + jiraUsernameDTO.getClientUsername());
+        HttpResponse<JsonNode> jsonDestinationJiraUser = request.get(avisiUrl + jiraUsernameDTO.getAvisiUsername());
 
-        jiraUserKeyDTO.setAvisiUserKey(getJiraUserKeyFromJson(JSONAvisiJiraUser));
-        jiraUserKeyDTO.setClientUserKey(getJiraUserKeyFromJson(JSONClientJiraUser));
+        jiraUserKeyDTO.setAvisiUserKey(getJiraUserKeyFromJson(jsonDestinationJiraUser));
+        jiraUserKeyDTO.setClientUserKey(getJiraUserKeyFromJson(jsonOriginJiraUser));
 
         if (jiraUserKeyDTO.getAvisiUserKey().isEmpty() || jiraUserKeyDTO.getClientUserKey().isEmpty()) {
             throw new InvalidUsernameException();
@@ -108,15 +108,15 @@ public class JiraUser {
     /**
      * Retrieves the Jira user key from the passed in response object
      *
-     * @param JSONJiraUser All data that was retrieved from the HTTP request relating to the
+     * @param jsonJiraUser All data that was retrieved from the HTTP request relating to the
      *                     specified email address
      * @return A string containing the Jira user key
      */
-    private String getJiraUserKeyFromJson(HttpResponse<JsonNode> JSONJiraUser) {
+    private String getJiraUserKeyFromJson(HttpResponse<JsonNode> jsonJiraUser) {
         String jiraUserKey;
 
         try {
-            jiraUserKey = JSONJiraUser.getBody().getArray().getJSONObject(0).getString("key");
+            jiraUserKey = jsonJiraUser.getBody().getArray().getJSONObject(0).getString("key");
         } catch (JSONException e) {
             throw new InvalidUsernameException();
         }
@@ -125,7 +125,7 @@ public class JiraUser {
     }
 
     public void setJiraUserKeys(JiraUsernameDTO jiraUsernameDTO) {
-        //TODO aanroep van retrieveJiraUserKeyByUsername en resultaat in de database knallen
+        // TODO aanroep van retrieveJiraUserKeyByUsername en resultaat in de database knallen
 
         /*
             Deze methode is nog leeg, maar is nodig om de UserController te kunnen testen en te pushen.

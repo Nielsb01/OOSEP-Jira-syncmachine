@@ -6,9 +6,6 @@ public class WorklogRequestDTO {
     private String from;
     private String to;
     private List<String> worker;
-
-    public WorklogRequestDTO() {
-    }
     
     public String getFrom() {
         return from;

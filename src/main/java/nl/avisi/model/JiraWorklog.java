@@ -14,7 +14,6 @@ import nl.avisi.network.IRequest;
 import nl.avisi.network.authentication.BasicAuth;
 import nl.avisi.propertyreaders.JiraSynchronisationProperties;
 
-import javax.enterprise.inject.Default;
 import javax.inject.Inject;
 import javax.json.Json;
 import java.util.*;
