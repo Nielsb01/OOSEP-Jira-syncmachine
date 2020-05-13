@@ -59,8 +59,8 @@ class JiraUserTest {
         final JiraUserKeyDTO result = sut.retrieveJiraUserKeyByUsername(jiraUsernameDTO);
 
         //Assert
-        assertEquals("JIRAUSER1000", result.getAvisiUserKey());
-        assertEquals("JIRAUSER1010", result.getClientUserKey());
+        assertEquals("JIRAUSER1000", result.getDestinationUserKey());
+        assertEquals("JIRAUSER1010", result.getOriginUserKey());
 
     }
 

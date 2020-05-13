@@ -19,16 +19,6 @@ import javax.inject.Inject;
 public class JiraUser {
 
     /**
-     * Base URL where the Jira server of the client is being hosted
-     */
-    private String clientUrl;
-
-    /**
-     * Base URL where the Jira server of Avisi is being hosted
-     */
-    private String avisiUrl;
-
-    /**
      * Method by which HTTP requests are sent
      */
     private IRequest<BasicAuth> request;
@@ -37,11 +27,6 @@ public class JiraUser {
      * Used for interacting with the database
      */
     private IUserDAO userDAO;
-
-    /**
-     * Contains information for the authentication required to make a HTTP request
-     */
-    private BasicAuth basicAuth;
 
     /**
      * Is used to read the necessary property information
@@ -54,21 +39,9 @@ public class JiraUser {
         this.jiraSynchronisationProperties = jiraSynchronisationProperties;
     }
 
-    public void setClientUrl(String clientUrl) {
-        this.clientUrl = String.format("%s/rest/api/2/user/search?username=", clientUrl);
-    }
-
-    public void setAvisiUrl(String avisiUrl) {
-        this.avisiUrl = String.format("%s/rest/api/2/user/search?username=", avisiUrl);
-    }
-
     @Inject
     public void setRequest(IRequest<BasicAuth> request) {
         this.request = request;
-    }
-
-    public void setBasicAuth(BasicAuth basicAuth) {
-        this.basicAuth = basicAuth;
     }
 
     /**
@@ -82,25 +55,39 @@ public class JiraUser {
      * @return JiraUserKeyDTO Contains the matching user keys to the given usernames.
      */
     public JiraUserKeyDTO retrieveJiraUserKeyByUsername(JiraUsernameDTO jiraUsernameDTO) {
-        setAvisiUrl(jiraSynchronisationProperties.getDestinationUrl());
-        setClientUrl(jiraSynchronisationProperties.getOriginUrl());
 
-        JiraUserKeyDTO jiraUserKeyDTO = new JiraUserKeyDTO();
+        String originUrl = jiraSynchronisationProperties.getOriginUrl();
+        String destinationUrl = jiraSynchronisationProperties.getDestinationUrl();
 
-        setBasicAuth(new BasicAuth()
-                .setPassword(jiraSynchronisationProperties.getAdminPassword())
-                .setUsername(jiraSynchronisationProperties.getAdminUsername()));
-        request.setAuthentication(basicAuth);
+        createJiraConnection();
 
-        HttpResponse<JsonNode> jsonOriginJiraUser = request.get(clientUrl + jiraUsernameDTO.getClientUsername());
-        HttpResponse<JsonNode> jsonDestinationJiraUser = request.get(avisiUrl + jiraUsernameDTO.getAvisiUsername());
+        HttpResponse<JsonNode> jsonOriginJiraUser = request.get(originUrl + jiraUsernameDTO.getClientUsername());
+        HttpResponse<JsonNode> jsonDestinationJiraUser = request.get(destinationUrl + jiraUsernameDTO.getAvisiUsername());
 
-        jiraUserKeyDTO.setAvisiUserKey(getJiraUserKeyFromJson(jsonDestinationJiraUser));
-        jiraUserKeyDTO.setClientUserKey(getJiraUserKeyFromJson(jsonOriginJiraUser));
+        JiraUserKeyDTO jiraUserKeyDTO = createJiraUserKeyDTO(jsonOriginJiraUser, jsonDestinationJiraUser);
 
-        if (jiraUserKeyDTO.getAvisiUserKey().isEmpty() || jiraUserKeyDTO.getClientUserKey().isEmpty()) {
+        if (jiraUserKeyDTO.getDestinationUserKey().isEmpty() || jiraUserKeyDTO.getOriginUserKey().isEmpty()) {
             throw new InvalidUsernameException();
         }
+
+        return jiraUserKeyDTO;
+    }
+
+    private void createJiraConnection() {
+        BasicAuth basicAuth = new BasicAuth()
+                .setUsername(jiraSynchronisationProperties.getAdminUsername())
+                .setPassword(jiraSynchronisationProperties.getAdminPassword());
+        request.setAuthentication(basicAuth);
+    }
+
+    private JiraUserKeyDTO createJiraUserKeyDTO(HttpResponse<JsonNode> jsonOriginUserKey, HttpResponse<JsonNode> jsonDestinationUserKey) {
+        JiraUserKeyDTO jiraUserKeyDTO = new JiraUserKeyDTO();
+
+        String originUserKey = getJiraUserKeyFromJson(jsonOriginUserKey);
+        String destinationUserKey = getJiraUserKeyFromJson(jsonDestinationUserKey);
+
+        jiraUserKeyDTO.setOriginUserKey(originUserKey);
+        jiraUserKeyDTO.setDestinationUserKey(destinationUserKey);
 
         return jiraUserKeyDTO;
     }
