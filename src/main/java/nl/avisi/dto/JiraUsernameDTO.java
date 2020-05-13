@@ -18,20 +18,20 @@ public class JiraUsernameDTO {
      */
     private String avisiUsername;
 
-    public String getClientUsername() {
+    public String getOriginUsername() {
         return clientUsername;
     }
 
-    public JiraUsernameDTO setClientUsername(String clientUsername) {
+    public JiraUsernameDTO setOriginUsername(String clientUsername) {
         this.clientUsername = clientUsername;
         return this;
     }
 
-    public String getAvisiUsername() {
+    public String getDestinationUsername() {
         return avisiUsername;
     }
 
-    public JiraUsernameDTO setAvisiUsername(String avisiUsername) {
+    public JiraUsernameDTO setDestinationUsername(String avisiUsername) {
         this.avisiUsername = avisiUsername;
         return this;
     }

@@ -22,6 +22,7 @@ class JiraUserTest {
 
     private JiraUser sut;
     private JiraSynchronisationProperties mockedProperties;
+
     private IRequest mockedRequest;
     private HttpResponse mockedResponse;
     private JiraUsernameDTO jiraUsernameDTO;
@@ -29,38 +30,41 @@ class JiraUserTest {
     @BeforeEach
     void setUp() {
         sut = new JiraUser();
-        mockedProperties = mock(JiraSynchronisationProperties.class);
-        mockedRequest = mock(IRequest.class);
-        mockedResponse = mock(HttpResponse.class);
 
+        mockedProperties = mock(JiraSynchronisationProperties.class);
         sut.setJiraSynchronisationProperties(mockedProperties);
+
+        mockedRequest = mock(IRequest.class);
         sut.setRequest(mockedRequest);
 
+        mockedResponse = mock(HttpResponse.class);
+
+
         jiraUsernameDTO = new JiraUsernameDTO()
-                .setAvisiUsername("AvisiUsername")
-                .setClientUsername("ClientUsername");
+                .setDestinationUsername("AvisiUsername")
+                .setOriginUsername("ClientUsername");
     }
 
     @Test
     void testRetrieveJiraUserKeyByUsernameReturnsCorrectJiraUserKeys() {
         //Arrange
-        JSONObject avisiJsonObject = new JSONObject()
-                .put("key", "JIRAUSER1000");
-        String avisiJsonString = new JSONArray().put(avisiJsonObject).toString();
-
-        JSONObject clientJsonObject = new JSONObject()
+        JSONObject originJsonObject = new JSONObject()
                 .put("key", "JIRAUSER1010");
-        String clientJsonString = new JSONArray().put(clientJsonObject).toString();
+        String originJsonString = new JSONArray().put(originJsonObject).toString();
+
+        JSONObject destinationJsonObject = new JSONObject()
+                .put("key", "JIRAUSER1000");
+        String destinationJsonString = new JSONArray().put(destinationJsonObject).toString();
 
         when(mockedRequest.get(any())).thenReturn(mockedResponse);
-        when(mockedResponse.getBody()).thenReturn(new JsonNode(avisiJsonString), new JsonNode(clientJsonString));
+        when(mockedResponse.getBody()).thenReturn(new JsonNode(originJsonString), new JsonNode(destinationJsonString));
 
         //Act
-        final JiraUserKeyDTO result = sut.retrieveJiraUserKeyByUsername(jiraUsernameDTO);
+         JiraUserKeyDTO result = sut.retrieveJiraUserKeyByUsername(jiraUsernameDTO);
 
         //Assert
-        assertEquals("JIRAUSER1000", result.getDestinationUserKey());
         assertEquals("JIRAUSER1010", result.getOriginUserKey());
+        assertEquals("JIRAUSER1000", result.getDestinationUserKey());
 
     }
 
