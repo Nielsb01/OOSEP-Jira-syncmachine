@@ -131,6 +131,5 @@ public class JiraUser {
             Deze methode is nog leeg, maar is nodig om de UserController te kunnen testen en te pushen.
             Iemand moet deze in een andere branch verder uitwerken.
          */
-
     }
 }
