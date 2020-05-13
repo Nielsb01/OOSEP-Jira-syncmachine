@@ -188,8 +188,8 @@ public class JiraWorklog {
      * list.
      *
      * @param retrievedWorklogs Worklogs that were retrieved from the origin server
-     * @param allWorklogIds All worklogIds of worklogs that are already synced in the past.
-     *                      This data is retrieved from the database
+     * @param allWorklogIds     All worklogIds of worklogs that are already synced in the past.
+     *                          This data is retrieved from the database
      * @return list of DestinationWorklogDTOs that only contain not yet synced worklogs
      */
     public List<DestinationWorklogDTO> filterOutAlreadySyncedWorklogs(List<OriginWorklogDTO> retrievedWorklogs, List<Integer> allWorklogIds) {
@@ -198,6 +198,40 @@ public class JiraWorklog {
                 .filter(worklog -> allWorklogIds.stream()
                         .noneMatch(worklogId -> worklogId == worklog.getWorklogId()))
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * Maps the worker field of a destinationWorklogDTO after it has been set with
+     * the origin worker user key, to the destination worker key that matches the
+     * origin worker user key.
+     *
+     * @param worklogsToBeSynced List of DestinationWorklogDTO where the worker field contains the origin user key
+     *                           which will be swapped for the destination user key
+     * @param autoSyncUsers List of all the users that have auto sync enabled
+     * @return A list of worklogs with the correct user key mapped to the worker field
+     */
+    public List<DestinationWorklogDTO> mapDestinationUserKeyToOriginUserKey(List<DestinationWorklogDTO> worklogsToBeSynced, List<UserSyncDTO> autoSyncUsers) {
+
+        List<DestinationWorklogDTO> worklogsWithoutMatchingKey = new ArrayList<>();
+
+        worklogsToBeSynced.forEach(worklog -> {
+            Optional<String> matchingKey = autoSyncUsers.stream()
+                    .filter(user -> user.getFromWorker().equals(worklog.getWorker()))
+                    .map(UserSyncDTO::getToWorker)
+                    .reduce((u, v) -> {
+                        throw new IllegalStateException("More than one user key found");
+                    });
+
+            if (matchingKey.isPresent()) {
+                worklog.setWorker(matchingKey.get());
+            } else {
+                worklogsWithoutMatchingKey.add(worklog);
+            }
+        });
+
+        worklogsWithoutMatchingKey.forEach(worklogsToBeSynced::remove);
+
+        return worklogsToBeSynced;
     }
 
     /**
@@ -213,6 +247,6 @@ public class JiraWorklog {
      * @return The same list that was passed in but the type changed to DestinationWorklogDTO
      */
     public List<DestinationWorklogDTO> transformFromOriginToDestination(List<OriginWorklogDTO> originWorklogDTOs) {
-         return originWorklogDTOs.stream().filter(Objects::nonNull).collect(Collectors.toList());
+        return originWorklogDTOs.stream().filter(Objects::nonNull).collect(Collectors.toList());
     }
 }
