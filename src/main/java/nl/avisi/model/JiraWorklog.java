@@ -179,7 +179,25 @@ public class JiraWorklog {
     }
 
     public void synchronise() {
-        //todo
+        List<UserSyncDTO> autoSyncUsers = userDAO.getAllAutoSyncUsers();
+
+        List<String> originJiraUserKeys = autoSyncUsers.stream()
+                .map(UserSyncDTO::getFromWorker)
+                .collect(Collectors.toList());
+
+        WorklogRequestDTO requestBody = new WorklogRequestDTO()
+                .setFrom("Laatste sync datum ophalen")
+                .setWorker(originJiraUserKeys)
+                .setTo("Nu");
+
+        List<DestinationWorklogDTO> filteredOutWorklogs = filterOutAlreadySyncedWorklogs(retrieveWorklogsFromClientServer(requestBody), worklogDAO.getAllWorklogIds());
+
+        List<DestinationWorklogDTO> worklogsToBeSynced = mapDestinationUserKeyToOriginUserKey(filteredOutWorklogs, userDAO);
+
+        createWorklogsOnAvisiServer(worklogsToBeSynced);
+
+        //todo make createworklogsonavisiserver return originDTOs with response codes mapped and add succesfully posted worklogs to the database.
+
     }
 
     /**
