@@ -86,6 +86,9 @@ public class JiraWorklog {
     }
 
     /**
+     * Makes a HTTP post request to the tempo api containing the Jira user keys of the workers and a date range to
+     * retrieve the worklogs matching that query.
+     *
      * @param worklogRequestDTO Contains the parameters to specify the worklogs to be retrieved during the HTTP request.
      * @return List of all worklogs that were retrieved from the client server between the two given dates for the specified workers.
      */
@@ -104,6 +107,8 @@ public class JiraWorklog {
     }
 
     /**
+     * Creates WorklogDTOs from the passed in JSONArray and puts them in a list
+     *
      * @param jsonArray All retrieved worklogs in jsonArray form.
      * @return List of all worklogs that were retrieved between the two given dates for the specified workers.
      */
@@ -138,6 +143,8 @@ public class JiraWorklog {
     }
 
     /**
+     * Sends the actual HTTP post request for the worklogs to the Tempo API
+     *
      * @param requestBody Contains the parameters to specify the worklogs to be retrieved during the HTTP request.
      * @return httpResponse containing the worklogs in JsonNode form.
      */
@@ -197,9 +204,10 @@ public class JiraWorklog {
      * Transforms a OriginWorklogDTO list to a DestinationWorklogDTO List.
      * This is needed because OriginWorklogDTO contains the worklogId that
      * is used to filter out already synced worklogs, but to post the worklog
-     * to the Destination server it can't contain the worklogId anymore. Hence
+     * to the destination server it can't contain the worklogId anymore. Hence
      * the transformation of the type of the list. Also simply casting it won't work
-     * this is why it is streamed and filtered for null objects.
+     * this is why it is streamed. The filter for nonNull is simply applied
+     * because the stream requires some kind of non-terminal operation to work.
      *
      * @param originWorklogDTOs List of originWorklogDTOs
      * @return The same list that was passed in but the type changed to DestinationWorklogDTO

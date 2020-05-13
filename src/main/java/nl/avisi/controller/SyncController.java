@@ -44,6 +44,6 @@ public class SyncController {
                jiraWorklog.transformFromOriginToDestination(
                        jiraWorklog.retrieveWorklogsFromClientServer(worklogRequestDTO)));
 
-        return Response.status(200).entity("Synchronisatie succesvol").build();
+        return Response.status(Response.Status.OK).entity("Synchronisatie succesvol").build();
     }
 }
