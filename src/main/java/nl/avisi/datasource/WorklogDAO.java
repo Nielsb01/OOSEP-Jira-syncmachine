@@ -10,14 +10,29 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
 
+/**
+ * interacts with the database for anything that has to do with worklogs
+ */
 public class WorklogDAO implements IWorklogDAO {
 
+    /**
+     * Class to manage the database connection
+     */
     private Database database;
 
+    /**
+     * SQL query for inserting a new worklogId
+     */
     private final static String ADD_WORKLOG_ID_SQL = "INSERT INTO worklog (worklog_id) VALUES (?)";
 
+    /**
+     * SQL query for retrieving all worklogIds
+     */
     private final static String GET_ALL_WORKLOG_IDS_SQL = "SELECT * FROM worklog";
 
+    /**
+     * Class to map Resultsets to in-application objects
+     */
     private IDataMapper<List<Integer>> worklogIdDataMapper;
 
     @Inject
@@ -30,6 +45,11 @@ public class WorklogDAO implements IWorklogDAO {
         this.worklogIdDataMapper = worklogIdDataMapper;
     }
 
+    /**
+     * Adds a worklogId to the database
+     *
+     * @param worklogId To be added to the database
+     */
     @Override
     public void addWorklogId(int worklogId) {
 
@@ -41,6 +61,11 @@ public class WorklogDAO implements IWorklogDAO {
         }
     }
 
+    /**
+     * Retrieves all worklogIds from the database
+     *
+     * @return List of all the worklogIds in the database
+     */
     @Override
     public List<Integer> getAllWorklogIds() {
         List<Integer> worklogIds;
