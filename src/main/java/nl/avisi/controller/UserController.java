@@ -58,7 +58,7 @@ public class UserController {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response setAutoSyncPreference(@PathParam("userId") int userId, @QueryParam("autoSync") boolean autoSyncOn) {
-        jiraUser.setAutoSyncePreference(userId, autoSyncOn);
+        jiraUser.setAutoSyncPreference(userId, autoSyncOn);
         return Response.status(Response.Status.OK).build();
     }
 }

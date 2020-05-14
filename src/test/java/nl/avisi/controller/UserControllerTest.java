@@ -60,7 +60,7 @@ class UserControllerTest {
         final Response actualValue = sut.setAutoSyncPreference(userId, autoSyncOn);
 
         //Assert
-        verify(mockedJiraUser).setAutoSyncePreference(userId, autoSyncOn);
+        verify(mockedJiraUser).setAutoSyncPreference(userId, autoSyncOn);
     }
 
     @Test

@@ -120,7 +120,7 @@ public class JiraUser {
          */
     }
 
-    public void setAutoSyncePreference(int userId, boolean autoSyncOn) {
+    public void setAutoSyncPreference(int userId, boolean autoSyncOn) {
         //todo in andere branch uitwerken
     }
 }
