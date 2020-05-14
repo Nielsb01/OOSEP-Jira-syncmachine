@@ -23,12 +23,12 @@ public class WorklogDAO implements IWorklogDAO {
     /**
      * SQL query for inserting a new worklogId
      */
-    private final static String ADD_WORKLOG_ID_SQL = "INSERT INTO worklog (worklog_id) VALUES (?)";
+    private static final String ADD_WORKLOG_ID_SQL = "INSERT INTO worklog (worklog_id) VALUES (?)";
 
     /**
      * SQL query for retrieving all worklogIds
      */
-    private final static String GET_ALL_WORKLOG_IDS_SQL = "SELECT * FROM worklog";
+    private static final String GET_ALL_WORKLOG_IDS_SQL = "SELECT worklog_id FROM worklog";
 
     /**
      * Class to map Resultsets to in-application objects
