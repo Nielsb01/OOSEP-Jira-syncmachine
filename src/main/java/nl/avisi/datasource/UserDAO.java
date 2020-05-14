@@ -83,4 +83,10 @@ public class UserDAO implements IUserDAO {
 
         return autoSyncUsers;
     }
+
+    @Override
+    public UserSyncDTO getSyncUser(int userId) {
+        //todo methode wordt in een andere branch verder uitgewerkt
+        return null;
+    }
 }

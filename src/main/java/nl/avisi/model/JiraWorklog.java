@@ -178,13 +178,22 @@ public class JiraWorklog {
     }
 
     public void manualSynchronisation(WorklogRequestDTO worklogRequestDTO, int userId) {
-        retrieveWorklogsFromOriginServer(worklogRequestDTO);
+        List<OriginWorklogDTO> allWorklogsFromOriginServer = retrieveWorklogsFromOriginServer(worklogRequestDTO);
 
          List<UserSyncDTO> userSyncDTO =  new ArrayList<>();
          userSyncDTO.add(userDAO.getSyncUser(userId));
 
-        List<OriginWorklogDTO> filterOutAlreadySyncedWorklogs(retrieveWorklogsFromOriginServer(worklogRequestDTO), worklogDAO.getAllWorklogIds());
-        mapDestinationUserKeyToOriginUserKey()
+        List<DestinationWorklogDTO> lol =  filterOutAlreadySyncedWorklogs(allWorklogsFromOriginServer, worklogDAO.getAllWorklogIds());
+
+        Map<DestinationWorklogDTO, Integer> postedWorklogsWithResponseCodes = createWorklogsOnDestinationServer(mapDestinationUserKeyToOriginUserKey(lol, userSyncDTO));
+
+        List<Integer> succesfullyPostedWorklogIds =  filterOutFailedPostedWorklogs(allWorklogsFromOriginServer, postedWorklogsWithResponseCodes);
+
+            //todo functionaliteit inbouwen voor afhandelen van failed posted worklogs en
+            //refactor zodat autosync en manualsync allebei gebruik maken van dezelfde
+            //sync method
+
+        succesfullyPostedWorklogIds.forEach(worklogId -> worklogDAO.addWorklogId(worklogId));
     }
 
     public void synchronise() {
