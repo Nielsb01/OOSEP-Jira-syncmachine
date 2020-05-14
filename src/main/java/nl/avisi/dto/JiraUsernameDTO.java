@@ -9,12 +9,12 @@ package nl.avisi.dto;
 public class JiraUsernameDTO {
 
     /**
-     * Username on the client Jira server
+     * Username on the origin Jira server
      */
     private String originUsername;
 
     /**
-     * Username on the Avisi Jira server
+     * Username on the destination Jira server
      */
     private String destinationUsername;
 

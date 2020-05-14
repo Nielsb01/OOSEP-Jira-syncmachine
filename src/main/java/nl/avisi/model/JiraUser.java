@@ -59,7 +59,7 @@ public class JiraUser {
         String originUrl = jiraSynchronisationProperties.getOriginUrl();
         String destinationUrl = jiraSynchronisationProperties.getDestinationUrl();
 
-        createJiraConnection();
+        setRequestAuthenticationMethod();
 
         HttpResponse<JsonNode> jsonOriginJiraUser = request.get(originUrl + jiraUsernameDTO.getOriginUsername());
         HttpResponse<JsonNode> jsonDestinationJiraUser = request.get(destinationUrl + jiraUsernameDTO.getDestinationUsername());
@@ -73,7 +73,7 @@ public class JiraUser {
         return jiraUserKeyDTO;
     }
 
-    private void createJiraConnection() {
+    private void setRequestAuthenticationMethod() {
         BasicAuth basicAuth = new BasicAuth()
                 .setUsername(jiraSynchronisationProperties.getAdminUsername())
                 .setPassword(jiraSynchronisationProperties.getAdminPassword());
