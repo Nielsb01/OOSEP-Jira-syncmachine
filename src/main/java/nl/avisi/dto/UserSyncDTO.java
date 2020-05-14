@@ -11,30 +11,30 @@ public class UserSyncDTO {
      * The worker key from the JIRA instance
      * where the employees log their hours
      */
-    private String fromWorker;
+    private String originWorker;
 
     /**
      * The worker key for the JIRA instance
      * where the logged hours need to be synced
      * to
      */
-    private String toWorker;
+    private String destinationWorker;
 
-    public String getFromWorker() {
-        return fromWorker;
+    public String getOriginWorker() {
+        return originWorker;
     }
 
-    public UserSyncDTO setFromWorker(String fromWorker) {
-        this.fromWorker = fromWorker;
+    public UserSyncDTO setOriginWorker(String originWorker) {
+        this.originWorker = originWorker;
         return this;
     }
 
-    public String getToWorker() {
-        return toWorker;
+    public String getDestinationWorker() {
+        return destinationWorker;
     }
 
-    public UserSyncDTO setToWorker(String toWorker) {
-        this.toWorker = toWorker;
+    public UserSyncDTO setDestinationWorker(String destinationWorker) {
+        this.destinationWorker = destinationWorker;
         return this;
     }
 }

@@ -26,19 +26,19 @@ public class UserDAO implements IUserDAO {
      * Column name for the worker of the from
      * JIRA instance
      */
-    private static final String JIRA_FROM_WORKER_COLUMN_NAME = "JiraInstantie1Worker";
+    private static final String JIRA_ORIGIN_WORKER_COLUMN_NAME = "JiraInstantie1Worker";
 
     /**
      * Column name for the worker of the to
      * JIRA instance
      */
-    private static final String JIRA_TO_WORKER_COLUMN_NAME = "Jirainstantie2Worker";
+    private static final String JIRA_DESTINATION_WORKER_COLUMN_NAME = "Jirainstantie2Worker";
 
     /**
      * SQL Query to retrieve all users who
      * have chosen to use the auto sync feature
      */
-    private static final String GET_ALL_AUTO_SYNC_USERS_SQL = String.format("SELECT %s, %s FROM Jirausers WHERE syncStatus = ?", JIRA_FROM_WORKER_COLUMN_NAME, JIRA_TO_WORKER_COLUMN_NAME);
+    private static final String GET_ALL_AUTO_SYNC_USERS_SQL = String.format("SELECT %s, %s FROM Jirausers WHERE syncStatus = ?", JIRA_ORIGIN_WORKER_COLUMN_NAME, JIRA_DESTINATION_WORKER_COLUMN_NAME);
 
     /**
      * Class to manage the database connection
@@ -71,8 +71,8 @@ public class UserDAO implements IUserDAO {
             while (result.next()) {
                 autoSyncUsers.add(
                         new UserSyncDTO()
-                                .setFromWorker(result.getString(JIRA_FROM_WORKER_COLUMN_NAME))
-                                .setToWorker(result.getString(JIRA_TO_WORKER_COLUMN_NAME))
+                                .setOriginWorker(result.getString(JIRA_ORIGIN_WORKER_COLUMN_NAME))
+                                .setDestinationWorker(result.getString(JIRA_DESTINATION_WORKER_COLUMN_NAME))
                 );
             }
         } catch (SQLException e) {

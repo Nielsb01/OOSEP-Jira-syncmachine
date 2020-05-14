@@ -99,9 +99,9 @@ public class UserDAOTest {
         List<UserSyncDTO> results = sut.getAllAutoSyncUsers();
 
         // Assert
-        assertEquals(firstSyncUserFromWorker, results.get(0).getFromWorker());
-        assertEquals(firstSyncUserToWorker, results.get(0).getToWorker());
-        assertEquals(secondSyncUserFromWorker, results.get(1).getFromWorker());
-        assertEquals(secondSyncUserToWorker, results.get(1).getToWorker());
+        assertEquals(firstSyncUserFromWorker, results.get(0).getOriginWorker());
+        assertEquals(firstSyncUserToWorker, results.get(0).getDestinationWorker());
+        assertEquals(secondSyncUserFromWorker, results.get(1).getOriginWorker());
+        assertEquals(secondSyncUserToWorker, results.get(1).getDestinationWorker());
     }
 }

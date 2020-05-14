@@ -9,30 +9,30 @@ package nl.avisi.dto;
 public class JiraUsernameDTO {
 
     /**
-     * Username on the client Jira server
+     * Username on the origin Jira server
      */
-    private String clientUsername;
+    private String originUsername;
 
     /**
-     * Username on the Avisi Jira server
+     * Username on the destination Jira server
      */
-    private String avisiUsername;
+    private String destinationUsername;
 
-    public String getClientUsername() {
-        return clientUsername;
+    public String getOriginUsername() {
+        return originUsername;
     }
 
-    public JiraUsernameDTO setClientUsername(String clientUsername) {
-        this.clientUsername = clientUsername;
+    public JiraUsernameDTO setOriginUsername(String originUsername) {
+        this.originUsername = originUsername;
         return this;
     }
 
-    public String getAvisiUsername() {
-        return avisiUsername;
+    public String getDestinationUsername() {
+        return destinationUsername;
     }
 
-    public JiraUsernameDTO setAvisiUsername(String avisiUsername) {
-        this.avisiUsername = avisiUsername;
+    public JiraUsernameDTO setDestinationUsername(String destinationUsername) {
+        this.destinationUsername = destinationUsername;
         return this;
     }
 }
