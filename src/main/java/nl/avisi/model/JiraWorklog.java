@@ -4,17 +4,18 @@ import kong.unirest.*;
 import kong.unirest.json.JSONArray;
 import kong.unirest.json.JSONException;
 import kong.unirest.json.JSONObject;
+import nl.avisi.datasource.contracts.IUserDAO;
+import nl.avisi.datasource.contracts.IWorklogDAO;
 import nl.avisi.dto.DestinationWorklogDTO;
+import nl.avisi.dto.OriginWorklogDTO;
 import nl.avisi.dto.WorklogRequestDTO;
 import nl.avisi.network.IRequest;
 import nl.avisi.network.authentication.BasicAuth;
 import nl.avisi.propertyreaders.JiraSynchronisationProperties;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Responsible for retrieving and creating worklogs on the specified Jira server through the Tempo API with HTTP requests
@@ -46,6 +47,20 @@ public class JiraWorklog {
      */
     private JiraSynchronisationProperties jiraSynchronisationProperties;
 
+    private IUserDAO userDAO;
+
+    private IWorklogDAO worklogDAO;
+
+    @Inject
+    public void setWorklogDAO(IWorklogDAO worklogDAO) {
+        this.worklogDAO = worklogDAO;
+    }
+
+    @Inject
+    public void setUserDAO(IUserDAO userDAO) {
+        this.userDAO = userDAO;
+    }
+
     @Inject
     public void setJiraSynchronisationProperties(JiraSynchronisationProperties jiraSynchronisationProperties) {
         this.jiraSynchronisationProperties = jiraSynchronisationProperties;
@@ -69,10 +84,13 @@ public class JiraWorklog {
     }
 
     /**
+     * Makes a HTTP post request to the tempo api containing the Jira user keys of the workers and a date range to
+     * retrieve the worklogs matching that query.
+     *
      * @param worklogRequestDTO Contains the parameters to specify the worklogs to be retrieved during the HTTP request.
      * @return List of all worklogs that were retrieved from the client server between the two given dates for the specified workers.
      */
-    public List<DestinationWorklogDTO> retrieveWorklogsFromOriginServer(WorklogRequestDTO worklogRequestDTO) {
+    public List<OriginWorklogDTO> retrieveWorklogsFromOriginServer(WorklogRequestDTO worklogRequestDTO) {
         setOriginUrl(jiraSynchronisationProperties.getOriginUrl());
 
         HttpResponse<JsonNode> jsonWorklogs = requestWorklogs(worklogRequestDTO);
@@ -87,11 +105,13 @@ public class JiraWorklog {
     }
 
     /**
+     * Creates WorklogDTOs from the passed in JSONArray and puts them in a list
+     *
      * @param jsonArray All retrieved worklogs in jsonArray form.
      * @return List of all worklogs that were retrieved between the two given dates for the specified workers.
      */
-    private List<DestinationWorklogDTO> createWorklogDTOs(JSONArray jsonArray) {
-        List<DestinationWorklogDTO> worklogs = new ArrayList<>();
+    private List<OriginWorklogDTO> createWorklogDTOs(JSONArray jsonArray) {
+        List<OriginWorklogDTO> worklogs = new ArrayList<>();
 
         for (int i = 0; i < jsonArray.length(); i++) {
             JSONObject jsonObject = jsonArray.getJSONObject(i);
@@ -101,8 +121,17 @@ public class JiraWorklog {
                 String started = jsonObject.getString("started");
                 String originTaskId = jsonObject.getJSONObject("issue").getString("accountKey");
                 int timeSpentSeconds = jsonObject.getInt("timeSpentSeconds");
+                int worklogId = jsonObject.getInt("tempoWorklogId");
 
-                worklogs.add(new DestinationWorklogDTO().setWorker(worker).setStarted(started).setOriginTaskId(originTaskId).setTimeSpentSeconds(timeSpentSeconds));
+                worklogs.add(
+                        (OriginWorklogDTO) new OriginWorklogDTO()
+                                .setWorklogId(worklogId)
+                                .setWorker(worker)
+                                .setStarted(started)
+                                .setOriginTaskId(originTaskId)
+                                .setTimeSpentSeconds(timeSpentSeconds)
+                );
+
             } catch (JSONException e) {
                 return new ArrayList<>();
             }
@@ -112,6 +141,8 @@ public class JiraWorklog {
     }
 
     /**
+     * Sends the actual HTTP post request for the worklogs to the Tempo API
+     *
      * @param requestBody Contains the parameters to specify the worklogs to be retrieved during the HTTP request.
      * @return httpResponse containing the worklogs in JsonNode form.
      */
@@ -140,14 +171,68 @@ public class JiraWorklog {
         for (DestinationWorklogDTO worklog : worklogs) {
             HttpResponse<JsonNode> response = request.post(destinationUrl, worklog);
             responseCodes.put(worklog, response.getStatus());
-
         }
 
         return responseCodes;
     }
 
     public void synchronise() {
-        System.out.println("Hij print");
-        // wordt verder uitgewerkt in andere branch
+        //todo
+    }
+
+    /**
+     * Filters all worklogs retrieved from the origin server
+     * that match with the worklogs that were posted to the
+     * destination server and have a status code 200.
+     *
+     * @param allRetrievedWorklogsFromOriginServer All the worklogs that were retrieved from the origin server
+     * @param postedWorklogsWithResponseCodes Map of worklogs that were posted with the respective response status
+     * @return List of all the worklogIds that had a status code of 200
+     */
+    public List<Integer> filterOutFailedPostedWorklogs(List<OriginWorklogDTO> allRetrievedWorklogsFromOriginServer, Map<DestinationWorklogDTO, Integer> postedWorklogsWithResponseCodes) {
+        List<Integer> idsOfSuccesfullyPostedworklogs = new ArrayList<>();
+
+        postedWorklogsWithResponseCodes.forEach((key, value) -> allRetrievedWorklogsFromOriginServer.forEach(worklog -> {
+            if (worklog.equals(key) && value == 200) {
+                idsOfSuccesfullyPostedworklogs.add(worklog.getWorklogId());
+            }
+        }));
+
+        return idsOfSuccesfullyPostedworklogs;
+
+    }
+
+    /**
+     * Filters out worklogs from the worklogs retrieved from the origin server by
+     * comparing the already synced worklogIds and removing any match from the original
+     * list.
+     *
+     * @param retrievedWorklogs Worklogs that were retrieved from the origin server
+     * @param allWorklogIds     All worklogIds of worklogs that are already synced in the past.
+     *                          This data is retrieved from the database
+     * @return list of DestinationWorklogDTOs that only contain not yet synced worklogs
+     */
+    public List<DestinationWorklogDTO> filterOutAlreadySyncedWorklogs(List<OriginWorklogDTO> retrievedWorklogs, List<Integer> allWorklogIds) {
+        return retrievedWorklogs
+                .stream()
+                .filter(worklog -> allWorklogIds.stream()
+                        .noneMatch(worklogId -> worklogId == worklog.getWorklogId()))
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Transforms a OriginWorklogDTO list to a DestinationWorklogDTO List.
+     * This is needed because OriginWorklogDTO contains the worklogId that
+     * is used to filter out already synced worklogs, but to post the worklog
+     * to the destination server it can't contain the worklogId anymore. Hence
+     * the transformation of the type of the list. Also simply casting it won't work
+     * this is why it is streamed. The filter for nonNull is simply applied
+     * because the stream requires some kind of non-terminal operation to work.
+     *
+     * @param originWorklogDTOs List of originWorklogDTOs
+     * @return The same list that was passed in but the type changed to DestinationWorklogDTO
+     */
+    public List<DestinationWorklogDTO> transformFromOriginToDestination(List<OriginWorklogDTO> originWorklogDTOs) {
+        return originWorklogDTOs.stream().filter(Objects::nonNull).collect(Collectors.toList());
     }
 }

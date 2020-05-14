@@ -5,14 +5,17 @@ import kong.unirest.JsonNode;
 import kong.unirest.json.JSONArray;
 import kong.unirest.json.JSONObject;
 import nl.avisi.dto.DestinationWorklogDTO;
+import nl.avisi.dto.OriginWorklogDTO;
 import nl.avisi.dto.WorklogRequestDTO;
 import nl.avisi.network.IRequest;
 import nl.avisi.network.authentication.BasicAuth;
 import nl.avisi.propertyreaders.JiraSynchronisationProperties;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.cglib.transform.AbstractClassTransformer;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -23,6 +26,7 @@ import static org.mockito.Mockito.*;
 
 class JiraWorklogTest {
 
+    public static final int TEMPO_WORKLOG_ID_VALUE = 1;
     private JiraWorklog sut;
     private IRequest mockedRequest;
     private HttpResponse mockedResponse;
@@ -59,7 +63,8 @@ class JiraWorklogTest {
                 .put("worker", WORKER_VALUE)
                 .put("started", STARTED_VALUE)
                 .put("issue", new JSONObject().put("accountKey", ACCOUNT_KEY_VALUE))
-                .put("timeSpentSeconds", TIME_SPENT_SECONDS_VALUE);
+                .put("timeSpentSeconds", TIME_SPENT_SECONDS_VALUE)
+                .put("tempoWorklogId", TEMPO_WORKLOG_ID_VALUE);
 
         String jsonString = new JSONArray().put(jsonObject).toString();
 
@@ -67,7 +72,11 @@ class JiraWorklogTest {
         when(mockedResponse.getBody()).thenReturn(new JsonNode(jsonString));
 
         //Act
+<<<<<<< HEAD
         List<DestinationWorklogDTO> actualValue = sut.retrieveWorklogsFromOriginServer(worklogRequestDTO);
+=======
+        List<OriginWorklogDTO> actualValue = sut.retrieveWorklogsFromClientServer(worklogRequestDTO);
+>>>>>>> 12021aa3b9611e435f994d89636c49656df411c9
 
         //Assert
         assertEquals(1, actualValue.size());
@@ -80,7 +89,11 @@ class JiraWorklogTest {
         when(mockedRequest.post(any(), any())).thenReturn(mockedResponse);
         when(mockedResponse.getBody()).thenReturn(null);
 
+<<<<<<< HEAD
         List<DestinationWorklogDTO> actualValue = sut.retrieveWorklogsFromOriginServer(worklogRequestDTO);
+=======
+        List<OriginWorklogDTO> actualValue = sut.retrieveWorklogsFromClientServer(worklogRequestDTO);
+>>>>>>> 12021aa3b9611e435f994d89636c49656df411c9
 
         assertEquals(0, actualValue.size());
     }
@@ -92,7 +105,11 @@ class JiraWorklogTest {
         when(mockedResponse.getBody()).thenReturn(new JsonNode(
                 "[]"));
 
+<<<<<<< HEAD
         List<DestinationWorklogDTO> actualValue = sut.retrieveWorklogsFromOriginServer(worklogRequestDTO);
+=======
+        List<OriginWorklogDTO> actualValue = sut.retrieveWorklogsFromClientServer(worklogRequestDTO);
+>>>>>>> 12021aa3b9611e435f994d89636c49656df411c9
 
         assertEquals(0, actualValue.size());
     }
@@ -104,7 +121,8 @@ class JiraWorklogTest {
                 .put("worker", WORKER_VALUE)
                 .put("started", STARTED_VALUE)
                 .put("issue", new JSONObject().put("accountKey", ACCOUNT_KEY_VALUE))
-                .put("timeSpentSeconds", TIME_SPENT_SECONDS_VALUE);
+                .put("timeSpentSeconds", TIME_SPENT_SECONDS_VALUE)
+                .put("tempoWorklogId", TEMPO_WORKLOG_ID_VALUE);
 
         String jsonString = new JSONArray().put(jsonObject).toString();
 
@@ -113,9 +131,14 @@ class JiraWorklogTest {
         when(mockedResponse.getBody()).thenReturn(new JsonNode(jsonString));
 
         //Act
+<<<<<<< HEAD
         List<DestinationWorklogDTO> actualValue = sut.retrieveWorklogsFromOriginServer(worklogRequestDTO);
+=======
+        List<OriginWorklogDTO> actualValue = sut.retrieveWorklogsFromClientServer(worklogRequestDTO);
+>>>>>>> 12021aa3b9611e435f994d89636c49656df411c9
 
         //Assert
+        assertEquals(TEMPO_WORKLOG_ID_VALUE, actualValue.get(0).getWorklogId());
         assertEquals(WORKER_VALUE, actualValue.get(0).getWorker());
         assertEquals(STARTED_VALUE, actualValue.get(0).getStarted());
         assertEquals(ACCOUNT_KEY_VALUE, actualValue.get(0).getOriginTaskId());
@@ -136,7 +159,11 @@ class JiraWorklogTest {
         when(mockedResponse.getBody()).thenReturn(new JsonNode(jsonArray));
 
         //Act
+<<<<<<< HEAD
         List<DestinationWorklogDTO> actualValue = sut.retrieveWorklogsFromOriginServer(worklogRequestDTO);
+=======
+        List<OriginWorklogDTO> actualValue = sut.retrieveWorklogsFromClientServer(worklogRequestDTO);
+>>>>>>> 12021aa3b9611e435f994d89636c49656df411c9
 
 
         //Assert
@@ -183,5 +210,129 @@ class JiraWorklogTest {
         //Assert
         assertTrue(actualvalue.containsValue(400));
         assertTrue(actualvalue.containsValue(200));
+    }
+
+    @Test
+     void testTransformFromOriginToDestinationReturnsListWithSameObjectAsBefore() {
+        //Arrange
+        List<OriginWorklogDTO> originList = new ArrayList<>();
+        OriginWorklogDTO originWorklogDTO = new OriginWorklogDTO().setWorklogId(1);
+        originList.add(originWorklogDTO);
+
+        //Act
+        List<DestinationWorklogDTO> destinationList = sut.transformFromOriginToDestination(originList);
+
+        //Assert
+        assertEquals(originWorklogDTO, destinationList.get(0));
+    }
+
+    @Test
+    void testTransformFromOriginToDestinationFiltersOutNullObjects() {
+        //Arrange
+        List<OriginWorklogDTO> originList = new ArrayList<>();
+        originList.add(null);
+
+        //Act
+        List<DestinationWorklogDTO> destinationList = sut.transformFromOriginToDestination(originList);
+
+        //Assert
+        assertEquals(0, destinationList.size());
+    }
+
+    @Test
+    void testFilterOutAlreadySyncedWorklogsReturnsCorrectlySizedListAfterFiltering() {
+        //Arrange
+        List<OriginWorklogDTO> originList = new ArrayList<>();
+        originList.add(new OriginWorklogDTO().setWorklogId(1));
+        originList.add(new OriginWorklogDTO().setWorklogId(2));
+        originList.add(new OriginWorklogDTO().setWorklogId(3));
+
+        List<Integer> allWorklogIds = new ArrayList<>();
+        allWorklogIds.add(1);
+        allWorklogIds.add(2);
+
+        //Act
+        List<DestinationWorklogDTO> destinationList = sut.filterOutAlreadySyncedWorklogs(originList, allWorklogIds);
+
+        //Assert
+        assertEquals(1, destinationList.size());
+    }
+
+    @Test
+    void testFilterOutAlreadySyncedWorklogsReturnsListWithCorrectObject() {
+        //Arrange
+        List<OriginWorklogDTO> originList = new ArrayList<>();
+        OriginWorklogDTO originWorklogDTO = new OriginWorklogDTO().setWorklogId(3);
+        originList.add(new OriginWorklogDTO().setWorklogId(1));
+        originList.add(new OriginWorklogDTO().setWorklogId(2));
+        originList.add(originWorklogDTO);
+
+        List<Integer> allWorklogIds = new ArrayList<>();
+        allWorklogIds.add(1);
+        allWorklogIds.add(2);
+
+        //Act
+        List<DestinationWorklogDTO> destinationList = sut.filterOutAlreadySyncedWorklogs(originList, allWorklogIds);
+
+        //Assert
+        assertEquals(originWorklogDTO, destinationList.get(0));
+    }
+
+    @Test
+    void testfilterOutFailedPostedWorklogsReturnListWithCorrectObject() {
+        //Arrange
+        List<OriginWorklogDTO> originList = new ArrayList<>();
+        OriginWorklogDTO originWorklogDTO = new OriginWorklogDTO().setWorklogId(3);
+        originList.add(new OriginWorklogDTO().setWorklogId(1));
+        originList.add(new OriginWorklogDTO().setWorklogId(2));
+        originList.add(originWorklogDTO);
+
+        Map<DestinationWorklogDTO, Integer> worklogsWithResponsecodes = new HashMap<>();
+        worklogsWithResponsecodes.put(originWorklogDTO, 200);
+
+        //Act
+        List<Integer> actualValue = sut.filterOutFailedPostedWorklogs(originList, worklogsWithResponsecodes);
+
+        //Assert
+        assertEquals(originWorklogDTO.getWorklogId(), actualValue.get(0).intValue());
+
+    }
+
+    @Test
+    void testfilterOutFailedPostedWorklogsReturnCorrectlySizedList() {
+        //Arrange
+        List<OriginWorklogDTO> originList = new ArrayList<>();
+        OriginWorklogDTO originWorklogDTO = new OriginWorklogDTO().setWorklogId(3);
+        originList.add(new OriginWorklogDTO().setWorklogId(1));
+        originList.add(new OriginWorklogDTO().setWorklogId(2));
+        originList.add(originWorklogDTO);
+
+        Map<DestinationWorklogDTO, Integer> worklogsWithResponsecodes = new HashMap<>();
+        worklogsWithResponsecodes.put(originWorklogDTO, 200);
+
+        //Act
+        List<Integer> actualValue = sut.filterOutFailedPostedWorklogs(originList, worklogsWithResponsecodes);
+
+        //Assert
+        assertEquals(1, actualValue.size());
+    }
+
+    @Test
+    void testfilterOutFailedPostedWorklogsReturnEmptyListWhenNoObjectsMatch() {
+        //Arrange
+        List<OriginWorklogDTO> originList = new ArrayList<>();
+        OriginWorklogDTO originWorklogDTO = new OriginWorklogDTO().setWorklogId(3);
+        originList.add(new OriginWorklogDTO().setWorklogId(1));
+        originList.add(new OriginWorklogDTO().setWorklogId(2));
+        originList.add(originWorklogDTO);
+
+        Map<DestinationWorklogDTO, Integer> worklogsWithResponsecodes = new HashMap<>();
+        worklogsWithResponsecodes.put(originWorklogDTO, 400);
+
+        //Act
+        List<Integer> actualValue = sut.filterOutFailedPostedWorklogs(originList, worklogsWithResponsecodes);
+
+        //Assert
+        assertEquals(0, actualValue.size());
     }
 }
