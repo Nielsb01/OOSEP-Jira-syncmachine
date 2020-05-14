@@ -15,7 +15,6 @@ import nl.avisi.network.authentication.BasicAuth;
 import nl.avisi.propertyreaders.JiraSynchronisationProperties;
 
 import javax.inject.Inject;
-import javax.json.Json;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -180,6 +179,28 @@ public class JiraWorklog {
 
     public void synchronise() {
         //todo
+    }
+
+    /**
+     * Filters all worklogs retrieved from the origin server
+     * that match with the worklogs that were posted to the
+     * destination server and have a status code 200.
+     *
+     * @param allRetrievedWorklogsFromOriginServer All the worklogs that were retrieved from the origin server
+     * @param postedWorklogsWithResponseCodes Map of worklogs that were posted with the respective response status
+     * @return List of all the worklogIds that had a status code of 200
+     */
+    public List<Integer> filterOutFailedPostedWorklogs(List<OriginWorklogDTO> allRetrievedWorklogsFromOriginServer, Map<DestinationWorklogDTO, Integer> postedWorklogsWithResponseCodes) {
+        List<Integer> idsOfSuccesfullyPostedworklogs = new ArrayList<>();
+
+        postedWorklogsWithResponseCodes.forEach((key, value) -> allRetrievedWorklogsFromOriginServer.forEach(worklog -> {
+            if (worklog.equals(key) && value == 200) {
+                idsOfSuccesfullyPostedworklogs.add(worklog.getWorklogId());
+            }
+        }));
+
+        return idsOfSuccesfullyPostedworklogs;
+
     }
 
     /**

@@ -13,9 +13,9 @@ import nl.avisi.network.authentication.BasicAuth;
 import nl.avisi.propertyreaders.JiraSynchronisationProperties;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.cglib.transform.AbstractClassTransformer;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -290,9 +290,7 @@ class JiraWorklogTest {
         userSyncDTOS.add(new UserSyncDTO().setFromWorker("JIRAUSER10").setToWorker("JIRAUSER21"));
 
         //Act & Assert
-        assertThrows(IllegalStateException.class, () -> {
-            sut.mapDestinationUserKeyToOriginUserKey(destinationWorklogDTOS, userSyncDTOS);
-        });
+        assertThrows(IllegalStateException.class, () -> sut.mapDestinationUserKeyToOriginUserKey(destinationWorklogDTOS, userSyncDTOS));
     }
 
     @Test
@@ -312,5 +310,63 @@ class JiraWorklogTest {
         //Assert
         assertEquals(1, destinationList.size());
 
+    }
+
+    @Test
+    void testfilterOutFailedPostedWorklogsReturnListWithCorrectObject() {
+        //Arrange
+        List<OriginWorklogDTO> originList = new ArrayList<>();
+        OriginWorklogDTO originWorklogDTO = new OriginWorklogDTO().setWorklogId(3);
+        originList.add(new OriginWorklogDTO().setWorklogId(1));
+        originList.add(new OriginWorklogDTO().setWorklogId(2));
+        originList.add(originWorklogDTO);
+
+        Map<DestinationWorklogDTO, Integer> worklogsWithResponsecodes = new HashMap<>();
+        worklogsWithResponsecodes.put(originWorklogDTO, 200);
+
+        //Act
+        List<Integer> actualValue = sut.filterOutFailedPostedWorklogs(originList, worklogsWithResponsecodes);
+
+        //Assert
+        assertEquals(originWorklogDTO.getWorklogId(), actualValue.get(0).intValue());
+
+    }
+
+    @Test
+    void testfilterOutFailedPostedWorklogsReturnCorrectlySizedList() {
+        //Arrange
+        List<OriginWorklogDTO> originList = new ArrayList<>();
+        OriginWorklogDTO originWorklogDTO = new OriginWorklogDTO().setWorklogId(3);
+        originList.add(new OriginWorklogDTO().setWorklogId(1));
+        originList.add(new OriginWorklogDTO().setWorklogId(2));
+        originList.add(originWorklogDTO);
+
+        Map<DestinationWorklogDTO, Integer> worklogsWithResponsecodes = new HashMap<>();
+        worklogsWithResponsecodes.put(originWorklogDTO, 200);
+
+        //Act
+        List<Integer> actualValue = sut.filterOutFailedPostedWorklogs(originList, worklogsWithResponsecodes);
+
+        //Assert
+        assertEquals(1, actualValue.size());
+    }
+
+    @Test
+    void testfilterOutFailedPostedWorklogsReturnEmptyListWhenNoObjectsMatch() {
+        //Arrange
+        List<OriginWorklogDTO> originList = new ArrayList<>();
+        OriginWorklogDTO originWorklogDTO = new OriginWorklogDTO().setWorklogId(3);
+        originList.add(new OriginWorklogDTO().setWorklogId(1));
+        originList.add(new OriginWorklogDTO().setWorklogId(2));
+        originList.add(originWorklogDTO);
+
+        Map<DestinationWorklogDTO, Integer> worklogsWithResponsecodes = new HashMap<>();
+        worklogsWithResponsecodes.put(originWorklogDTO, 400);
+
+        //Act
+        List<Integer> actualValue = sut.filterOutFailedPostedWorklogs(originList, worklogsWithResponsecodes);
+
+        //Assert
+        assertEquals(0, actualValue.size());
     }
 }
