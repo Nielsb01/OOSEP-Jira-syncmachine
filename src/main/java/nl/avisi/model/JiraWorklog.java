@@ -8,14 +8,12 @@ import nl.avisi.datasource.contracts.IUserDAO;
 import nl.avisi.datasource.contracts.IWorklogDAO;
 import nl.avisi.dto.DestinationWorklogDTO;
 import nl.avisi.dto.OriginWorklogDTO;
-import nl.avisi.dto.UserSyncDTO;
 import nl.avisi.dto.WorklogRequestDTO;
 import nl.avisi.network.IRequest;
 import nl.avisi.network.authentication.BasicAuth;
 import nl.avisi.propertyreaders.JiraSynchronisationProperties;
 
 import javax.inject.Inject;
-import javax.json.Json;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -183,13 +181,35 @@ public class JiraWorklog {
     }
 
     /**
+     * Filters all worklogs retrieved from the origin server
+     * that match with the worklogs that were posted to the
+     * destination server and have a status code 200.
+     *
+     * @param allRetrievedWorklogsFromOriginServer All the worklogs that were retrieved from the origin server
+     * @param postedWorklogsWithResponseCodes Map of worklogs that were posted with the respective response status
+     * @return List of all the worklogIds that had a status code of 200
+     */
+    public List<Integer> filterOutFailedPostedWorklogs(List<OriginWorklogDTO> allRetrievedWorklogsFromOriginServer, Map<DestinationWorklogDTO, Integer> postedWorklogsWithResponseCodes) {
+        List<Integer> idsOfSuccesfullyPostedworklogs = new ArrayList<>();
+
+        postedWorklogsWithResponseCodes.forEach((key, value) -> allRetrievedWorklogsFromOriginServer.forEach(worklog -> {
+            if (worklog.equals(key) && value == 200) {
+                idsOfSuccesfullyPostedworklogs.add(worklog.getWorklogId());
+            }
+        }));
+
+        return idsOfSuccesfullyPostedworklogs;
+
+    }
+
+    /**
      * Filters out worklogs from the worklogs retrieved from the origin server by
      * comparing the already synced worklogIds and removing any match from the original
      * list.
      *
      * @param retrievedWorklogs Worklogs that were retrieved from the origin server
-     * @param allWorklogIds All worklogIds of worklogs that are already synced in the past.
-     *                      This data is retrieved from the database
+     * @param allWorklogIds     All worklogIds of worklogs that are already synced in the past.
+     *                          This data is retrieved from the database
      * @return list of DestinationWorklogDTOs that only contain not yet synced worklogs
      */
     public List<DestinationWorklogDTO> filterOutAlreadySyncedWorklogs(List<OriginWorklogDTO> retrievedWorklogs, List<Integer> allWorklogIds) {
@@ -213,6 +233,6 @@ public class JiraWorklog {
      * @return The same list that was passed in but the type changed to DestinationWorklogDTO
      */
     public List<DestinationWorklogDTO> transformFromOriginToDestination(List<OriginWorklogDTO> originWorklogDTOs) {
-         return originWorklogDTOs.stream().filter(Objects::nonNull).collect(Collectors.toList());
+        return originWorklogDTOs.stream().filter(Objects::nonNull).collect(Collectors.toList());
     }
 }
