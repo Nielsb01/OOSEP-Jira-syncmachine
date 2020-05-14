@@ -177,6 +177,16 @@ public class JiraWorklog {
         return responseCodes;
     }
 
+    /**
+     * Synchronises the worklogs of one person after the user sent
+     * a request to manually synchronise their worklogs.
+     * @param worklogRequestDTO Contains the neccesary information to
+     *                          make a HTTP request to the Tempo API
+     *                          to retrieve worklogs from the
+     *                          origin server
+     * @param userId Id of the user that wants to manually synchronise their
+     *               worklogs
+     */
     public void manualSynchronisation(WorklogRequestDTO worklogRequestDTO, int userId) {
         List<OriginWorklogDTO> allWorklogsFromOriginServer = retrieveWorklogsFromOriginServer(worklogRequestDTO);
 
