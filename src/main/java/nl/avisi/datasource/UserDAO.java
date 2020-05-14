@@ -83,4 +83,9 @@ public class UserDAO implements IUserDAO {
 
         return autoSyncUsers;
     }
+
+    @Override
+    public void setAutoSyncPreference(int userId, boolean autoSyncOn) {
+        //todo in andere branch uitwerken
+    }
 }

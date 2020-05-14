@@ -34,7 +34,7 @@ public class LoginController {
      * @param loginDTO contains the login information of the user
      *                 needed to verify their identity
      * @return Response containing the UserID corresponding to the
-     *         supplied login information and the appropriate status code.
+     * supplied login information and the appropriate status code.
      */
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
