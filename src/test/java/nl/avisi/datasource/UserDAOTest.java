@@ -5,13 +5,14 @@ import nl.avisi.dto.UserSyncDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import javax.ws.rs.InternalServerErrorException;
 import java.sql.*;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class UserDAOTest {
     private UserDAO sut;
@@ -103,5 +104,80 @@ public class UserDAOTest {
         assertEquals(firstSyncUserToWorker, results.get(0).getDestinationWorker());
         assertEquals(secondSyncUserFromWorker, results.get(1).getOriginWorker());
         assertEquals(secondSyncUserToWorker, results.get(1).getDestinationWorker());
+    }
+
+    @Test
+    void testSetAutoSyncPreferenceCallsConnect() throws SQLException {
+        //Arrange
+        final int userId = 1;
+        final boolean autoSyncOn = true;
+
+        PreparedStatement mockedStatement = mock(PreparedStatement.class);
+        Connection mockedConnection = mock(Connection.class);
+
+        when(mockedDatabase.connect()).thenReturn(mockedConnection);
+        when(mockedConnection.prepareStatement(any())).thenReturn(mockedStatement);
+
+        //Act
+        sut.setAutoSyncPreference(userId, autoSyncOn);
+
+        //Assert
+        verify(mockedDatabase).connect();
+    }
+
+    @Test
+    void testSetAutoSyncPreferenceClosesConnectionAndStatement() throws SQLException {
+        //Arrange
+        final int userId = 1;
+        final boolean autoSyncOn = true;
+
+        PreparedStatement mockedStatement = mock(PreparedStatement.class);
+        Connection mockedConnection = mock(Connection.class);
+
+        when(mockedDatabase.connect()).thenReturn(mockedConnection);
+        when(mockedConnection.prepareStatement(any())).thenReturn(mockedStatement);
+
+        //Act
+        sut.setAutoSyncPreference(userId, autoSyncOn);
+
+        //Assert
+        verify(mockedConnection).close();
+        verify(mockedStatement).close();
+    }
+
+    @Test
+    void testSetAutoSyncPreferenceSetsPreparedStmtCorrectly() throws SQLException {
+        //Arrange
+        final int userId = 1;
+        final boolean autoSyncOn = true;
+
+        PreparedStatement mockedStatement = mock(PreparedStatement.class);
+        Connection mockedConnection = mock(Connection.class);
+
+        when(mockedDatabase.connect()).thenReturn(mockedConnection);
+        when(mockedConnection.prepareStatement(any())).thenReturn(mockedStatement);
+
+        //Act
+        sut.setAutoSyncPreference(userId, autoSyncOn);
+
+        //Assert
+        verify(mockedStatement).setInt(2, userId);
+        verify(mockedStatement).setBoolean(1, autoSyncOn);
+    }
+
+    @Test
+    void testSetAutoSyncPreferenceThrowsInternalServerErrorWhenSQLExceptionIsThrown() throws SQLException {
+        //Arrange
+        final int userId = 1;
+        final boolean autoSyncOn = true;
+
+        PreparedStatement mockedStatement = mock(PreparedStatement.class);
+        Connection mockedConnection = mock(Connection.class);
+
+        when(mockedDatabase.connect()).thenThrow(SQLException.class);
+        when(mockedConnection.prepareStatement(any())).thenReturn(mockedStatement);
+
+        //Act & Assert
+      assertThrows(InternalServerErrorException.class, () -> sut.setAutoSyncPreference(userId, autoSyncOn));
     }
 }

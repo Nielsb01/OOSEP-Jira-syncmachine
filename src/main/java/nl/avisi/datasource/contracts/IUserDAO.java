@@ -6,4 +6,6 @@ import java.util.List;
 
 public interface IUserDAO {
     List<UserSyncDTO> getAllAutoSyncUsers();
+
+    void setAutoSyncPreference(int userId, boolean autoSyncOn);
 }
