@@ -16,6 +16,7 @@ import nl.avisi.network.authentication.BasicAuth;
 import nl.avisi.propertyreaders.JiraSynchronisationProperties;
 
 import javax.inject.Inject;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -112,7 +113,7 @@ public class JiraWorklog {
      * @param jsonArray All retrieved worklogs in jsonArray form.
      * @return List of all worklogs that were retrieved between the two given dates for the specified workers.
      */
-    private List<OriginWorklogDTO> createWorklogDTOs(JSONArray jsonArray) {
+    protected List<OriginWorklogDTO> createWorklogDTOs(JSONArray jsonArray) {
         List<OriginWorklogDTO> worklogs = new ArrayList<>();
 
         for (int i = 0; i < jsonArray.length(); i++) {
@@ -178,20 +179,31 @@ public class JiraWorklog {
         return responseCodes;
     }
 
+    /**
+     * This method is called once a week by {@link nl.avisi.timer.SynchroniseTask} to
+     * synchronise all the worklogs from the origin server to the destination server.
+     * Only worklogs from users with auto synchronisation enabled will be synchronised.
+     * The ids of successfully posted worklogs will be added to the database to prevent
+     * wrongfully synchronising worklogs in the future.
+     */
     public void synchronise() {
+        Date date = new Date();
+        String currentDate = new SimpleDateFormat("yyyy-MM-dd").format(date);
+
         List<UserSyncDTO> autoSyncUsers = userDAO.getAllAutoSyncUsers();
 
 
         List<String> originJiraUserKeys = autoSyncUsers.stream()
-                .map(UserSyncDTO::getFromWorker)
+                .map(UserSyncDTO::getOriginWorker)
                 .collect(Collectors.toList());
 
         WorklogRequestDTO requestBody = new WorklogRequestDTO()
-                .setFrom("Laatste sync datum ophalen")
+                .setFrom("laatste sync datum")
                 .setWorker(originJiraUserKeys)
-                .setTo("Nu");
+                .setTo(currentDate);
 
         List<OriginWorklogDTO> allWorklogsFromOriginServer = retrieveWorklogsFromOriginServer(requestBody);
+
         List<DestinationWorklogDTO> filteredOutWorklogs = filterOutAlreadySyncedWorklogs(allWorklogsFromOriginServer, worklogDAO.getAllWorklogIds());
 
         List<DestinationWorklogDTO> worklogsToBeSynced = mapDestinationUserKeyToOriginUserKey(filteredOutWorklogs, autoSyncUsers);
@@ -212,7 +224,7 @@ public class JiraWorklog {
      * @param postedWorklogsWithResponseCodes Map of worklogs that were posted with the respective response status
      * @return List of all the worklogIds that had a status code of 200
      */
-    public List<Integer> filterOutFailedPostedWorklogs(List<OriginWorklogDTO> allRetrievedWorklogsFromOriginServer, Map<DestinationWorklogDTO, Integer> postedWorklogsWithResponseCodes) {
+    protected List<Integer> filterOutFailedPostedWorklogs(List<OriginWorklogDTO> allRetrievedWorklogsFromOriginServer, Map<DestinationWorklogDTO, Integer> postedWorklogsWithResponseCodes) {
         List<Integer> idsOfSuccesfullyPostedworklogs = new ArrayList<>();
 
         postedWorklogsWithResponseCodes.forEach((key, value) -> allRetrievedWorklogsFromOriginServer.forEach(worklog -> {
@@ -235,7 +247,7 @@ public class JiraWorklog {
      *                          This data is retrieved from the database
      * @return list of DestinationWorklogDTOs that only contain not yet synced worklogs
      */
-    public List<DestinationWorklogDTO> filterOutAlreadySyncedWorklogs(List<OriginWorklogDTO> retrievedWorklogs, List<Integer> allWorklogIds) {
+    protected List<DestinationWorklogDTO> filterOutAlreadySyncedWorklogs(List<OriginWorklogDTO> retrievedWorklogs, List<Integer> allWorklogIds) {
         return retrievedWorklogs
                 .stream()
                 .filter(worklog -> allWorklogIds.stream()
@@ -253,7 +265,7 @@ public class JiraWorklog {
      * @param autoSyncUsers List of all the users that have auto sync enabled
      * @return A list of worklogs with the correct user key mapped to the worker field
      */
-    public List<DestinationWorklogDTO> mapDestinationUserKeyToOriginUserKey(List<DestinationWorklogDTO> worklogsToBeSynced, List<UserSyncDTO> autoSyncUsers) {
+    protected List<DestinationWorklogDTO> mapDestinationUserKeyToOriginUserKey(List<DestinationWorklogDTO> worklogsToBeSynced, List<UserSyncDTO> autoSyncUsers) {
 
         List<DestinationWorklogDTO> worklogsWithoutMatchingKey = new ArrayList<>();
 
