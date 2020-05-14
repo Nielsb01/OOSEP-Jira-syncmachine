@@ -3,25 +3,25 @@ package nl.avisi.dto;
 import java.util.List;
 
 public class WorklogRequestDTO {
-    private String origin;
-    private String destination;
+    private String from;
+    private String to;
     private List<String> worker;
     
-    public String getOrigin() {
-        return origin;
+    public String getFrom() {
+        return from;
     }
 
-    public WorklogRequestDTO setOrigin(String origin) {
-        this.origin = origin;
+    public WorklogRequestDTO setFrom(String from) {
+        this.from = from;
         return this;
     }
 
-    public String getDestination() {
-        return destination;
+    public String getTo() {
+        return to;
     }
 
-    public WorklogRequestDTO setDestination(String destination) {
-        this.destination = destination;
+    public WorklogRequestDTO setTo(String to) {
+        this.to = to;
         return this;
     }
 
