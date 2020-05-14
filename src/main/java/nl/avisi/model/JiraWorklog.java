@@ -177,6 +177,16 @@ public class JiraWorklog {
         return responseCodes;
     }
 
+    public void manualSynchronisation(WorklogRequestDTO worklogRequestDTO, int userId) {
+        retrieveWorklogsFromOriginServer(worklogRequestDTO);
+
+         List<UserSyncDTO> userSyncDTO =  new ArrayList<>();
+         userSyncDTO.add(userDAO.getSyncUser(userId));
+
+        List<OriginWorklogDTO> filterOutAlreadySyncedWorklogs(retrieveWorklogsFromOriginServer(worklogRequestDTO), worklogDAO.getAllWorklogIds());
+        mapDestinationUserKeyToOriginUserKey()
+    }
+
     public void synchronise() {
         //todo
     }
@@ -200,7 +210,6 @@ public class JiraWorklog {
         }));
 
         return idsOfSuccesfullyPostedworklogs;
-
     }
 
     /**

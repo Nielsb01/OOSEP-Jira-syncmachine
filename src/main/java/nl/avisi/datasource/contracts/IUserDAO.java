@@ -6,4 +6,5 @@ import java.util.List;
 
 public interface IUserDAO {
     List<UserSyncDTO> getAllAutoSyncUsers();
+    UserSyncDTO getSyncUser(int userId);
 }
