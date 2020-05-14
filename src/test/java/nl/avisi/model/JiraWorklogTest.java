@@ -43,8 +43,8 @@ class JiraWorklogTest {
         mockedResponse = mock(HttpResponse.class);
         mockedProperties = mock(JiraSynchronisationProperties.class);
 
-        sut.setClientUrl("http://127.0.0.1/");
-        sut.setAvisiUrl("http://127.0.0.1/");
+        sut.setOriginUrl("http://127.0.0.1/");
+        sut.setDestinationUrl("http://127.0.0.1/");
         sut.setRequest(mockedRequest);
         sut.setBasicAuth(new BasicAuth());
         sut.setJiraSynchronisationProperties(mockedProperties);
@@ -67,7 +67,7 @@ class JiraWorklogTest {
         when(mockedResponse.getBody()).thenReturn(new JsonNode(jsonString));
 
         //Act
-        List<DestinationWorklogDTO> actualValue = sut.retrieveWorklogsFromClientServer(worklogRequestDTO);
+        List<DestinationWorklogDTO> actualValue = sut.retrieveWorklogsFromOriginServer(worklogRequestDTO);
 
         //Assert
         assertEquals(1, actualValue.size());
@@ -80,7 +80,7 @@ class JiraWorklogTest {
         when(mockedRequest.post(any(), any())).thenReturn(mockedResponse);
         when(mockedResponse.getBody()).thenReturn(null);
 
-        List<DestinationWorklogDTO> actualValue = sut.retrieveWorklogsFromClientServer(worklogRequestDTO);
+        List<DestinationWorklogDTO> actualValue = sut.retrieveWorklogsFromOriginServer(worklogRequestDTO);
 
         assertEquals(0, actualValue.size());
     }
@@ -92,7 +92,7 @@ class JiraWorklogTest {
         when(mockedResponse.getBody()).thenReturn(new JsonNode(
                 "[]"));
 
-        List<DestinationWorklogDTO> actualValue = sut.retrieveWorklogsFromClientServer(worklogRequestDTO);
+        List<DestinationWorklogDTO> actualValue = sut.retrieveWorklogsFromOriginServer(worklogRequestDTO);
 
         assertEquals(0, actualValue.size());
     }
@@ -113,7 +113,7 @@ class JiraWorklogTest {
         when(mockedResponse.getBody()).thenReturn(new JsonNode(jsonString));
 
         //Act
-        List<DestinationWorklogDTO> actualValue = sut.retrieveWorklogsFromClientServer(worklogRequestDTO);
+        List<DestinationWorklogDTO> actualValue = sut.retrieveWorklogsFromOriginServer(worklogRequestDTO);
 
         //Assert
         assertEquals(WORKER_VALUE, actualValue.get(0).getWorker());
@@ -136,7 +136,7 @@ class JiraWorklogTest {
         when(mockedResponse.getBody()).thenReturn(new JsonNode(jsonArray));
 
         //Act
-        List<DestinationWorklogDTO> actualValue = sut.retrieveWorklogsFromClientServer(worklogRequestDTO);
+        List<DestinationWorklogDTO> actualValue = sut.retrieveWorklogsFromOriginServer(worklogRequestDTO);
 
 
         //Assert
@@ -158,7 +158,7 @@ class JiraWorklogTest {
         when(mockedResponse.getStatus()).thenReturn(200);
 
         // Act
-        Map actualvalue = sut.createWorklogsOnAvisiServer(mockWorklogs);
+        Map actualvalue = sut.createWorklogsOnDestinationServer(mockWorklogs);
 
         //Assert
         assertEquals(2,actualvalue.size());
@@ -178,7 +178,7 @@ class JiraWorklogTest {
         when(mockedResponse.getStatus()).thenReturn(200,400);
 
         // Act
-        Map actualvalue = sut.createWorklogsOnAvisiServer(mockWorklogs);
+        Map actualvalue = sut.createWorklogsOnDestinationServer(mockWorklogs);
 
         //Assert
         assertTrue(actualvalue.containsValue(400));

@@ -32,9 +32,9 @@ public class SyncController {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response synchroniseWorklogsFromClientToAvisi(WorklogRequestDTO worklogRequestDTO) {
+    public Response synchroniseWorklogsFromOriginToDestination(WorklogRequestDTO worklogRequestDTO) {
 
-        jiraWorklog.createWorklogsOnAvisiServer(jiraWorklog.retrieveWorklogsFromClientServer(worklogRequestDTO));
-        return Response.status(200).entity("Synchronisatie succesvol").build();
+        jiraWorklog.createWorklogsOnDestinationServer(jiraWorklog.retrieveWorklogsFromOriginServer(worklogRequestDTO));
+        return Response.status(Response.Status.OK).entity("Synchronisatie succesvol").build();
     }
 }

@@ -11,28 +11,28 @@ public class JiraUsernameDTO {
     /**
      * Username on the client Jira server
      */
-    private String clientUsername;
+    private String originUsername;
 
     /**
      * Username on the Avisi Jira server
      */
-    private String avisiUsername;
+    private String destinationUsername;
 
     public String getOriginUsername() {
-        return clientUsername;
+        return originUsername;
     }
 
-    public JiraUsernameDTO setOriginUsername(String clientUsername) {
-        this.clientUsername = clientUsername;
+    public JiraUsernameDTO setOriginUsername(String originUsername) {
+        this.originUsername = originUsername;
         return this;
     }
 
     public String getDestinationUsername() {
-        return avisiUsername;
+        return destinationUsername;
     }
 
-    public JiraUsernameDTO setDestinationUsername(String avisiUsername) {
-        this.avisiUsername = avisiUsername;
+    public JiraUsernameDTO setDestinationUsername(String destinationUsername) {
+        this.destinationUsername = destinationUsername;
         return this;
     }
 }
