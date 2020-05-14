@@ -197,6 +197,7 @@ public class JiraWorklog {
                 .map(UserSyncDTO::getOriginWorker)
                 .collect(Collectors.toList());
 
+        //TODO: Functionaliteit van Max toepassen bij het zetten van de datums
         WorklogRequestDTO requestBody = new WorklogRequestDTO()
                 .setFrom("laatste sync datum")
                 .setWorker(originJiraUserKeys)
@@ -212,8 +213,10 @@ public class JiraWorklog {
 
         List<Integer> succesfullyPostedWorklogIds = filterOutFailedPostedWorklogs(allWorklogsFromOriginServer, postedWorklogsWithResponseCodes);
 
-        //TODO: onsuccesvol gesplaatste worklogs verwerken (met groep overleggen wat er moet gebeuren)
-        //TODO: Synchronise refactoren zodat autoSync en manualSync deze beide kunnen aanspreken
+        /*
+        TODO: onsuccesvol gesplaatste worklogs verwerken (met groep overleggen wat er moet gebeuren).
+        TODO: Synchronise refactoren zodat autoSync en manualSync deze beide kunnen aanspreken
+         */
 
         succesfullyPostedWorklogIds.forEach(worklogId -> worklogDAO.addWorklogId(worklogId));
     }
@@ -224,7 +227,7 @@ public class JiraWorklog {
      * destination server and have a status code 200.
      *
      * @param allRetrievedWorklogsFromOriginServer All the worklogs that were retrieved from the origin server
-     * @param postedWorklogsWithResponseCodes Map of worklogs that were posted with the respective response status
+     * @param postedWorklogsWithResponseCodes      Map of worklogs that were posted with the respective response status
      * @return List of all the worklogIds that had a status code of 200
      */
     protected List<Integer> filterOutFailedPostedWorklogs(List<OriginWorklogDTO> allRetrievedWorklogsFromOriginServer, Map<DestinationWorklogDTO, Integer> postedWorklogsWithResponseCodes) {
@@ -265,7 +268,7 @@ public class JiraWorklog {
      *
      * @param worklogsToBeSynced List of DestinationWorklogDTO where the worker field contains the origin user key
      *                           which will be swapped for the destination user key
-     * @param autoSyncUsers List of all the users that have auto sync enabled
+     * @param autoSyncUsers      List of all the users that have auto sync enabled
      * @return A list of worklogs with the correct user key mapped to the worker field
      */
     protected List<DestinationWorklogDTO> mapDestinationUserKeyToOriginUserKey(List<DestinationWorklogDTO> worklogsToBeSynced, List<UserSyncDTO> autoSyncUsers) {

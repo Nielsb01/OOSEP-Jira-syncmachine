@@ -34,7 +34,7 @@ public class SyncController {
     @Produces(MediaType.APPLICATION_JSON)
     public Response synchroniseWorklogsFromOriginToDestination(WorklogRequestDTO worklogRequestDTO) {
         /*
-        todo tussenstap maken voor handmatig synchroniseren in één methode.
+        TODO: tussenstap maken voor handmatig synchroniseren in één methode.
            Deze onderstaande 3 methodes aan elkaar knopen is lelijk,
            filteren moet ook nog.
          */
