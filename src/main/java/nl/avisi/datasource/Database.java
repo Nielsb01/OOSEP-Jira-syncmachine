@@ -35,8 +35,6 @@ public class Database {
      * @throws SQLException when no connection to the database could be established
      */
     public Connection connect() throws SQLException {
-        this.databaseProperties.loadPropertyFile();
-
         final String driverName = databaseProperties.getDriverName();
         final String connectionString = databaseProperties.getConnectionString();
 

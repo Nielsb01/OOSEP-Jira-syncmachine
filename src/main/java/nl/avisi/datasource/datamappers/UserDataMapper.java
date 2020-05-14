@@ -31,7 +31,6 @@ public class UserDataMapper implements IDataMapper<UserDTO> {
                 .setPassword(resultSet.getString("password"))
                 .setUserID(resultSet.getInt("user_id"));
 
-
         return userDTO;
     }
 }

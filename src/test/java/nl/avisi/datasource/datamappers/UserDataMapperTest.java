@@ -15,12 +15,12 @@ import static org.mockito.Mockito.*;
 
 class UserDataMapperTest {
 
-    private UserDataMapper userDataMapperUnderTest;
+    private UserDataMapper sut;
     private ResultSet mockedResultset;
 
     @BeforeEach
     void setUp() {
-        userDataMapperUnderTest = new UserDataMapper();
+        sut = new UserDataMapper();
         mockedResultset = mock(ResultSet.class);
     }
 
@@ -29,7 +29,7 @@ class UserDataMapperTest {
         //Arrange
         when(mockedResultset.next()).thenReturn(false);
         //Act
-        final UserDTO result = userDataMapperUnderTest.toDTO(mockedResultset);
+        final UserDTO result = sut.toDTO(mockedResultset);
 
         //Assert
         assertThat(result, instanceOf(UserDTO.class));
@@ -42,7 +42,7 @@ class UserDataMapperTest {
 
         //Act & Assert
         assertThrows(SQLException.class, () -> {
-            userDataMapperUnderTest.toDTO(mockedResultset);
+            sut.toDTO(mockedResultset);
         });
     }
 
@@ -57,7 +57,7 @@ class UserDataMapperTest {
         when(mockedResultset.getString(any())).thenReturn(username, password);
         when(mockedResultset.getInt(any())).thenReturn(userID);
         //Act
-        final UserDTO result = userDataMapperUnderTest.toDTO(mockedResultset);
+        final UserDTO result = sut.toDTO(mockedResultset);
 
         //Assert
         assertEquals(password, result.getPassword());
@@ -71,7 +71,7 @@ class UserDataMapperTest {
         when(mockedResultset.next()).thenReturn(true);
 
         //Act
-        final UserDTO result = userDataMapperUnderTest.toDTO(mockedResultset);
+        final UserDTO result = sut.toDTO(mockedResultset);
 
         //Assert
         verify(mockedResultset,times(1)).next();

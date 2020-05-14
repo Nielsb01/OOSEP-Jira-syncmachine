@@ -8,6 +8,7 @@ import nl.avisi.datasource.contracts.IUserDAO;
 import nl.avisi.datasource.contracts.IWorklogDAO;
 import nl.avisi.dto.DestinationWorklogDTO;
 import nl.avisi.dto.OriginWorklogDTO;
+import nl.avisi.dto.UserSyncDTO;
 import nl.avisi.dto.WorklogRequestDTO;
 import nl.avisi.network.IRequest;
 import nl.avisi.network.authentication.BasicAuth;
@@ -218,6 +219,40 @@ public class JiraWorklog {
                 .filter(worklog -> allWorklogIds.stream()
                         .noneMatch(worklogId -> worklogId == worklog.getWorklogId()))
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * Maps the worker field of a destinationWorklogDTO after it has been set with
+     * the origin worker user key, to the destination worker key that matches the
+     * origin worker user key.
+     *
+     * @param worklogsToBeSynced List of DestinationWorklogDTO where the worker field contains the origin user key
+     *                           which will be swapped for the destination user key
+     * @param autoSyncUsers List of all the users that have auto sync enabled
+     * @return A list of worklogs with the correct user key mapped to the worker field
+     */
+    public List<DestinationWorklogDTO> mapDestinationUserKeyToOriginUserKey(List<DestinationWorklogDTO> worklogsToBeSynced, List<UserSyncDTO> autoSyncUsers) {
+
+        List<DestinationWorklogDTO> worklogsWithoutMatchingKey = new ArrayList<>();
+
+        worklogsToBeSynced.forEach(worklog -> {
+            Optional<String> matchingKey = autoSyncUsers.stream()
+                    .filter(user -> user.getFromWorker().equals(worklog.getWorker()))
+                    .map(UserSyncDTO::getToWorker)
+                    .reduce((u, v) -> {
+                        throw new IllegalStateException("More than one user key found");
+                    });
+
+            if (matchingKey.isPresent()) {
+                worklog.setWorker(matchingKey.get());
+            } else {
+                worklogsWithoutMatchingKey.add(worklog);
+            }
+        });
+
+        worklogsWithoutMatchingKey.forEach(worklogsToBeSynced::remove);
+
+        return worklogsToBeSynced;
     }
 
     /**

@@ -6,13 +6,13 @@ import kong.unirest.json.JSONArray;
 import kong.unirest.json.JSONObject;
 import nl.avisi.dto.DestinationWorklogDTO;
 import nl.avisi.dto.OriginWorklogDTO;
+import nl.avisi.dto.UserSyncDTO;
 import nl.avisi.dto.WorklogRequestDTO;
 import nl.avisi.network.IRequest;
 import nl.avisi.network.authentication.BasicAuth;
 import nl.avisi.propertyreaders.JiraSynchronisationProperties;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.cglib.transform.AbstractClassTransformer;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,6 +21,7 @@ import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
@@ -153,35 +154,35 @@ class JiraWorklogTest {
     @Test
     public void testWhileAddingWorklogsCheckMapIsSameLengthAsWorklogs() {
         // Arrange
-        List<DestinationWorklogDTO> mockWorklogs= new ArrayList<>();
+        List<DestinationWorklogDTO> mockWorklogs = new ArrayList<>();
         String adminAuthUserName = "Nielsb01";
         String adminAuthPass = "OOSEGENUA";
 
         mockWorklogs.add(new DestinationWorklogDTO().setWorker("JIRAUSER10000").setStarted("2020-05-07").setTimeSpentSeconds(660).setOriginTaskId("KNBPU-2"));
         mockWorklogs.add(new DestinationWorklogDTO().setWorker("JIRAUSER10100").setStarted("2020-05-07").setTimeSpentSeconds(840).setOriginTaskId("KNBPU-2"));
 
-        when(mockedRequest.post(any(),any())).thenReturn(mockedResponse);
+        when(mockedRequest.post(any(), any())).thenReturn(mockedResponse);
         when(mockedResponse.getStatus()).thenReturn(200);
 
         // Act
         Map actualvalue = sut.createWorklogsOnDestinationServer(mockWorklogs);
 
         //Assert
-        assertEquals(2,actualvalue.size());
+        assertEquals(2, actualvalue.size());
     }
 
     @Test
     public void testWhileAddingWorklogsCheckMapNotAllStatuscodes200() {
         // Arrange
-        List<DestinationWorklogDTO> mockWorklogs= new ArrayList<>();
+        List<DestinationWorklogDTO> mockWorklogs = new ArrayList<>();
         String adminAuthUserName = "Nielsb01";
         String adminAuthPass = "OOSEGENUA";
 
         mockWorklogs.add(new DestinationWorklogDTO().setWorker("JIRAUSER10000").setStarted("2020-05-07").setTimeSpentSeconds(660).setOriginTaskId("KNBPU-2"));
         mockWorklogs.add(new DestinationWorklogDTO().setWorker("JIRAUSER10100").setStarted("2020-05-07").setTimeSpentSeconds(840).setOriginTaskId("KNBPU-4"));
 
-        when(mockedRequest.post(any(),any())).thenReturn(mockedResponse);
-        when(mockedResponse.getStatus()).thenReturn(200,400);
+        when(mockedRequest.post(any(), any())).thenReturn(mockedResponse);
+        when(mockedResponse.getStatus()).thenReturn(200, 400);
 
         // Act
         Map actualvalue = sut.createWorklogsOnDestinationServer(mockWorklogs);
@@ -192,7 +193,7 @@ class JiraWorklogTest {
     }
 
     @Test
-     void testTransformFromOriginToDestinationReturnsListWithSameObjectAsBefore() {
+    void testTransformFromOriginToDestinationReturnsListWithSameObjectAsBefore() {
         //Arrange
         List<OriginWorklogDTO> originList = new ArrayList<>();
         OriginWorklogDTO originWorklogDTO = new OriginWorklogDTO().setWorklogId(1);
@@ -255,6 +256,59 @@ class JiraWorklogTest {
 
         //Assert
         assertEquals(originWorklogDTO, destinationList.get(0));
+    }
+
+    @Test
+    void testmapDestinationUserKeyToOriginUserKeyReturnsObjectsWithCorrectlyMappedUserKeys() {
+        //Arrange
+        List<DestinationWorklogDTO> destinationWorklogDTOS = new ArrayList<>();
+        destinationWorklogDTOS.add(new DestinationWorklogDTO().setWorker("JIRAUSER10"));
+        destinationWorklogDTOS.add(new DestinationWorklogDTO().setWorker("JIRAUSER11"));
+
+        List<UserSyncDTO> userSyncDTOS = new ArrayList<>();
+        userSyncDTOS.add(new UserSyncDTO().setFromWorker("JIRAUSER10").setToWorker("JIRAUSER20"));
+        userSyncDTOS.add(new UserSyncDTO().setFromWorker("JIRAUSER11").setToWorker("JIRAUSER21"));
+
+        //Act
+        List<DestinationWorklogDTO> destinationList = sut.mapDestinationUserKeyToOriginUserKey(destinationWorklogDTOS, userSyncDTOS);
+
+        //Assert
+        assertEquals("JIRAUSER20", destinationList.get(0).getWorker());
+        assertEquals("JIRAUSER21", destinationList.get(1).getWorker());
+    }
+
+    @Test
+    void testmapDestinationUserKeyToOriginUserKeyThrowsIllegalStateExceptionWhenMultipleMatchingOriginUserKeysAreFound() {
+        //Arrange
+        List<DestinationWorklogDTO> destinationWorklogDTOS = new ArrayList<>();
+        destinationWorklogDTOS.add(new DestinationWorklogDTO().setWorker("JIRAUSER10"));
+        destinationWorklogDTOS.add(new DestinationWorklogDTO().setWorker("JIRAUSER11"));
+
+        List<UserSyncDTO> userSyncDTOS = new ArrayList<>();
+        userSyncDTOS.add(new UserSyncDTO().setFromWorker("JIRAUSER10").setToWorker("JIRAUSER20"));
+        userSyncDTOS.add(new UserSyncDTO().setFromWorker("JIRAUSER10").setToWorker("JIRAUSER21"));
+
+        //Act & Assert
+        assertThrows(IllegalStateException.class, () -> sut.mapDestinationUserKeyToOriginUserKey(destinationWorklogDTOS, userSyncDTOS));
+    }
+
+    @Test
+    void testmapDestinationUserKeyToOriginUserKeyRemovesObjectFromListWhenNoMatchingKeyIsFound() {
+        //Arrange
+        List<DestinationWorklogDTO> destinationWorklogDTOS = new ArrayList<>();
+        destinationWorklogDTOS.add(new DestinationWorklogDTO().setWorker("JIRAUSER10"));
+        destinationWorklogDTOS.add(new DestinationWorklogDTO().setWorker("JIRAUSER11"));
+
+        List<UserSyncDTO> userSyncDTOS = new ArrayList<>();
+        userSyncDTOS.add(new UserSyncDTO().setFromWorker("JIRAUSER9").setToWorker("JIRAUSER20"));
+        userSyncDTOS.add(new UserSyncDTO().setFromWorker("JIRAUSER11").setToWorker("JIRAUSER21"));
+
+        //Act
+        List<DestinationWorklogDTO> destinationList = sut.mapDestinationUserKeyToOriginUserKey(destinationWorklogDTOS, userSyncDTOS);
+
+        //Assert
+        assertEquals(1, destinationList.size());
+
     }
 
     @Test
