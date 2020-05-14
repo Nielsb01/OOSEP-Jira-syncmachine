@@ -1,24 +1,24 @@
 package nl.avisi.dto;
 
 public class JiraUserKeyDTO {
-    private String clientUserKey;
-    private String avisiUserKey;
+    private String originUserKey;
+    private String destinationUserKey;
 
-    public String getClientUserKey() {
-        return clientUserKey;
+    public String getOriginUserKey() {
+        return originUserKey;
     }
 
-    public JiraUserKeyDTO setClientUserKey(String clientUserKey) {
-        this.clientUserKey = clientUserKey;
+    public JiraUserKeyDTO setOriginUserKey(String originUserKey) {
+        this.originUserKey = originUserKey;
         return this;
     }
 
-    public String getAvisiUserKey() {
-        return avisiUserKey;
+    public String getDestinationUserKey() {
+        return destinationUserKey;
     }
 
-    public JiraUserKeyDTO setAvisiUserKey(String avisiUserKey) {
-        this.avisiUserKey = avisiUserKey;
+    public JiraUserKeyDTO setDestinationUserKey(String destinationUserKey) {
+        this.destinationUserKey = destinationUserKey;
         return this;
     }
 }

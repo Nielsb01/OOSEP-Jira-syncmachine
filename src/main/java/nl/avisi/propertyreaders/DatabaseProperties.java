@@ -36,6 +36,7 @@ public class DatabaseProperties {
     @Inject
     public void setPropertyReader(PropertyReader propertyReader) {
         this.propertyReader = propertyReader;
+        loadPropertyFile();
     }
 
     /**
@@ -43,7 +44,7 @@ public class DatabaseProperties {
      * property reader
      *
      */
-    public void loadPropertyFile() {
+    private void loadPropertyFile() {
         propertyReader.loadPropertyFile(PROPERTIES_FILE);
     }
 

@@ -26,12 +26,12 @@ public class JiraWorklog {
     /**
      * base URL where the Jira server of the client is being hosted
      */
-    private String clientUrl;
+    private String originUrl;
 
     /**
      * base URL where the Jira server of Avisi is being hosted
      */
-    private String avisiUrl;
+    private String destinationUrl;
 
     /**
      * Method by which HTTP requests are sent
@@ -72,12 +72,12 @@ public class JiraWorklog {
         this.request = request;
     }
 
-    public void setClientUrl(String clientUrl) {
-        this.clientUrl = String.format("%s/rest/tempo-timesheets/4/worklogs/search", clientUrl);
+    public void setOriginUrl(String originUrl) {
+        this.originUrl = String.format("%s/rest/tempo-timesheets/4/worklogs/search", originUrl);
     }
 
-    public void setAvisiUrl(String avisiUrl) {
-        this.avisiUrl = String.format("%s/rest/tempo-timesheets/4/worklogs", avisiUrl);
+    public void setDestinationUrl(String destinationUrl) {
+        this.destinationUrl = String.format("%s/rest/tempo-timesheets/4/worklogs", destinationUrl);
     }
 
     public void setBasicAuth(BasicAuth basicAuth) {
@@ -91,8 +91,8 @@ public class JiraWorklog {
      * @param worklogRequestDTO Contains the parameters to specify the worklogs to be retrieved during the HTTP request.
      * @return List of all worklogs that were retrieved from the client server between the two given dates for the specified workers.
      */
-    public List<OriginWorklogDTO> retrieveWorklogsFromClientServer(WorklogRequestDTO worklogRequestDTO) {
-        setClientUrl(jiraSynchronisationProperties.getOriginUrl());
+    public List<OriginWorklogDTO> retrieveWorklogsFromOriginServer(WorklogRequestDTO worklogRequestDTO) {
+        setOriginUrl(jiraSynchronisationProperties.getOriginUrl());
 
         HttpResponse<JsonNode> jsonWorklogs = requestWorklogs(worklogRequestDTO);
 
@@ -153,7 +153,7 @@ public class JiraWorklog {
                 .setUsername(jiraSynchronisationProperties.getAdminUsername()));
         request.setAuthentication(basicAuth);
 
-        return request.post(clientUrl, requestBody);
+        return request.post(originUrl, requestBody);
     }
 
     /**
@@ -164,13 +164,13 @@ public class JiraWorklog {
      * @param worklogs ArrayList consisting of WorklogDTO's this list are all the worklogs retrieved from client Jira-server.
      * @return A map of worklogDTO's with their corresponding status codes after being posted.
      */
-    public Map createWorklogsOnAvisiServer(List<DestinationWorklogDTO> worklogs) {
-        setAvisiUrl(jiraSynchronisationProperties.getDestinationUrl());
+    public Map createWorklogsOnDestinationServer(List<DestinationWorklogDTO> worklogs) {
+        setDestinationUrl(jiraSynchronisationProperties.getDestinationUrl());
 
         Map<DestinationWorklogDTO, Integer> responseCodes = new HashMap<>();
 
         for (DestinationWorklogDTO worklog : worklogs) {
-            HttpResponse<JsonNode> response = request.post(avisiUrl, worklog);
+            HttpResponse<JsonNode> response = request.post(destinationUrl, worklog);
             responseCodes.put(worklog, response.getStatus());
         }
 

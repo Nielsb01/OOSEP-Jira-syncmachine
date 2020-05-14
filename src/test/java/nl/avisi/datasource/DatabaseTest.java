@@ -32,19 +32,4 @@ public class DatabaseTest {
             sut.connect();
         });
     }
-
-    @Test
-    void testConnectLoadTheVariablesFromThePropertiesFile() {
-        // Arrange
-        final int numberOfTimesThePropertiesFileIsLoaded = 1;
-        when(mockedDatabaseProperties.getDriverName()).thenReturn("");
-
-        // Assert
-        assertThrows(DatabaseDriverNotFoundException.class, () -> {
-            // Act
-            sut.connect();
-        });
-
-        verify(mockedDatabaseProperties, times(numberOfTimesThePropertiesFileIsLoaded)).loadPropertyFile();
-    }
 }
