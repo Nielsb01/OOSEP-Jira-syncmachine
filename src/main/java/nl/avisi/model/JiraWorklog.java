@@ -255,19 +255,7 @@ public class JiraWorklog {
         return worklogsToBeSynced;
     }
 
-    /**
-     * Transforms a OriginWorklogDTO list to a DestinationWorklogDTO List.
-     * This is needed because OriginWorklogDTO contains the worklogId that
-     * is used to filter out already synced worklogs, but to post the worklog
-     * to the destination server it can't contain the worklogId anymore. Hence
-     * the transformation of the type of the list. Also simply casting it won't work
-     * this is why it is streamed. The filter for nonNull is simply applied
-     * because the stream requires some kind of non-terminal operation to work.
-     *
-     * @param originWorklogDTOs List of originWorklogDTOs
-     * @return The same list that was passed in but the type changed to DestinationWorklogDTO
-     */
-    public List<DestinationWorklogDTO> transformFromOriginToDestination(List<OriginWorklogDTO> originWorklogDTOs) {
-        return originWorklogDTOs.stream().filter(Objects::nonNull).collect(Collectors.toList());
+    public void manualSynchronisation(WorklogRequestDTO worklogRequestDTO, int userId) {
+        //todo andere branch uitwerken
     }
 }

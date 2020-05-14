@@ -193,33 +193,6 @@ class JiraWorklogTest {
     }
 
     @Test
-    void testTransformFromOriginToDestinationReturnsListWithSameObjectAsBefore() {
-        //Arrange
-        List<OriginWorklogDTO> originList = new ArrayList<>();
-        OriginWorklogDTO originWorklogDTO = new OriginWorklogDTO().setWorklogId(1);
-        originList.add(originWorklogDTO);
-
-        //Act
-        List<DestinationWorklogDTO> destinationList = sut.transformFromOriginToDestination(originList);
-
-        //Assert
-        assertEquals(originWorklogDTO, destinationList.get(0));
-    }
-
-    @Test
-    void testTransformFromOriginToDestinationFiltersOutNullObjects() {
-        //Arrange
-        List<OriginWorklogDTO> originList = new ArrayList<>();
-        originList.add(null);
-
-        //Act
-        List<DestinationWorklogDTO> destinationList = sut.transformFromOriginToDestination(originList);
-
-        //Assert
-        assertEquals(0, destinationList.size());
-    }
-
-    @Test
     void testFilterOutAlreadySyncedWorklogsReturnsCorrectlySizedListAfterFiltering() {
         //Arrange
         List<OriginWorklogDTO> originList = new ArrayList<>();
