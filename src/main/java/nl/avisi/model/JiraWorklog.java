@@ -210,7 +210,10 @@ public class JiraWorklog {
 
         Map<DestinationWorklogDTO, Integer> postedWorklogsWithResponseCodes = createWorklogsOnDestinationServer(worklogsToBeSynced);
 
-        List<Integer> succesfullyPostedWorklogIds =  filterOutFailedPostedWorklogs(allWorklogsFromOriginServer, postedWorklogsWithResponseCodes);
+        List<Integer> succesfullyPostedWorklogIds = filterOutFailedPostedWorklogs(allWorklogsFromOriginServer, postedWorklogsWithResponseCodes);
+
+        //TODO: onsuccesvol gesplaatste worklogs verwerken (met groep overleggen wat er moet gebeuren)
+        //TODO: Synchronise refactoren zodat autoSync en manualSync deze beide kunnen aanspreken
 
         succesfullyPostedWorklogIds.forEach(worklogId -> worklogDAO.addWorklogId(worklogId));
     }
