@@ -111,12 +111,16 @@ public class JiraUser {
         return jiraUserKey;
     }
 
-    public void setJiraUserKeys(JiraUsernameDTO jiraUsernameDTO) {
+    public void setJiraUserKeys(JiraUsernameDTO jiraUsernameDTO, int userId) {
         // TODO aanroep van retrieveJiraUserKeyByUsername en resultaat in de database knallen
 
         /*
             Deze methode is nog leeg, maar is nodig om de UserController te kunnen testen en te pushen.
             Iemand moet deze in een andere branch verder uitwerken.
          */
+    }
+
+    public void setAutoSyncePreference(int userId, boolean autoSyncOn) {
+        //todo in andere branch uitwerken
     }
 }
