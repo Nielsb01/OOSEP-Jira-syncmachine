@@ -42,7 +42,6 @@ public class DatabaseProperties {
     /**
      * Load the properties file into the
      * property reader
-     *
      */
     private void loadPropertyFile() {
         propertyReader.loadPropertyFile(PROPERTIES_FILE);

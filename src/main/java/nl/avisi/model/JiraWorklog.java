@@ -187,7 +187,7 @@ public class JiraWorklog {
      * destination server and have a status code 200.
      *
      * @param allRetrievedWorklogsFromOriginServer All the worklogs that were retrieved from the origin server
-     * @param postedWorklogsWithResponseCodes Map of worklogs that were posted with the respective response status
+     * @param postedWorklogsWithResponseCodes      Map of worklogs that were posted with the respective response status
      * @return List of all the worklogIds that had a status code of 200
      */
     public List<Integer> filterOutFailedPostedWorklogs(List<OriginWorklogDTO> allRetrievedWorklogsFromOriginServer, Map<DestinationWorklogDTO, Integer> postedWorklogsWithResponseCodes) {
@@ -228,7 +228,7 @@ public class JiraWorklog {
      *
      * @param worklogsToBeSynced List of DestinationWorklogDTO where the worker field contains the origin user key
      *                           which will be swapped for the destination user key
-     * @param autoSyncUsers List of all the users that have auto sync enabled
+     * @param autoSyncUsers      List of all the users that have auto sync enabled
      * @return A list of worklogs with the correct user key mapped to the worker field
      */
     public List<DestinationWorklogDTO> mapDestinationUserKeyToOriginUserKey(List<DestinationWorklogDTO> worklogsToBeSynced, List<UserSyncDTO> autoSyncUsers) {

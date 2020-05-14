@@ -64,7 +64,7 @@ class JiraUserTest {
         when(mockedResponse.getBody()).thenReturn(new JsonNode(originJsonString), new JsonNode(destinationJsonString));
 
         //Act
-         JiraUserKeyDTO result = sut.retrieveJiraUserKeyByUsername(jiraUsernameDTO);
+        JiraUserKeyDTO result = sut.retrieveJiraUserKeyByUsername(jiraUsernameDTO);
 
         //Assert
         assertEquals("JIRAUSER1010", result.getOriginUserKey());

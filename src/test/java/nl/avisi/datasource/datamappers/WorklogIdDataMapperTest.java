@@ -54,10 +54,10 @@ class WorklogIdDataMapperTest {
         when(mockedResultset.next()).thenReturn(true, false);
 
         //Act
-         List<Integer> result = sut.toDTO(mockedResultset);
+        List<Integer> result = sut.toDTO(mockedResultset);
 
         //Assert
-        verify(mockedResultset,times(2)).next();
+        verify(mockedResultset, times(2)).next();
     }
 
     @Test

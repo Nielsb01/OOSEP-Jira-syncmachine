@@ -34,16 +34,16 @@ public class UserDAOTest {
         PreparedStatement mockedStatement = mock(PreparedStatement.class);
         Connection mockedConnection = mock(Connection.class);
 
-       when(mockedDatabase.connect()).thenReturn(mockedConnection);
-       when(mockedConnection.prepareStatement(anyString())).thenReturn(mockedStatement);
-       when(mockedStatement.executeQuery()).thenReturn(mockedResultSet);
-       when(mockedResultSet.next()).thenReturn(false);
+        when(mockedDatabase.connect()).thenReturn(mockedConnection);
+        when(mockedConnection.prepareStatement(anyString())).thenReturn(mockedStatement);
+        when(mockedStatement.executeQuery()).thenReturn(mockedResultSet);
+        when(mockedResultSet.next()).thenReturn(false);
 
-       // Act
-       List<UserSyncDTO> results = sut.getAllAutoSyncUsers();
+        // Act
+        List<UserSyncDTO> results = sut.getAllAutoSyncUsers();
 
-       // Assert
-       assertEquals(expectedResultSize, results.size());
+        // Assert
+        assertEquals(expectedResultSize, results.size());
     }
 
     @Test
