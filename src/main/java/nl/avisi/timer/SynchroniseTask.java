@@ -39,10 +39,6 @@ public class SynchroniseTask extends TimerTask {
      */
     @Override
     public void run() {
-        if (lastSynchronisationDate == null) {
-            setLastSynchronisationDate(Calendar.getInstance());
-        }
-
         Calendar newLastSynchronisationDate = Calendar.getInstance();
 
         jiraWorklog.synchronise();
