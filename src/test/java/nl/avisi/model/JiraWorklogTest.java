@@ -155,35 +155,35 @@ class JiraWorklogTest {
     @Test
     public void testWhileAddingWorklogsCheckMapIsSameLengthAsWorklogs() {
         // Arrange
-        List<DestinationWorklogDTO> mockWorklogs= new ArrayList<>();
+        List<DestinationWorklogDTO> mockWorklogs = new ArrayList<>();
         String adminAuthUserName = "Nielsb01";
         String adminAuthPass = "OOSEGENUA";
 
         mockWorklogs.add(new DestinationWorklogDTO().setWorker("JIRAUSER10000").setStarted("2020-05-07").setTimeSpentSeconds(660).setOriginTaskId("KNBPU-2"));
         mockWorklogs.add(new DestinationWorklogDTO().setWorker("JIRAUSER10100").setStarted("2020-05-07").setTimeSpentSeconds(840).setOriginTaskId("KNBPU-2"));
 
-        when(mockedRequest.post(any(),any())).thenReturn(mockedResponse);
+        when(mockedRequest.post(any(), any())).thenReturn(mockedResponse);
         when(mockedResponse.getStatus()).thenReturn(200);
 
         // Act
         Map actualvalue = sut.createWorklogsOnAvisiServer(mockWorklogs);
 
         //Assert
-        assertEquals(2,actualvalue.size());
+        assertEquals(2, actualvalue.size());
     }
 
     @Test
     public void testWhileAddingWorklogsCheckMapNotAllStatuscodes200() {
         // Arrange
-        List<DestinationWorklogDTO> mockWorklogs= new ArrayList<>();
+        List<DestinationWorklogDTO> mockWorklogs = new ArrayList<>();
         String adminAuthUserName = "Nielsb01";
         String adminAuthPass = "OOSEGENUA";
 
         mockWorklogs.add(new DestinationWorklogDTO().setWorker("JIRAUSER10000").setStarted("2020-05-07").setTimeSpentSeconds(660).setOriginTaskId("KNBPU-2"));
         mockWorklogs.add(new DestinationWorklogDTO().setWorker("JIRAUSER10100").setStarted("2020-05-07").setTimeSpentSeconds(840).setOriginTaskId("KNBPU-4"));
 
-        when(mockedRequest.post(any(),any())).thenReturn(mockedResponse);
-        when(mockedResponse.getStatus()).thenReturn(200,400);
+        when(mockedRequest.post(any(), any())).thenReturn(mockedResponse);
+        when(mockedResponse.getStatus()).thenReturn(200, 400);
 
         // Act
         Map actualvalue = sut.createWorklogsOnAvisiServer(mockWorklogs);
@@ -194,7 +194,7 @@ class JiraWorklogTest {
     }
 
     @Test
-     void testTransformFromOriginToDestinationReturnsListWithSameObjectAsBefore() {
+    void testTransformFromOriginToDestinationReturnsListWithSameObjectAsBefore() {
         //Arrange
         List<OriginWorklogDTO> originList = new ArrayList<>();
         OriginWorklogDTO originWorklogDTO = new OriginWorklogDTO().setWorklogId(1);
@@ -290,9 +290,9 @@ class JiraWorklogTest {
         userSyncDTOS.add(new UserSyncDTO().setFromWorker("JIRAUSER10").setToWorker("JIRAUSER21"));
 
         //Act & Assert
-      assertThrows(IllegalStateException.class, () -> {
-          sut.mapDestinationUserKeyToOriginUserKey(destinationWorklogDTOS, userSyncDTOS);
-      });
+        assertThrows(IllegalStateException.class, () -> {
+            sut.mapDestinationUserKeyToOriginUserKey(destinationWorklogDTOS, userSyncDTOS);
+        });
     }
 
     @Test
