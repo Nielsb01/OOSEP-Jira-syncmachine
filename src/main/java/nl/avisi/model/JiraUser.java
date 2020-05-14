@@ -33,6 +33,10 @@ public class JiraUser {
      */
     private JiraSynchronisationProperties jiraSynchronisationProperties;
 
+    @Inject
+    public void setUserDAO(IUserDAO userDAO) {
+        this.userDAO = userDAO;
+    }
 
     @Inject
     public void setJiraSynchronisationProperties(JiraSynchronisationProperties jiraSynchronisationProperties) {
@@ -54,7 +58,7 @@ public class JiraUser {
      *                        be used.
      * @return JiraUserKeyDTO Contains the matching user keys to the given usernames.
      */
-    public JiraUserKeyDTO retrieveJiraUserKeyByUsername(JiraUsernameDTO jiraUsernameDTO) {
+    protected JiraUserKeyDTO retrieveJiraUserKeyByUsername(JiraUsernameDTO jiraUsernameDTO) {
 
         String originUrl = jiraSynchronisationProperties.getOriginUrl();
         String destinationUrl = jiraSynchronisationProperties.getDestinationUrl();
@@ -111,12 +115,16 @@ public class JiraUser {
         return jiraUserKey;
     }
 
-    public void setJiraUserKeys(JiraUsernameDTO jiraUsernameDTO) {
-        // TODO aanroep van retrieveJiraUserKeyByUsername en resultaat in de database knallen
-
-        /*
-            Deze methode is nog leeg, maar is nodig om de UserController te kunnen testen en te pushen.
-            Iemand moet deze in een andere branch verder uitwerken.
-         */
+    /**
+     * Handles retrieving the correct user keys with
+     * the given usernames and passes them on to
+     * be persisted in the database
+     *
+     * @param jiraUsernameDTO Contain the usernames used to retrieve the
+     *                        correct user keys
+     * @param userId Id of the user that made the request
+     */
+    public void setJiraUserKeys(JiraUsernameDTO jiraUsernameDTO, int userId) {
+       userDAO.updateJiraUserKeys(retrieveJiraUserKeyByUsername(jiraUsernameDTO), userId);
     }
 }

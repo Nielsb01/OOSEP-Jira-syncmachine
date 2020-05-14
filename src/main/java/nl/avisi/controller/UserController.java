@@ -41,7 +41,7 @@ public class UserController {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response setJiraUserKeys(JiraUsernameDTO jiraUsernameDTO) {
-        jiraUser.setJiraUserKeys(jiraUsernameDTO);
+        jiraUser.setJiraUserKeys(jiraUsernameDTO, 1);
         return Response.status(200).build();
     }
 }

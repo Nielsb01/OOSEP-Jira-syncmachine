@@ -38,6 +38,7 @@ class UserControllerTest {
 
     @Test
     void testSetJiraUserKeysCallsSetJiraUserKeys() {
+        final int userId = 1;
         //Arrange
         final JiraUsernameDTO jiraUsernameDTO = new JiraUsernameDTO();
 
@@ -45,6 +46,6 @@ class UserControllerTest {
         final Response actualValue = sut.setJiraUserKeys(jiraUsernameDTO);
 
         //Assert
-        verify(mockedJiraUser).setJiraUserKeys(jiraUsernameDTO);
+        verify(mockedJiraUser).setJiraUserKeys(jiraUsernameDTO, userId);
     }
 }
