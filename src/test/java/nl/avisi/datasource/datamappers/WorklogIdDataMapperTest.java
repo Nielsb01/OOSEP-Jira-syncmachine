@@ -63,21 +63,21 @@ class WorklogIdDataMapperTest {
     @Test
     void testToDTOReturnsListWithCorrectValues() throws Exception {
         //Arrange
-        final int ONE = 1;
-        final int TWO = 2;
-        final int THREE = 3;
-        final int FOUR = 4;
+        final int one = 1;
+        final int two = 2;
+        final int three = 3;
+        final int four = 4;
 
         when(mockedResultset.next()).thenReturn(true, true, true, true, false);
-        when(mockedResultset.getInt(any())).thenReturn(ONE, TWO, THREE, FOUR);
+        when(mockedResultset.getInt(any())).thenReturn(one, two, three, four);
 
         //Act
         final List<Integer> result = sut.toDTO(mockedResultset);
 
         //Assert
-        assertEquals(ONE, result.get(0).intValue());
-        assertEquals(TWO, result.get(1).intValue());
-        assertEquals(THREE, result.get(2).intValue());
-        assertEquals(FOUR, result.get(3).intValue());
+        assertEquals(one, result.get(0).intValue());
+        assertEquals(two, result.get(1).intValue());
+        assertEquals(three, result.get(2).intValue());
+        assertEquals(four, result.get(3).intValue());
     }
 }
