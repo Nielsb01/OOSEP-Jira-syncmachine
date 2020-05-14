@@ -266,8 +266,8 @@ class JiraWorklogTest {
         destinationWorklogDTOS.add(new DestinationWorklogDTO().setWorker("JIRAUSER11"));
 
         List<UserSyncDTO> userSyncDTOS = new ArrayList<>();
-        userSyncDTOS.add(new UserSyncDTO().setFromWorker("JIRAUSER10").setToWorker("JIRAUSER20"));
-        userSyncDTOS.add(new UserSyncDTO().setFromWorker("JIRAUSER11").setToWorker("JIRAUSER21"));
+        userSyncDTOS.add(new UserSyncDTO().setOriginWorker("JIRAUSER10").setDestinationWorker("JIRAUSER20"));
+        userSyncDTOS.add(new UserSyncDTO().setOriginWorker("JIRAUSER11").setDestinationWorker("JIRAUSER21"));
 
         //Act
         List<DestinationWorklogDTO> destinationList = sut.mapDestinationUserKeyToOriginUserKey(destinationWorklogDTOS, userSyncDTOS);
@@ -285,8 +285,8 @@ class JiraWorklogTest {
         destinationWorklogDTOS.add(new DestinationWorklogDTO().setWorker("JIRAUSER11"));
 
         List<UserSyncDTO> userSyncDTOS = new ArrayList<>();
-        userSyncDTOS.add(new UserSyncDTO().setFromWorker("JIRAUSER10").setToWorker("JIRAUSER20"));
-        userSyncDTOS.add(new UserSyncDTO().setFromWorker("JIRAUSER10").setToWorker("JIRAUSER21"));
+        userSyncDTOS.add(new UserSyncDTO().setOriginWorker("JIRAUSER10").setDestinationWorker("JIRAUSER20"));
+        userSyncDTOS.add(new UserSyncDTO().setOriginWorker("JIRAUSER10").setDestinationWorker("JIRAUSER21"));
 
         //Act & Assert
         assertThrows(IllegalStateException.class, () -> sut.mapDestinationUserKeyToOriginUserKey(destinationWorklogDTOS, userSyncDTOS));
@@ -300,8 +300,8 @@ class JiraWorklogTest {
         destinationWorklogDTOS.add(new DestinationWorklogDTO().setWorker("JIRAUSER11"));
 
         List<UserSyncDTO> userSyncDTOS = new ArrayList<>();
-        userSyncDTOS.add(new UserSyncDTO().setFromWorker("JIRAUSER9").setToWorker("JIRAUSER20"));
-        userSyncDTOS.add(new UserSyncDTO().setFromWorker("JIRAUSER11").setToWorker("JIRAUSER21"));
+        userSyncDTOS.add(new UserSyncDTO().setOriginWorker("JIRAUSER9").setDestinationWorker("JIRAUSER20"));
+        userSyncDTOS.add(new UserSyncDTO().setOriginWorker("JIRAUSER11").setDestinationWorker("JIRAUSER21"));
 
         //Act
         List<DestinationWorklogDTO> destinationList = sut.mapDestinationUserKeyToOriginUserKey(destinationWorklogDTOS, userSyncDTOS);

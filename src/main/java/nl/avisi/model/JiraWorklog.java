@@ -237,8 +237,8 @@ public class JiraWorklog {
 
         worklogsToBeSynced.forEach(worklog -> {
             Optional<String> matchingKey = autoSyncUsers.stream()
-                    .filter(user -> user.getFromWorker().equals(worklog.getWorker()))
-                    .map(UserSyncDTO::getToWorker)
+                    .filter(user -> user.getOriginWorker().equals(worklog.getWorker()))
+                    .map(UserSyncDTO::getDestinationWorker)
                     .reduce((u, v) -> {
                         throw new IllegalStateException("More than one user key found");
                     });
