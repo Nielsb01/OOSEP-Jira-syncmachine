@@ -4,6 +4,7 @@ import kong.unirest.*;
 import kong.unirest.json.JSONArray;
 import kong.unirest.json.JSONException;
 import kong.unirest.json.JSONObject;
+import nl.avisi.datasource.WorklogDAO;
 import nl.avisi.datasource.contracts.IUserDAO;
 import nl.avisi.datasource.contracts.IWorklogDAO;
 import nl.avisi.dto.DestinationWorklogDTO;
@@ -164,7 +165,7 @@ public class JiraWorklog {
      * @param worklogs ArrayList consisting of WorklogDTO's this list are all the worklogs retrieved from client Jira-server.
      * @return A map of worklogDTO's with their corresponding status codes after being posted.
      */
-    public Map createWorklogsOnDestinationServer(List<DestinationWorklogDTO> worklogs) {
+    public Map<DestinationWorklogDTO, Integer> createWorklogsOnDestinationServer(List<DestinationWorklogDTO> worklogs) {
         setDestinationUrl(jiraSynchronisationProperties.getDestinationUrl());
 
         Map<DestinationWorklogDTO, Integer> responseCodes = new HashMap<>();
@@ -180,6 +181,7 @@ public class JiraWorklog {
     public void synchronise() {
         List<UserSyncDTO> autoSyncUsers = userDAO.getAllAutoSyncUsers();
 
+
         List<String> originJiraUserKeys = autoSyncUsers.stream()
                 .map(UserSyncDTO::getFromWorker)
                 .collect(Collectors.toList());
@@ -189,14 +191,16 @@ public class JiraWorklog {
                 .setWorker(originJiraUserKeys)
                 .setTo("Nu");
 
-        List<DestinationWorklogDTO> filteredOutWorklogs = filterOutAlreadySyncedWorklogs(retrieveWorklogsFromClientServer(requestBody), worklogDAO.getAllWorklogIds());
+        List<OriginWorklogDTO> allWorklogsFromOriginServer = retrieveWorklogsFromOriginServer(requestBody);
+        List<DestinationWorklogDTO> filteredOutWorklogs = filterOutAlreadySyncedWorklogs(allWorklogsFromOriginServer, worklogDAO.getAllWorklogIds());
 
-        List<DestinationWorklogDTO> worklogsToBeSynced = mapDestinationUserKeyToOriginUserKey(filteredOutWorklogs, userDAO);
+        List<DestinationWorklogDTO> worklogsToBeSynced = mapDestinationUserKeyToOriginUserKey(filteredOutWorklogs, autoSyncUsers);
 
-        createWorklogsOnAvisiServer(worklogsToBeSynced);
+        Map<DestinationWorklogDTO, Integer> postedWorklogsWithResponseCodes = createWorklogsOnDestinationServer(worklogsToBeSynced);
 
-        //todo make createworklogsonavisiserver return originDTOs with response codes mapped and add succesfully posted worklogs to the database.
+        List<Integer> succesfullyPostedWorklogIds =  filterOutFailedPostedWorklogs(allWorklogsFromOriginServer, postedWorklogsWithResponseCodes);
 
+        succesfullyPostedWorklogIds.forEach(worklogId -> worklogDAO.addWorklogId(worklogId));
     }
 
     /**
