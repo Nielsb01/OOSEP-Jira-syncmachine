@@ -1,4 +1,4 @@
-package nl.avisi;
+package nl.avisi.controller;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -10,9 +10,7 @@ public class HelloWorld {
 
     @GET
     @Produces(MediaType.TEXT_PLAIN)
-    public String helloWorld() {
-        return "Hello world";
+    public String test() {
+        return "test succes";
     }
-
-
 }
