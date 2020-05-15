@@ -15,7 +15,7 @@ public class WorklogRequestDTO {
 
     /**
      * is the second date from where in between the worklogs will be requested.
-     * if the from date is 2020-04-25 all the worklogs created between the from date and this date will be requested
+     * if the from date is 2020-04-25 all the worklogs created between the "from" date and this date will be requested
      */
     private String to;
 
