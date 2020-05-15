@@ -135,4 +135,17 @@ class JiraUserTest {
         //Assert
         verify(mockedUserDAO).updateJiraUserKeys(anyObject(), anyInt());
     }
+
+    @Test
+    void testSetAutoSyncPreferenceCallsSetAutoPreferenceWithCorrectParams() {
+        //Arrange
+        final int userId = 1;
+        final boolean autoSyncOn = true;
+
+        //Act
+        sut.setAutoSyncPreference(userId, autoSyncOn);
+
+        //Assert
+        verify(mockedUserDAO).setAutoSyncPreference(userId, autoSyncOn);
+    }
 }

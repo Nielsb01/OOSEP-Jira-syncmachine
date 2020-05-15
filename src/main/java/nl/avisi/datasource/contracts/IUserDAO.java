@@ -9,4 +9,6 @@ public interface IUserDAO {
     List<UserSyncDTO> getAllAutoSyncUsers();
 
     void updateJiraUserKeys(JiraUserKeyDTO jiraUserKeyDTO, int userID);
+
+    void setAutoSyncPreference(int userId, boolean autoSyncOn);
 }

@@ -89,4 +89,10 @@ public class UserDAO implements IUserDAO {
     public void updateJiraUserKeys(JiraUserKeyDTO jiraUserKeyDTO, int userID) {
         //TODO: in een andere branch uitwerken
     }
+
+    @Override
+    public void setAutoSyncPreference(int userId, boolean autoSyncOn) {
+        //todo in andere branch uitwerken
+    }
+
 }

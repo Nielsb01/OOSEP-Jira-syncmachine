@@ -25,7 +25,6 @@ public class SyncController {
     }
 
     /**
-     *
      * @param worklogRequestDTO Contains the necessary information needed to retrieve worklogs from the server.
      * @return HTTP response with corresponding status code and entity to the request that was made.
      */
@@ -39,9 +38,9 @@ public class SyncController {
            filteren moet ook nog.
          */
 
-       jiraWorklog.createWorklogsOnDestinationServer(
-               jiraWorklog.transformFromOriginToDestination(
-                       jiraWorklog.retrieveWorklogsFromOriginServer(worklogRequestDTO)));
+        jiraWorklog.createWorklogsOnDestinationServer(
+                jiraWorklog.transformFromOriginToDestination(
+                        jiraWorklog.retrieveWorklogsFromOriginServer(worklogRequestDTO)));
 
         return Response.status(Response.Status.OK).entity("Synchronisatie succesvol").build();
     }

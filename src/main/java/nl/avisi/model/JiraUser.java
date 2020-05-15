@@ -58,7 +58,7 @@ public class JiraUser {
      *                        be used.
      * @return JiraUserKeyDTO Contains the matching user keys to the given usernames.
      */
-    protected JiraUserKeyDTO retrieveJiraUserKeyByUsername(JiraUsernameDTO jiraUsernameDTO) {
+    public JiraUserKeyDTO retrieveJiraUserKeyByUsername(JiraUsernameDTO jiraUsernameDTO) {
 
         String originUrl = jiraSynchronisationProperties.getOriginUrl();
         String destinationUrl = jiraSynchronisationProperties.getDestinationUrl();
@@ -115,6 +115,28 @@ public class JiraUser {
         return jiraUserKey;
     }
 
+    public void setJiraUserKeys(JiraUsernameDTO jiraUsernameDTO) {
+        // TODO aanroep van retrieveJiraUserKeyByUsername en resultaat in de database knallen
+
+        /*
+            Deze methode is nog leeg, maar is nodig om de UserController te kunnen testen en te pushen.
+            Iemand moet deze in een andere branch verder uitwerken.
+         */
+    }
+
+    /**
+     * Responsible for making the appropriate calls
+     * to update the users auto synchronisation preference
+     *
+     * @param userId     Id of the user that made the request
+     * @param autoSyncOn Boolean value indicating whether or not
+     *                   the user wants their auto synchronisation
+     *                   to be on or not
+     */
+    public void setAutoSyncPreference(int userId, boolean autoSyncOn) {
+        userDAO.setAutoSyncPreference(userId, autoSyncOn);
+    }
+
     /**
      * Handles retrieving the correct user keys with
      * the given usernames and passes them on to
@@ -125,10 +147,6 @@ public class JiraUser {
      * @param userId Id of the user that made the request
      */
     public void setJiraUserKeys(JiraUsernameDTO jiraUsernameDTO, int userId) {
-       userDAO.updateJiraUserKeys(retrieveJiraUserKeyByUsername(jiraUsernameDTO), userId);
-    }
-
-    public void setAutoSyncPreference(int userId, boolean autoSyncOn) {
-        //todo in andere branch uitwerken
+        userDAO.updateJiraUserKeys(retrieveJiraUserKeyByUsername(jiraUsernameDTO), userId);
     }
 }

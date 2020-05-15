@@ -209,8 +209,8 @@ public class JiraWorklog {
      * list.
      *
      * @param retrievedWorklogs Worklogs that were retrieved from the origin server
-     * @param allWorklogIds     All worklogIds of worklogs that are already synced in the past.
-     *                          This data is retrieved from the database
+     * @param allWorklogIds All worklogIds of worklogs that are already synced in the past.
+     *                      This data is retrieved from the database
      * @return list of DestinationWorklogDTOs that only contain not yet synced worklogs
      */
     public List<DestinationWorklogDTO> filterOutAlreadySyncedWorklogs(List<OriginWorklogDTO> retrievedWorklogs, List<Integer> allWorklogIds) {
