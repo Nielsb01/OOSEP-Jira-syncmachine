@@ -4,6 +4,8 @@ import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
 import kong.unirest.json.JSONArray;
 import kong.unirest.json.JSONObject;
+import nl.avisi.datasource.contracts.IUserDAO;
+import nl.avisi.datasource.contracts.IWorklogDAO;
 import nl.avisi.dto.DestinationWorklogDTO;
 import nl.avisi.dto.OriginWorklogDTO;
 import nl.avisi.dto.UserSyncDTO;
@@ -32,11 +34,14 @@ class JiraWorklogTest {
     private IRequest mockedRequest;
     private HttpResponse mockedResponse;
     private JiraSynchronisationProperties mockedProperties;
+    private IUserDAO mockedUserDAO;
+    private IWorklogDAO mockedWorklogDAO;
 
-    private final String WORKER_VALUE = "ttt";
-    private final String STARTED_VALUE = "fff";
-    private final String ACCOUNT_KEY_VALUE = "kkk";
-    private final int TIME_SPENT_SECONDS_VALUE = 1234;
+
+    private static final String WORKER_VALUE = "ttt";
+    private static final String STARTED_VALUE = "fff";
+    private static final String ACCOUNT_KEY_VALUE = "kkk";
+    private static final int TIME_SPENT_SECONDS_VALUE = 1234;
 
     private WorklogRequestDTO worklogRequestDTO;
 
@@ -47,7 +52,11 @@ class JiraWorklogTest {
         mockedRequest = mock(IRequest.class);
         mockedResponse = mock(HttpResponse.class);
         mockedProperties = mock(JiraSynchronisationProperties.class);
+        mockedUserDAO = mock(IUserDAO.class);
+        mockedWorklogDAO = mock(IWorklogDAO.class);
 
+        sut.setUserDAO(mockedUserDAO);
+        sut.setWorklogDAO(mockedWorklogDAO);
         sut.setOriginUrl("http://127.0.0.1/");
         sut.setDestinationUrl("http://127.0.0.1/");
         sut.setRequest(mockedRequest);
@@ -270,7 +279,7 @@ class JiraWorklogTest {
         userSyncDTOS.add(new UserSyncDTO().setOriginWorker("JIRAUSER11").setDestinationWorker("JIRAUSER21"));
 
         //Act
-        List<DestinationWorklogDTO> destinationList = sut.mapDestinationUserKeyToOriginUserKey(destinationWorklogDTOS, userSyncDTOS);
+        List<DestinationWorklogDTO> destinationList = sut.replaceOriginUserKeyWithCorrectDestinationUserKey(destinationWorklogDTOS, userSyncDTOS);
 
         //Assert
         assertEquals("JIRAUSER20", destinationList.get(0).getWorker());
@@ -289,7 +298,7 @@ class JiraWorklogTest {
         userSyncDTOS.add(new UserSyncDTO().setOriginWorker("JIRAUSER10").setDestinationWorker("JIRAUSER21"));
 
         //Act & Assert
-        assertThrows(IllegalStateException.class, () -> sut.mapDestinationUserKeyToOriginUserKey(destinationWorklogDTOS, userSyncDTOS));
+        assertThrows(IllegalStateException.class, () -> sut.replaceOriginUserKeyWithCorrectDestinationUserKey(destinationWorklogDTOS, userSyncDTOS));
     }
 
     @Test
@@ -304,7 +313,7 @@ class JiraWorklogTest {
         userSyncDTOS.add(new UserSyncDTO().setOriginWorker("JIRAUSER11").setDestinationWorker("JIRAUSER21"));
 
         //Act
-        List<DestinationWorklogDTO> destinationList = sut.mapDestinationUserKeyToOriginUserKey(destinationWorklogDTOS, userSyncDTOS);
+        List<DestinationWorklogDTO> destinationList = sut.replaceOriginUserKeyWithCorrectDestinationUserKey(destinationWorklogDTOS, userSyncDTOS);
 
         //Assert
         assertEquals(1, destinationList.size());
@@ -328,7 +337,6 @@ class JiraWorklogTest {
 
         //Assert
         assertEquals(originWorklogDTO.getWorklogId(), actualValue.get(0).intValue());
-
     }
 
     @Test
@@ -367,5 +375,78 @@ class JiraWorklogTest {
 
         //Assert
         assertEquals(0, actualValue.size());
+    }
+
+    @Test
+    void testSynchroniseCallsGetAllAutoSyncUsers() {
+        //Arrange
+        JSONObject jsonObject = new JSONObject()
+                .put("worker", WORKER_VALUE)
+                .put("started", STARTED_VALUE)
+                .put("issue", new JSONObject().put("accountKey", ACCOUNT_KEY_VALUE))
+                .put("timeSpentSeconds", TIME_SPENT_SECONDS_VALUE)
+                .put("tempoWorklogId", TEMPO_WORKLOG_ID_VALUE);
+
+        String jsonString = new JSONArray().put(jsonObject).toString();
+
+
+        when(mockedRequest.post(any(), any())).thenReturn(mockedResponse);
+        when(mockedResponse.getBody()).thenReturn(new JsonNode(jsonString));
+
+        //Act
+        sut.synchronise();
+
+        //Assert
+        verify(mockedUserDAO).getAllAutoSyncUsers();
+    }
+
+    @Test
+    void testSynchroniseCallsGetAllWorklogIds() {
+        //Arrange
+        JSONObject jsonObject = new JSONObject()
+                .put("worker", WORKER_VALUE)
+                .put("started", STARTED_VALUE)
+                .put("issue", new JSONObject().put("accountKey", ACCOUNT_KEY_VALUE))
+                .put("timeSpentSeconds", TIME_SPENT_SECONDS_VALUE)
+                .put("tempoWorklogId", TEMPO_WORKLOG_ID_VALUE);
+
+        String jsonString = new JSONArray().put(jsonObject).toString();
+
+
+        when(mockedRequest.post(any(), any())).thenReturn(mockedResponse);
+        when(mockedResponse.getBody()).thenReturn(new JsonNode(jsonString));
+
+        //Act
+        sut.synchronise();
+
+        //Assert
+        verify(mockedWorklogDAO).getAllWorklogIds();
+    }
+
+    @Test
+    void testSynchroniseCallsAddWorklogId() {
+        //Arrange
+        JSONObject jsonObject = new JSONObject()
+                .put("worker", WORKER_VALUE)
+                .put("started", STARTED_VALUE)
+                .put("issue", new JSONObject().put("accountKey", ACCOUNT_KEY_VALUE))
+                .put("timeSpentSeconds", TIME_SPENT_SECONDS_VALUE)
+                .put("tempoWorklogId", TEMPO_WORKLOG_ID_VALUE);
+
+        String jsonString = new JSONArray().put(jsonObject).toString();
+
+        List<UserSyncDTO> userSyncDTOS = new ArrayList<>();
+        userSyncDTOS.add(new UserSyncDTO().setOriginWorker(WORKER_VALUE).setDestinationWorker("JIRAUSER20"));
+
+        when(mockedUserDAO.getAllAutoSyncUsers()).thenReturn(userSyncDTOS);
+        when(mockedRequest.post(any(), any())).thenReturn(mockedResponse);
+        when(mockedResponse.getBody()).thenReturn(new JsonNode(jsonString));
+        when(mockedResponse.getStatus()).thenReturn(200);
+
+        //Act
+        sut.synchronise();
+
+        //Assert
+        verify(mockedWorklogDAO).addWorklogId(TEMPO_WORKLOG_ID_VALUE);
     }
 }
