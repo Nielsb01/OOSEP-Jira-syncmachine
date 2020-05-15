@@ -1,5 +1,6 @@
 package nl.avisi.datasource;
 
+import nl.avisi.datasource.datamappers.IDataMapper;
 import nl.avisi.propertyreaders.exceptions.DatabaseDriverNotFoundException;
 import nl.avisi.dto.UserSyncDTO;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,15 +16,21 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.*;
 
 public class UserDAOTest {
+    public static final int USER_ID = 1;
+    public static final String JIRAUSER_1010 = "JIRAUSER1010";
+    public static final String JIRAUSER_1000 = "JIRAUSER1000";
     private UserDAO sut;
     private Database mockedDatabase;
+    private IDataMapper mockedDataMapper;
 
     @BeforeEach
     void setUp() {
         sut = new UserDAO();
         mockedDatabase = mock(Database.class);
+        mockedDataMapper = mock(IDataMapper.class);
 
         sut.setDatabase(mockedDatabase);
+        sut.setUserSyncDataMapper(mockedDataMapper);
     }
 
     @Test
@@ -78,10 +85,13 @@ public class UserDAOTest {
     @Test
     void testGetAllAutoSyncUsersReturnsListWithObjectsFromDatabase() throws SQLException, DatabaseDriverNotFoundException {
         // Arrange
-        final String firstSyncUserFromWorker = "from1";
-        final String firstSyncUserToWorker = "to1";
-        final String secondSyncUserFromWorker = "from2";
-        final String secondSyncUserToWorker = "to2";
+        UserSyncDTO userSyncDTO = new UserSyncDTO()
+                .setOriginWorker(JIRAUSER_1010)
+                .setDestinationWorker(JIRAUSER_1000);
+
+        UserSyncDTO userSyncDTO1 = new UserSyncDTO()
+                .setOriginWorker(JIRAUSER_1010)
+                .setDestinationWorker(JIRAUSER_1000);
 
         ResultSet mockedResultSet = mock(ResultSet.class);
         PreparedStatement mockedStatement = mock(PreparedStatement.class);
@@ -91,19 +101,14 @@ public class UserDAOTest {
         when(mockedConnection.prepareStatement(anyString())).thenReturn(mockedStatement);
         when(mockedStatement.executeQuery()).thenReturn(mockedResultSet);
         when(mockedResultSet.next()).thenReturn(true, true, false);
-        when(mockedResultSet.getString(anyString())).thenReturn(firstSyncUserFromWorker,
-                firstSyncUserToWorker,
-                secondSyncUserFromWorker,
-                secondSyncUserToWorker);
+        when(mockedDataMapper.toDTO(mockedResultSet)).thenReturn(userSyncDTO, userSyncDTO1);
 
         // Act
         List<UserSyncDTO> results = sut.getAllAutoSyncUsers();
 
         // Assert
-        assertEquals(firstSyncUserFromWorker, results.get(0).getOriginWorker());
-        assertEquals(firstSyncUserToWorker, results.get(0).getDestinationWorker());
-        assertEquals(secondSyncUserFromWorker, results.get(1).getOriginWorker());
-        assertEquals(secondSyncUserToWorker, results.get(1).getDestinationWorker());
+       assertEquals(userSyncDTO, results.get(0));
+       assertEquals(userSyncDTO1, results.get(1));
     }
 
     @Test
@@ -180,5 +185,69 @@ public class UserDAOTest {
 
         //Act & Assert
         assertThrows(InternalServerErrorException.class, () -> sut.setAutoSyncPreference(userId, autoSyncOn));
+    }
+
+    @Test
+    void testGetSyncUserReturnsCorrectObject() throws SQLException {
+        //Arrange
+        UserSyncDTO userSyncDTO = new UserSyncDTO()
+                .setDestinationWorker(JIRAUSER_1000)
+                .setOriginWorker(JIRAUSER_1010);
+        PreparedStatement mockedStatement = mock(PreparedStatement.class);
+        Connection mockedConnection = mock(Connection.class);
+        ResultSet mockedResultSet = mock(ResultSet.class);
+
+        when(mockedDatabase.connect()).thenReturn(mockedConnection);
+        when(mockedConnection.prepareStatement(any())).thenReturn(mockedStatement);
+        when(mockedStatement.executeQuery()).thenReturn(mockedResultSet);
+        when(mockedDataMapper.toDTO(mockedResultSet)).thenReturn(userSyncDTO);
+
+        //Act
+        UserSyncDTO result = sut.getSyncUser(USER_ID);
+
+        //Assert
+        assertEquals(JIRAUSER_1000, result.getDestinationWorker());
+        assertEquals(JIRAUSER_1010, result.getOriginWorker());
+    }
+
+    @Test
+    void testGetSyncUserThrowsInternalServerErrorWhenSQLExceptionIsThrown() throws SQLException {
+        //Arrange
+        UserSyncDTO userSyncDTO = new UserSyncDTO()
+                .setDestinationWorker(JIRAUSER_1000)
+                .setOriginWorker(JIRAUSER_1010);
+        PreparedStatement mockedStatement = mock(PreparedStatement.class);
+        Connection mockedConnection = mock(Connection.class);
+        ResultSet mockedResultSet = mock(ResultSet.class);
+
+        when(mockedDatabase.connect()).thenThrow(SQLException.class);
+        when(mockedConnection.prepareStatement(any())).thenReturn(mockedStatement);
+        when(mockedStatement.executeQuery()).thenReturn(mockedResultSet);
+        when(mockedDataMapper.toDTO(mockedResultSet)).thenReturn(userSyncDTO);
+
+        //Act & Assert
+        assertThrows(InternalServerErrorException.class, () -> sut.getSyncUser(USER_ID));
+    }
+
+    @Test
+    void testGetSyncUserCallsDataMapper() throws SQLException {
+        //Arrange
+        UserSyncDTO userSyncDTO = new UserSyncDTO()
+                .setDestinationWorker(JIRAUSER_1000)
+                .setOriginWorker(JIRAUSER_1010);
+        PreparedStatement mockedStatement = mock(PreparedStatement.class);
+        Connection mockedConnection = mock(Connection.class);
+        ResultSet mockedResultSet = mock(ResultSet.class);
+
+        when(mockedDatabase.connect()).thenReturn(mockedConnection);
+        when(mockedConnection.prepareStatement(any())).thenReturn(mockedStatement);
+        when(mockedStatement.executeQuery()).thenReturn(mockedResultSet);
+        when(mockedDataMapper.toDTO(mockedResultSet)).thenReturn(userSyncDTO);
+
+        //Act
+        UserSyncDTO result = sut.getSyncUser(USER_ID);
+
+        //Assert
+        verify(mockedDataMapper).toDTO(mockedResultSet);
     }
 }
