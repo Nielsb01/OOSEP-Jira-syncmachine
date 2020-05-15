@@ -39,7 +39,6 @@ class UserControllerTest {
 
     @Test
     void testSetJiraUserKeysCallsSetJiraUserKeys() {
-        final int userId = 1;
         //Arrange
         final JiraUsernameDTO jiraUsernameDTO = new JiraUsernameDTO();
         final int userId = 1;

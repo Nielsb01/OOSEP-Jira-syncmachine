@@ -20,6 +20,11 @@ import static org.mockito.Mockito.*;
 
 class JiraUserTest {
 
+    public static final String JIRAUSER_1000 = "JIRAUSER1000";
+    public static final String JIRAUSER_1010 = "JIRAUSER1010";
+    public static final String TEST_HOTMAIL_COM = "test@hotmail.com";
+    public static final String TEST_GMAIL_COM = "test@gmail.com";
+    public static final String KEY = "key";
     private JiraUser sut;
     private JiraSynchronisationProperties mockedProperties;
     private IUserDAO mockedUserDAO;
@@ -107,15 +112,15 @@ class JiraUserTest {
         //Arrange
         final int userId = 1;
         JiraUsernameDTO jiraUsernameDTO = new JiraUsernameDTO()
-                .setDestinationUsername("test@gmail.com")
-                .setOriginUsername("test@hotmail.com");
+                .setDestinationUsername(TEST_GMAIL_COM)
+                .setOriginUsername(TEST_HOTMAIL_COM);
 
         JSONObject originJsonObject = new JSONObject()
-                .put("key", "JIRAUSER1010");
+                .put(KEY, JIRAUSER_1010);
         String originJsonString = new JSONArray().put(originJsonObject).toString();
 
         JSONObject destinationJsonObject = new JSONObject()
-                .put("key", "JIRAUSER1000");
+                .put(KEY, JIRAUSER_1000);
         String destinationJsonString = new JSONArray().put(destinationJsonObject).toString();
 
         when(mockedRequest.get(any())).thenReturn(mockedResponse);
