@@ -6,6 +6,7 @@ import nl.avisi.propertyreaders.exceptions.DatabaseDriverNotFoundException;
 import nl.avisi.dto.UserSyncDTO;
 
 import javax.inject.Inject;
+import javax.ws.rs.InternalServerErrorException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +43,13 @@ public class UserDAO implements IUserDAO {
     private static final String GET_ALL_AUTO_SYNC_USERS_SQL = String.format("SELECT %s, %s FROM Jirausers WHERE syncStatus = ?", JIRA_ORIGIN_WORKER_COLUMN_NAME, JIRA_DESTINATION_WORKER_COLUMN_NAME);
 
     /**
+     * SQL statement to update the
+     * auto synchronisation preference
+     * for a user
+     */
+    private static final String UPDATE_AUTO_SYNC_PREFERENCE_SQL = "UPDATE jira_user SET auto_sync = ? WHERE user_id = ?";
+
+    /**
      * Class to manage the database connection
      */
     private Database database;
@@ -64,7 +72,8 @@ public class UserDAO implements IUserDAO {
     public List<UserSyncDTO> getAllAutoSyncUsers() {
         List<UserSyncDTO> autoSyncUsers = new ArrayList<>();
 
-        try (Connection connection = database.connect(); PreparedStatement stmt = connection.prepareStatement(GET_ALL_AUTO_SYNC_USERS_SQL)) {
+        try (Connection connection = database.connect();
+             PreparedStatement stmt = connection.prepareStatement(GET_ALL_AUTO_SYNC_USERS_SQL)) {
             stmt.setBoolean(1, AUTO_SYNC_STATUS_VALUE);
 
             ResultSet result = stmt.executeQuery();
@@ -85,6 +94,28 @@ public class UserDAO implements IUserDAO {
         return autoSyncUsers;
     }
 
+    /**
+     * Updates the auto sync preference in the database for the given user id
+     *
+     * @param userId Id of the user that wants to update their preference
+     * @param autoSyncOn Boolean value containing the status of the users
+     *                   auto sync preference
+     */
+    @Override
+    public void setAutoSyncPreference(int userId, boolean autoSyncOn) {
+
+        try (Connection connection = database.connect();
+             PreparedStatement stmt = connection.prepareStatement(UPDATE_AUTO_SYNC_PREFERENCE_SQL)) {
+            stmt.setBoolean(1, autoSyncOn);
+            stmt.setInt(2, userId);
+
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new InternalServerErrorException(String.format("Error occurred while updating the auto synchronisation status: %s", e.getMessage()));
+        }
+
+    }
+
     @Override
     public UserSyncDTO getSyncUser(int userId) {
         //todo methode wordt in een andere branch verder uitgewerkt
@@ -95,10 +126,4 @@ public class UserDAO implements IUserDAO {
     public void updateJiraUserKeys(JiraUserKeyDTO jiraUserKeyDTO, int userID) {
         //TODO: in een andere branch uitwerken
     }
-
-    @Override
-    public void setAutoSyncPreference(int userId, boolean autoSyncOn) {
-        //todo in andere branch uitwerken
-    }
-
 }
