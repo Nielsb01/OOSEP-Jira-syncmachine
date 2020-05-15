@@ -9,7 +9,7 @@ import java.util.List;
  * Maps incoming ResultSet that has to do with worklogs
  * to the correct in-application format
  */
-public class WorklogIdDataMapper implements IDataMapper {
+public class WorklogIdDataMapper implements IDataMapper<List<Integer>> {
 
     /**
      * Maps the Resultset containing all the worklogIds in the database
