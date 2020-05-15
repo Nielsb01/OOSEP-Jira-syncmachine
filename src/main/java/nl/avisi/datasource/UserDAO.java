@@ -1,6 +1,7 @@
 package nl.avisi.datasource;
 
 import nl.avisi.datasource.contracts.IUserDAO;
+import nl.avisi.datasource.datamappers.IDataMapper;
 import nl.avisi.dto.JiraUserKeyDTO;
 import nl.avisi.propertyreaders.exceptions.DatabaseDriverNotFoundException;
 import nl.avisi.dto.UserSyncDTO;
@@ -50,15 +51,24 @@ public class UserDAO implements IUserDAO {
     private static final String UPDATE_AUTO_SYNC_PREFERENCE_SQL = "UPDATE jira_user SET auto_sync = ? WHERE user_id = ?";
 
     /**
+     * SQL query to retrieve
+     * user keys for the given
+     * user id
+     */
+    private static final String GET_SYNC_USER_SQL = String.format("SELECT %s, %s FROM jira_user WHERE user_id = ?", JIRA_ORIGIN_WORKER_COLUMN_NAME, JIRA_DESTINATION_WORKER_COLUMN_NAME);
+
+    /**
      * Class to manage the database connection
      */
     private Database database;
 
-    /**
-     * Inject the database dependency
-     *
-     * @param database the database
-     */
+    private IDataMapper<UserSyncDTO> userSyncDataMapper;
+
+    @Inject
+    public void setUserSyncDataMapper(IDataMapper<UserSyncDTO> userSyncDataMapper) {
+        this.userSyncDataMapper = userSyncDataMapper;
+    }
+
     @Inject
     public void setDatabase(Database database) {
         this.database = database;
@@ -97,7 +107,7 @@ public class UserDAO implements IUserDAO {
     /**
      * Updates the auto sync preference in the database for the given user id
      *
-     * @param userId Id of the user that wants to update their preference
+     * @param userId     Id of the user that wants to update their preference
      * @param autoSyncOn Boolean value containing the status of the users
      *                   auto sync preference
      */
@@ -118,8 +128,16 @@ public class UserDAO implements IUserDAO {
 
     @Override
     public UserSyncDTO getSyncUser(int userId) {
-        //todo methode wordt in een andere branch verder uitgewerkt
-        return null;
+        try (Connection connection = database.connect();
+             PreparedStatement stmt = connection.prepareStatement(GET_SYNC_USER_SQL)) {
+            stmt.setInt(1, userId);
+
+
+        } catch (SQLException e) {
+            throw new InternalServerErrorException(String.format("Error occurred while retrieving a synchronisation user: %s", e.getMessage()));
+        }
+
+
     }
 
     @Override
