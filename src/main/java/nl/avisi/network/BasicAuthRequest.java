@@ -17,19 +17,19 @@ public class BasicAuthRequest implements IRequest<BasicAuth> {
      * Header name for the content type which is
      * expected by the Unirest client
      */
-    private static final String acceptHeader = "Accept";
+    private static final String ACCEPT_HEADER = "Accept";
 
     /**
      * Header name for the content type which is
      * sent by the Unirest client
      */
-    private static final String contentTypeHeader = "Content-Type";
+    private static final String CONTENT_TYPE_HEADER = "Content-Type";
 
     /**
      * The type of data that is accepted by the Unirest
      * client
      */
-    private static final String contentTypeJson = "application/json";
+    private static final String CONTENT_TYPE_JSON = "application/json";
 
     /**
      * The basic auth information to send
@@ -55,7 +55,7 @@ public class BasicAuthRequest implements IRequest<BasicAuth> {
     public HttpResponse<JsonNode> get(String url) {
         return Unirest.get(url)
                 .basicAuth(authentication.getUsername(), authentication.getPassword())
-                .header(acceptHeader, contentTypeJson)
+                .header(ACCEPT_HEADER, CONTENT_TYPE_JSON)
                 .asJson();
     }
 
@@ -69,8 +69,8 @@ public class BasicAuthRequest implements IRequest<BasicAuth> {
     public <T> HttpResponse<JsonNode> post(String url, T data) {
         return Unirest.post(url)
                 .basicAuth(authentication.getUsername(), authentication.getPassword())
-                .header(acceptHeader, contentTypeJson)
-                .header(contentTypeHeader, contentTypeJson)
+                .header(ACCEPT_HEADER, CONTENT_TYPE_JSON)
+                .header(CONTENT_TYPE_HEADER, CONTENT_TYPE_JSON)
                 .body(data)
                 .asJson();
     }
