@@ -39,10 +39,10 @@ class JiraWorklogTest {
     private IWorklogDAO mockedWorklogDAO;
 
 
-    private final String WORKER_VALUE = "ttt";
-    private final String STARTED_VALUE = "fff";
-    private final String ACCOUNT_KEY_VALUE = "kkk";
-    private final int TIME_SPENT_SECONDS_VALUE = 1234;
+    private static final String WORKER_VALUE = "ttt";
+    private static final String STARTED_VALUE = "fff";
+    private static final String ACCOUNT_KEY_VALUE = "kkk";
+    private static final int TIME_SPENT_SECONDS_VALUE = 1234;
 
     private WorklogRequestDTO worklogRequestDTO;
 
