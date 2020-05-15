@@ -4,7 +4,6 @@ import kong.unirest.*;
 import kong.unirest.json.JSONArray;
 import kong.unirest.json.JSONException;
 import kong.unirest.json.JSONObject;
-import nl.avisi.datasource.WorklogDAO;
 import nl.avisi.datasource.contracts.IUserDAO;
 import nl.avisi.datasource.contracts.IWorklogDAO;
 import nl.avisi.dto.DestinationWorklogDTO;
@@ -207,7 +206,7 @@ public class JiraWorklog {
 
         List<DestinationWorklogDTO> filteredOutWorklogs = filterOutAlreadySyncedWorklogs(allWorklogsFromOriginServer, worklogDAO.getAllWorklogIds());
 
-        List<DestinationWorklogDTO> worklogsToBeSynced = mapDestinationUserKeyToOriginUserKey(filteredOutWorklogs, autoSyncUsers);
+        List<DestinationWorklogDTO> worklogsToBeSynced = replaceOriginUserKeyWithCorrectDestinationUserKey(filteredOutWorklogs, autoSyncUsers);
 
         Map<DestinationWorklogDTO, Integer> postedWorklogsWithResponseCodes = createWorklogsOnDestinationServer(worklogsToBeSynced);
 
@@ -271,7 +270,7 @@ public class JiraWorklog {
      * @param autoSyncUsers      List of all the users that have auto sync enabled
      * @return A list of worklogs with the correct user key mapped to the worker field
      */
-    protected List<DestinationWorklogDTO> mapDestinationUserKeyToOriginUserKey(List<DestinationWorklogDTO> worklogsToBeSynced, List<UserSyncDTO> autoSyncUsers) {
+    protected List<DestinationWorklogDTO> replaceOriginUserKeyWithCorrectDestinationUserKey(List<DestinationWorklogDTO> worklogsToBeSynced, List<UserSyncDTO> autoSyncUsers) {
 
         List<DestinationWorklogDTO> worklogsWithoutMatchingKey = new ArrayList<>();
 

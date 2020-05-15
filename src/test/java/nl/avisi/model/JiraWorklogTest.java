@@ -16,7 +16,6 @@ import nl.avisi.propertyreaders.JiraSynchronisationProperties;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -280,7 +279,7 @@ class JiraWorklogTest {
         userSyncDTOS.add(new UserSyncDTO().setOriginWorker("JIRAUSER11").setDestinationWorker("JIRAUSER21"));
 
         //Act
-        List<DestinationWorklogDTO> destinationList = sut.mapDestinationUserKeyToOriginUserKey(destinationWorklogDTOS, userSyncDTOS);
+        List<DestinationWorklogDTO> destinationList = sut.replaceOriginUserKeyWithCorrectDestinationUserKey(destinationWorklogDTOS, userSyncDTOS);
 
         //Assert
         assertEquals("JIRAUSER20", destinationList.get(0).getWorker());
@@ -299,7 +298,7 @@ class JiraWorklogTest {
         userSyncDTOS.add(new UserSyncDTO().setOriginWorker("JIRAUSER10").setDestinationWorker("JIRAUSER21"));
 
         //Act & Assert
-        assertThrows(IllegalStateException.class, () -> sut.mapDestinationUserKeyToOriginUserKey(destinationWorklogDTOS, userSyncDTOS));
+        assertThrows(IllegalStateException.class, () -> sut.replaceOriginUserKeyWithCorrectDestinationUserKey(destinationWorklogDTOS, userSyncDTOS));
     }
 
     @Test
@@ -314,7 +313,7 @@ class JiraWorklogTest {
         userSyncDTOS.add(new UserSyncDTO().setOriginWorker("JIRAUSER11").setDestinationWorker("JIRAUSER21"));
 
         //Act
-        List<DestinationWorklogDTO> destinationList = sut.mapDestinationUserKeyToOriginUserKey(destinationWorklogDTOS, userSyncDTOS);
+        List<DestinationWorklogDTO> destinationList = sut.replaceOriginUserKeyWithCorrectDestinationUserKey(destinationWorklogDTOS, userSyncDTOS);
 
         //Assert
         assertEquals(1, destinationList.size());
