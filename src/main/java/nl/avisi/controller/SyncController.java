@@ -14,7 +14,7 @@ import javax.ws.rs.core.Response;
  * synchronising worklogs.
  */
 
-@Path("sync")
+@Path("synchronise")
 public class SyncController {
 
     private JiraWorklog jiraWorklog;
@@ -25,23 +25,16 @@ public class SyncController {
     }
 
     /**
-     * @param worklogRequestDTO Contains the necessary information needed to retrieve worklogs from the server.
-     * @return HTTP response with corresponding status code and entity to the request that was made.
+     * @param worklogRequestDTO Contains the necessary information needed to retrieve worklogs from the server
+     * @param userId Id of the user that made the request
+     * @return HTTP response with corresponding status code
      */
+    @Path("/{userId}")
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response synchroniseWorklogsFromOriginToDestination(WorklogRequestDTO worklogRequestDTO) {
-        /*
-        TODO: tussenstap maken voor handmatig synchroniseren in één methode.
-           Deze onderstaande 3 methodes aan elkaar knopen is lelijk,
-           filteren moet ook nog.
-         */
-
-        jiraWorklog.createWorklogsOnDestinationServer(
-                jiraWorklog.transformFromOriginToDestination(
-                        jiraWorklog.retrieveWorklogsFromOriginServer(worklogRequestDTO)));
-
-        return Response.status(Response.Status.OK).entity("Synchronisatie succesvol").build();
+    public Response manualSynchronisation(WorklogRequestDTO worklogRequestDTO, @PathParam("userId") int userId) {
+        jiraWorklog.manualSynchronisation(worklogRequestDTO, userId);
+        return Response.status(Response.Status.OK).build();
     }
 }
