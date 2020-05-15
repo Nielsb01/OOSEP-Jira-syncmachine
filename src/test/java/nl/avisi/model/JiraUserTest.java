@@ -25,6 +25,9 @@ class JiraUserTest {
     public static final String TEST_HOTMAIL_COM = "test@hotmail.com";
     public static final String TEST_GMAIL_COM = "test@gmail.com";
     public static final String KEY = "key";
+    public static final String DESTINATION_USERNAME = "AvisiUsername";
+    public static final String ORIGIN_USERNAME = "ClientUsername";
+    public static final String JSON = "[]";
     private JiraUser sut;
     private JiraSynchronisationProperties mockedProperties;
     private IUserDAO mockedUserDAO;
@@ -50,19 +53,19 @@ class JiraUserTest {
 
 
         jiraUsernameDTO = new JiraUsernameDTO()
-                .setDestinationUsername("AvisiUsername")
-                .setOriginUsername("ClientUsername");
+                .setDestinationUsername(DESTINATION_USERNAME)
+                .setOriginUsername(ORIGIN_USERNAME);
     }
 
     @Test
     void testRetrieveJiraUserKeyByUsernameReturnsCorrectJiraUserKeys() {
         //Arrange
         JSONObject originJsonObject = new JSONObject()
-                .put("key", "JIRAUSER1010");
+                .put(KEY, JIRAUSER_1010);
         String originJsonString = new JSONArray().put(originJsonObject).toString();
 
         JSONObject destinationJsonObject = new JSONObject()
-                .put("key", "JIRAUSER1000");
+                .put(KEY, JIRAUSER_1000);
         String destinationJsonString = new JSONArray().put(destinationJsonObject).toString();
 
         when(mockedRequest.get(any())).thenReturn(mockedResponse);
@@ -72,8 +75,8 @@ class JiraUserTest {
         JiraUserKeyDTO result = sut.retrieveJiraUserKeyByUsername(jiraUsernameDTO);
 
         //Assert
-        assertEquals("JIRAUSER1010", result.getOriginUserKey());
-        assertEquals("JIRAUSER1000", result.getDestinationUserKey());
+        assertEquals(JIRAUSER_1010, result.getOriginUserKey());
+        assertEquals(JIRAUSER_1000, result.getDestinationUserKey());
 
     }
 
@@ -81,7 +84,7 @@ class JiraUserTest {
     void testRetrieveJiraUserKeyByUsernameThrowsInvalidUsernameExceptionWhenJSONExceptionOccurs() {
         //Arrange
         when(mockedRequest.get(any())).thenReturn(mockedResponse);
-        when(mockedResponse.getBody()).thenReturn(new JsonNode("[]"));
+        when(mockedResponse.getBody()).thenReturn(new JsonNode(JSON));
 
         //Assert
         assertThrows(InvalidUsernameException.class, () ->
@@ -94,7 +97,7 @@ class JiraUserTest {
     void testRetrieveJiraUserKeyByUsernameThrowsInvalidUsernameExceptionWhenKeyIsEmpty() {
         //Arrange
         JSONObject jsonObject = new JSONObject()
-                .put("key", "");
+                .put(KEY, "");
         String jsonString = new JSONArray().put(jsonObject).toString();
 
         when(mockedRequest.get(any())).thenReturn(mockedResponse);
