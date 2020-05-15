@@ -163,7 +163,7 @@ public class UserDAOTest {
         //Assert
         verify(mockedStatement).setBoolean(1, autoSyncOn);
         verify(mockedStatement).setInt(2, userId);
-        
+
     }
 
     @Test
@@ -179,6 +179,6 @@ public class UserDAOTest {
         when(mockedConnection.prepareStatement(any())).thenReturn(mockedStatement);
 
         //Act & Assert
-      assertThrows(InternalServerErrorException.class, () -> sut.setAutoSyncPreference(userId, autoSyncOn));
+        assertThrows(InternalServerErrorException.class, () -> sut.setAutoSyncPreference(userId, autoSyncOn));
     }
 }
