@@ -45,6 +45,12 @@ public class UserDAO implements IUserDAO {
 
     /**
      * SQL statement to update the
+     * jira user keys for a user
+     */
+    private final static String UPDATE_JIRA_USER_KEY_SQL = String.format("UPDATE jira_user SET %s = ?, %s = ? WHERE user_id = ?", JIRA_ORIGIN_WORKER_COLUMN_NAME, JIRA_DESTINATION_WORKER_COLUMN_NAME);
+
+    /**
+     * SQL statement to update the
      * auto synchronisation preference
      * for a user
      */
@@ -149,8 +155,25 @@ public class UserDAO implements IUserDAO {
         return userSyncDTO;
     }
 
+    /**
+     * Updates the Jira user keys that match the
+     * given user id
+     * 
+     * @param jiraUserKeyDTO Contain the origin and destination user keys
+     * @param userId Id of the user that made the request
+     */
     @Override
-    public void updateJiraUserKeys(JiraUserKeyDTO jiraUserKeyDTO, int userID) {
-        //TODO: in een andere branch uitwerken
-    }
+    public void updateJiraUserKeys(JiraUserKeyDTO jiraUserKeyDTO, int userId) {
+            try (Connection connection = database.connect();
+                 PreparedStatement stmt = connection.prepareStatement(UPDATE_JIRA_USER_KEY_SQL)) {
+                stmt.setString(1, jiraUserKeyDTO.getOriginUserKey());
+                stmt.setString(2, jiraUserKeyDTO.getDestinationUserKey());
+                stmt.setInt(3, userId);
+
+                stmt.executeUpdate();
+
+            } catch (SQLException e) {
+                throw new InternalServerErrorException(String.format("Error occurred while retrieving a synchronisation user: %s", e.getMessage()));
+            }
+        }
 }

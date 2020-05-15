@@ -1,6 +1,7 @@
 package nl.avisi.datasource;
 
 import nl.avisi.datasource.datamappers.IDataMapper;
+import nl.avisi.dto.JiraUserKeyDTO;
 import nl.avisi.propertyreaders.exceptions.DatabaseDriverNotFoundException;
 import nl.avisi.dto.UserSyncDTO;
 import org.junit.jupiter.api.BeforeEach;
@@ -107,8 +108,8 @@ public class UserDAOTest {
         List<UserSyncDTO> results = sut.getAllAutoSyncUsers();
 
         // Assert
-       assertEquals(userSyncDTO, results.get(0));
-       assertEquals(userSyncDTO1, results.get(1));
+        assertEquals(userSyncDTO, results.get(0));
+        assertEquals(userSyncDTO1, results.get(1));
     }
 
     @Test
@@ -249,5 +250,61 @@ public class UserDAOTest {
 
         //Assert
         verify(mockedDataMapper).toDTO(mockedResultSet);
+    }
+
+    @Test
+    void testUpdateJiraUserKeysThrowsInternalServerErrorWhenSQLExceptionIsThrown() throws SQLException {
+        JiraUserKeyDTO jiraUserKeyDTO = new JiraUserKeyDTO()
+                .setOriginUserKey(JIRAUSER_1000)
+                .setDestinationUserKey(JIRAUSER_1010);
+        //Arrange
+        PreparedStatement mockedStatement = mock(PreparedStatement.class);
+        Connection mockedConnection = mock(Connection.class);
+
+        when(mockedDatabase.connect()).thenThrow(SQLException.class);
+        when(mockedConnection.prepareStatement(any())).thenReturn(mockedStatement);
+
+        //Act & Assert
+        assertThrows(InternalServerErrorException.class, () -> sut.updateJiraUserKeys(jiraUserKeyDTO, USER_ID));
+    }
+
+    @Test
+    void testUpdateJiraUserKeysThrowsCallsConnectAndClose() throws SQLException {
+        JiraUserKeyDTO jiraUserKeyDTO = new JiraUserKeyDTO()
+                .setOriginUserKey(JIRAUSER_1000)
+                .setDestinationUserKey(JIRAUSER_1010);
+        //Arrange
+        PreparedStatement mockedStatement = mock(PreparedStatement.class);
+        Connection mockedConnection = mock(Connection.class);
+
+        when(mockedDatabase.connect()).thenReturn(mockedConnection);
+        when(mockedConnection.prepareStatement(any())).thenReturn(mockedStatement);
+        //Act
+        sut.updateJiraUserKeys(jiraUserKeyDTO, USER_ID);
+
+        //Assert
+        verify(mockedStatement).setString(1, JIRAUSER_1000);
+        verify(mockedStatement).setString(2, JIRAUSER_1010);
+        verify(mockedStatement).setInt(3, USER_ID);
+    }
+
+    @Test
+    void testUpdateJiraUserKeysMakesConnectionAndClosesIt() throws SQLException {
+        JiraUserKeyDTO jiraUserKeyDTO = new JiraUserKeyDTO()
+                .setOriginUserKey(JIRAUSER_1000)
+                .setDestinationUserKey(JIRAUSER_1010);
+        //Arrange
+        PreparedStatement mockedStatement = mock(PreparedStatement.class);
+        Connection mockedConnection = mock(Connection.class);
+
+        when(mockedDatabase.connect()).thenReturn(mockedConnection);
+        when(mockedConnection.prepareStatement(any())).thenReturn(mockedStatement);
+        //Act
+        sut.updateJiraUserKeys(jiraUserKeyDTO, USER_ID);
+
+        //Assert
+        verify(mockedConnection).close();
+        verify(mockedDatabase).connect();
+        verify(mockedStatement).close();
     }
 }
