@@ -8,7 +8,6 @@ import nl.avisi.network.authentication.BasicAuth;
 
 /**
  * Send a request with the basic auth headers
- * <p>
  * The basic auth credentials are set using
  * the constructor
  */
