@@ -35,7 +35,7 @@ public class Login {
      *                 needed to verify their identity
      * @return The UserID the corresponds to the supplied login information
      * @throws NotAuthorizedException When passwords don't match. This will produce
-     * a 401 status code response.
+     *                                a 401 status code response.
      */
     public int validateCredentials(LoginDTO loginDTO) {
         UserDTO userDTO = loginDAO.getLoginInfo(loginDTO.getUsername());

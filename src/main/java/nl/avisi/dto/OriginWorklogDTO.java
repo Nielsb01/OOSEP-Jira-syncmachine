@@ -5,7 +5,6 @@ package nl.avisi.dto;
  * adds a worklogId. This class will be used to
  * persist the worklogId in the database and compare
  * with other worklogs.
- *
  */
 public class OriginWorklogDTO extends DestinationWorklogDTO {
 

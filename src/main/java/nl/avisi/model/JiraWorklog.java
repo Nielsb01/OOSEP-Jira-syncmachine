@@ -15,6 +15,7 @@ import nl.avisi.network.authentication.BasicAuth;
 import nl.avisi.propertyreaders.JiraSynchronisationProperties;
 
 import javax.inject.Inject;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -111,7 +112,7 @@ public class JiraWorklog {
      * @param jsonArray All retrieved worklogs in jsonArray form.
      * @return List of all worklogs that were retrieved between the two given dates for the specified workers.
      */
-    private List<OriginWorklogDTO> createWorklogDTOs(JSONArray jsonArray) {
+    protected List<OriginWorklogDTO> createWorklogDTOs(JSONArray jsonArray) {
         List<OriginWorklogDTO> worklogs = new ArrayList<>();
 
         for (int i = 0; i < jsonArray.length(); i++) {
@@ -164,7 +165,7 @@ public class JiraWorklog {
      * @param worklogs ArrayList consisting of WorklogDTO's this list are all the worklogs retrieved from client Jira-server.
      * @return A map of worklogDTO's with their corresponding status codes after being posted.
      */
-    public Map createWorklogsOnDestinationServer(List<DestinationWorklogDTO> worklogs) {
+    public Map<DestinationWorklogDTO, Integer> createWorklogsOnDestinationServer(List<DestinationWorklogDTO> worklogs) {
         setDestinationUrl(jiraSynchronisationProperties.getDestinationUrl());
 
         Map<DestinationWorklogDTO, Integer> responseCodes = new HashMap<>();
@@ -177,8 +178,76 @@ public class JiraWorklog {
         return responseCodes;
     }
 
+
+    /**
+     * Synchronises the worklogs of one person after the user sent
+     * a request to manually synchronise their worklogs.
+     * @param worklogRequestDTO Contains the neccesary information to
+     *                          make a HTTP request to the Tempo API
+     *                          to retrieve worklogs from the
+     *                          origin server
+     * @param userId Id of the user that wants to manually synchronise their
+     *               worklogs
+     */
+    public void manualSynchronisation(WorklogRequestDTO worklogRequestDTO, int userId) {
+        List<OriginWorklogDTO> allWorklogsFromOriginServer = retrieveWorklogsFromOriginServer(worklogRequestDTO);
+
+         List<UserSyncDTO> userSyncDTO =  new ArrayList<>();
+         userSyncDTO.add(userDAO.getSyncUser(userId));
+
+        List<DestinationWorklogDTO> filteredWorklogs =  filterOutAlreadySyncedWorklogs(allWorklogsFromOriginServer, worklogDAO.getAllWorklogIds());
+
+        Map<DestinationWorklogDTO, Integer> postedWorklogsWithResponseCodes = createWorklogsOnDestinationServer(replaceOriginUserKeyWithCorrectDestinationUserKey(filteredWorklogs, userSyncDTO));
+
+        List<Integer> succesfullyPostedWorklogIds =  filterOutFailedPostedWorklogs(allWorklogsFromOriginServer, postedWorklogsWithResponseCodes);
+
+            //todo functionaliteit inbouwen voor afhandelen van failed posted worklogs en
+            //refactor zodat autosync en manualsync allebei gebruik maken van dezelfde
+            //sync method
+
+        succesfullyPostedWorklogIds.forEach(worklogId -> worklogDAO.addWorklogId(worklogId));
+    }
+
+    /**
+     * This method is called once a week by {@link nl.avisi.timer.SynchroniseTask} to
+     * synchronise all the worklogs from the origin server to the destination server.
+     * Only worklogs from users with auto synchronisation enabled will be synchronised.
+     * The ids of successfully posted worklogs will be added to the database to prevent
+     * wrongfully synchronising worklogs in the future.
+     */
     public void synchronise() {
-        //todo
+        Date date = new Date();
+        String currentDate = new SimpleDateFormat("yyyy-MM-dd").format(date);
+
+        List<UserSyncDTO> autoSyncUsers = userDAO.getAllAutoSyncUsers();
+
+
+        List<String> originJiraUserKeys = autoSyncUsers.stream()
+                .map(UserSyncDTO::getOriginWorker)
+                .collect(Collectors.toList());
+
+        //TODO: Functionaliteit van Max toepassen bij het zetten van de datums
+        WorklogRequestDTO requestBody = new WorklogRequestDTO()
+                .setFrom("laatste sync datum")
+                .setWorker(originJiraUserKeys)
+                .setTo(currentDate);
+
+        List<OriginWorklogDTO> allWorklogsFromOriginServer = retrieveWorklogsFromOriginServer(requestBody);
+
+        List<DestinationWorklogDTO> filteredOutWorklogs = filterOutAlreadySyncedWorklogs(allWorklogsFromOriginServer, worklogDAO.getAllWorklogIds());
+
+        List<DestinationWorklogDTO> worklogsToBeSynced = replaceOriginUserKeyWithCorrectDestinationUserKey(filteredOutWorklogs, autoSyncUsers);
+
+        Map<DestinationWorklogDTO, Integer> postedWorklogsWithResponseCodes = createWorklogsOnDestinationServer(worklogsToBeSynced);
+
+        List<Integer> succesfullyPostedWorklogIds = filterOutFailedPostedWorklogs(allWorklogsFromOriginServer, postedWorklogsWithResponseCodes);
+
+        /*
+        TODO: onsuccesvol gesplaatste worklogs verwerken (met groep overleggen wat er moet gebeuren).
+        TODO: Synchronise refactoren zodat autoSync en manualSync deze beide kunnen aanspreken
+         */
+
+        succesfullyPostedWorklogIds.forEach(worklogId -> worklogDAO.addWorklogId(worklogId));
     }
 
     /**
@@ -190,7 +259,7 @@ public class JiraWorklog {
      * @param postedWorklogsWithResponseCodes Map of worklogs that were posted with the respective response status
      * @return List of all the worklogIds that had a status code of 200
      */
-    public List<Integer> filterOutFailedPostedWorklogs(List<OriginWorklogDTO> allRetrievedWorklogsFromOriginServer, Map<DestinationWorklogDTO, Integer> postedWorklogsWithResponseCodes) {
+    protected List<Integer> filterOutFailedPostedWorklogs(List<OriginWorklogDTO> allRetrievedWorklogsFromOriginServer, Map<DestinationWorklogDTO, Integer> postedWorklogsWithResponseCodes) {
         List<Integer> idsOfSuccesfullyPostedworklogs = new ArrayList<>();
 
         postedWorklogsWithResponseCodes.forEach((key, value) -> allRetrievedWorklogsFromOriginServer.forEach(worklog -> {
@@ -209,11 +278,11 @@ public class JiraWorklog {
      * list.
      *
      * @param retrievedWorklogs Worklogs that were retrieved from the origin server
-     * @param allWorklogIds     All worklogIds of worklogs that are already synced in the past.
-     *                          This data is retrieved from the database
+     * @param allWorklogIds All worklogIds of worklogs that are already synced in the past.
+     *                      This data is retrieved from the database
      * @return list of DestinationWorklogDTOs that only contain not yet synced worklogs
      */
-    public List<DestinationWorklogDTO> filterOutAlreadySyncedWorklogs(List<OriginWorklogDTO> retrievedWorklogs, List<Integer> allWorklogIds) {
+    protected List<DestinationWorklogDTO> filterOutAlreadySyncedWorklogs(List<OriginWorklogDTO> retrievedWorklogs, List<Integer> allWorklogIds) {
         return retrievedWorklogs
                 .stream()
                 .filter(worklog -> allWorklogIds.stream()
@@ -231,7 +300,7 @@ public class JiraWorklog {
      * @param autoSyncUsers List of all the users that have auto sync enabled
      * @return A list of worklogs with the correct user key mapped to the worker field
      */
-    public List<DestinationWorklogDTO> mapDestinationUserKeyToOriginUserKey(List<DestinationWorklogDTO> worklogsToBeSynced, List<UserSyncDTO> autoSyncUsers) {
+    protected List<DestinationWorklogDTO> replaceOriginUserKeyWithCorrectDestinationUserKey(List<DestinationWorklogDTO> worklogsToBeSynced, List<UserSyncDTO> autoSyncUsers) {
 
         List<DestinationWorklogDTO> worklogsWithoutMatchingKey = new ArrayList<>();
 
@@ -253,21 +322,5 @@ public class JiraWorklog {
         worklogsWithoutMatchingKey.forEach(worklogsToBeSynced::remove);
 
         return worklogsToBeSynced;
-    }
-
-    /**
-     * Transforms a OriginWorklogDTO list to a DestinationWorklogDTO List.
-     * This is needed because OriginWorklogDTO contains the worklogId that
-     * is used to filter out already synced worklogs, but to post the worklog
-     * to the destination server it can't contain the worklogId anymore. Hence
-     * the transformation of the type of the list. Also simply casting it won't work
-     * this is why it is streamed. The filter for nonNull is simply applied
-     * because the stream requires some kind of non-terminal operation to work.
-     *
-     * @param originWorklogDTOs List of originWorklogDTOs
-     * @return The same list that was passed in but the type changed to DestinationWorklogDTO
-     */
-    public List<DestinationWorklogDTO> transformFromOriginToDestination(List<OriginWorklogDTO> originWorklogDTOs) {
-        return originWorklogDTOs.stream().filter(Objects::nonNull).collect(Collectors.toList());
     }
 }
