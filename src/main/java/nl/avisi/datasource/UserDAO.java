@@ -29,13 +29,13 @@ public class UserDAO implements IUserDAO {
      * Column name for the worker of the from
      * JIRA instance
      */
-    private static final String JIRA_ORIGIN_WORKER_COLUMN_NAME = "JiraInstantie1Worker";
+    private static final String JIRA_ORIGIN_WORKER_COLUMN_NAME = "origin_instance_user_key";
 
     /**
      * Column name for the worker of the to
      * JIRA instance
      */
-    private static final String JIRA_DESTINATION_WORKER_COLUMN_NAME = "Jirainstantie2Worker";
+    private static final String JIRA_DESTINATION_WORKER_COLUMN_NAME = "destination_instance_user_key";
 
     /**
      * SQL Query to retrieve all users who
@@ -62,6 +62,9 @@ public class UserDAO implements IUserDAO {
      */
     private Database database;
 
+    /**
+     * Maps resultSet to in-application object
+     */
     private IDataMapper<UserSyncDTO> userSyncDataMapper;
 
     @Inject
@@ -89,12 +92,9 @@ public class UserDAO implements IUserDAO {
             ResultSet result = stmt.executeQuery();
 
             while (result.next()) {
-                autoSyncUsers.add(
-                        new UserSyncDTO()
-                                .setOriginWorker(result.getString(JIRA_ORIGIN_WORKER_COLUMN_NAME))
-                                .setDestinationWorker(result.getString(JIRA_DESTINATION_WORKER_COLUMN_NAME))
-                );
+                autoSyncUsers.add(userSyncDataMapper.toDTO(result));
             }
+
         } catch (SQLException e) {
             System.err.printf("Error occurred fetching all users which have enabled auto sync: %s\n", e.getMessage());
         } catch (DatabaseDriverNotFoundException e) {
@@ -126,18 +126,27 @@ public class UserDAO implements IUserDAO {
 
     }
 
+    /**
+     * Gets the user keys of the origin and destination instance
+     * from the database that match the user id
+     *
+     * @param userId Id of the user that made the request
+     * @return UserSyncDTO containing the user keys
+     */
     @Override
     public UserSyncDTO getSyncUser(int userId) {
+        UserSyncDTO userSyncDTO;
+
         try (Connection connection = database.connect();
              PreparedStatement stmt = connection.prepareStatement(GET_SYNC_USER_SQL)) {
-            stmt.setInt(1, userId);
 
+            stmt.setInt(1, userId);
+            userSyncDTO = userSyncDataMapper.toDTO(stmt.executeQuery());
 
         } catch (SQLException e) {
             throw new InternalServerErrorException(String.format("Error occurred while retrieving a synchronisation user: %s", e.getMessage()));
         }
-
-
+        return userSyncDTO;
     }
 
     @Override
