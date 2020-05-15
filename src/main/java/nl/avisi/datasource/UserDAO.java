@@ -72,7 +72,8 @@ public class UserDAO implements IUserDAO {
     public List<UserSyncDTO> getAllAutoSyncUsers() {
         List<UserSyncDTO> autoSyncUsers = new ArrayList<>();
 
-        try (Connection connection = database.connect(); PreparedStatement stmt = connection.prepareStatement(GET_ALL_AUTO_SYNC_USERS_SQL)) {
+        try (Connection connection = database.connect();
+             PreparedStatement stmt = connection.prepareStatement(GET_ALL_AUTO_SYNC_USERS_SQL)) {
             stmt.setBoolean(1, AUTO_SYNC_STATUS_VALUE);
 
             ResultSet result = stmt.executeQuery();
@@ -103,7 +104,8 @@ public class UserDAO implements IUserDAO {
     @Override
     public void setAutoSyncPreference(int userId, boolean autoSyncOn) {
 
-        try (Connection connection = database.connect(); PreparedStatement stmt = connection.prepareStatement(UPDATE_AUTO_SYNC_PREFERENCE_SQL)) {
+        try (Connection connection = database.connect();
+             PreparedStatement stmt = connection.prepareStatement(UPDATE_AUTO_SYNC_PREFERENCE_SQL)) {
             stmt.setBoolean(1, autoSyncOn);
             stmt.setInt(2, userId);
 

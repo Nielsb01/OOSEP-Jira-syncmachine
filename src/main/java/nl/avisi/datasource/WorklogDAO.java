@@ -53,7 +53,8 @@ public class WorklogDAO implements IWorklogDAO {
     @Override
     public void addWorklogId(int worklogId) {
 
-        try (Connection connection = database.connect(); PreparedStatement stmt = connection.prepareStatement(ADD_WORKLOG_ID_SQL)) {
+        try (Connection connection = database.connect();
+             PreparedStatement stmt = connection.prepareStatement(ADD_WORKLOG_ID_SQL)) {
             stmt.setInt(1, worklogId);
             stmt.executeUpdate();
         } catch (SQLException e) {
@@ -70,7 +71,8 @@ public class WorklogDAO implements IWorklogDAO {
     public List<Integer> getAllWorklogIds() {
         List<Integer> worklogIds;
 
-        try (Connection connection = database.connect(); PreparedStatement stmt = connection.prepareStatement(GET_ALL_WORKLOG_IDS_SQL)) {
+        try (Connection connection = database.connect();
+             PreparedStatement stmt = connection.prepareStatement(GET_ALL_WORKLOG_IDS_SQL)) {
             worklogIds = worklogIdDataMapper.toDTO(stmt.executeQuery());
         } catch (SQLException e) {
             throw new InternalServerErrorException(e.getMessage());

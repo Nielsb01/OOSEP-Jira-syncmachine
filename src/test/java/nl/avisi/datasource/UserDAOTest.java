@@ -161,8 +161,9 @@ public class UserDAOTest {
         sut.setAutoSyncPreference(userId, autoSyncOn);
 
         //Assert
-        verify(mockedStatement).setInt(2, userId);
         verify(mockedStatement).setBoolean(1, autoSyncOn);
+        verify(mockedStatement).setInt(2, userId);
+        
     }
 
     @Test

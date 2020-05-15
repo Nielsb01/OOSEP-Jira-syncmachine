@@ -58,7 +58,8 @@ public class LoginDAO implements ILoginDAO {
 
         UserDTO userDTO;
 
-        try (Connection connection = database.connect(); PreparedStatement stmt = connection.prepareStatement(GET_LOGIN_DATA_SQL)) {
+        try (Connection connection = database.connect();
+             PreparedStatement stmt = connection.prepareStatement(GET_LOGIN_DATA_SQL)) {
             stmt.setString(1, username);
 
             userDTO = userDataMapper.toDTO(stmt.executeQuery());
