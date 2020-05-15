@@ -163,7 +163,6 @@ public class UserDAOTest {
         //Assert
         verify(mockedStatement).setBoolean(1, autoSyncOn);
         verify(mockedStatement).setInt(2, userId);
-
     }
 
     @Test
