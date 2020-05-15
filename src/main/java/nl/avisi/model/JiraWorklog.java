@@ -178,6 +178,36 @@ public class JiraWorklog {
         return responseCodes;
     }
 
+
+    /**
+     * Synchronises the worklogs of one person after the user sent
+     * a request to manually synchronise their worklogs.
+     * @param worklogRequestDTO Contains the neccesary information to
+     *                          make a HTTP request to the Tempo API
+     *                          to retrieve worklogs from the
+     *                          origin server
+     * @param userId Id of the user that wants to manually synchronise their
+     *               worklogs
+     */
+    public void manualSynchronisation(WorklogRequestDTO worklogRequestDTO, int userId) {
+        List<OriginWorklogDTO> allWorklogsFromOriginServer = retrieveWorklogsFromOriginServer(worklogRequestDTO);
+
+         List<UserSyncDTO> userSyncDTO =  new ArrayList<>();
+         userSyncDTO.add(userDAO.getSyncUser(userId));
+
+        List<DestinationWorklogDTO> filteredWorklogs =  filterOutAlreadySyncedWorklogs(allWorklogsFromOriginServer, worklogDAO.getAllWorklogIds());
+
+        Map<DestinationWorklogDTO, Integer> postedWorklogsWithResponseCodes = createWorklogsOnDestinationServer(replaceOriginUserKeyWithCorrectDestinationUserKey(filteredWorklogs, userSyncDTO));
+
+        List<Integer> succesfullyPostedWorklogIds =  filterOutFailedPostedWorklogs(allWorklogsFromOriginServer, postedWorklogsWithResponseCodes);
+
+            //todo functionaliteit inbouwen voor afhandelen van failed posted worklogs en
+            //refactor zodat autosync en manualsync allebei gebruik maken van dezelfde
+            //sync method
+
+        succesfullyPostedWorklogIds.forEach(worklogId -> worklogDAO.addWorklogId(worklogId));
+    }
+
     /**
      * This method is called once a week by {@link nl.avisi.timer.SynchroniseTask} to
      * synchronise all the worklogs from the origin server to the destination server.
@@ -226,7 +256,7 @@ public class JiraWorklog {
      * destination server and have a status code 200.
      *
      * @param allRetrievedWorklogsFromOriginServer All the worklogs that were retrieved from the origin server
-     * @param postedWorklogsWithResponseCodes      Map of worklogs that were posted with the respective response status
+     * @param postedWorklogsWithResponseCodes Map of worklogs that were posted with the respective response status
      * @return List of all the worklogIds that had a status code of 200
      */
     protected List<Integer> filterOutFailedPostedWorklogs(List<OriginWorklogDTO> allRetrievedWorklogsFromOriginServer, Map<DestinationWorklogDTO, Integer> postedWorklogsWithResponseCodes) {
@@ -267,7 +297,7 @@ public class JiraWorklog {
      *
      * @param worklogsToBeSynced List of DestinationWorklogDTO where the worker field contains the origin user key
      *                           which will be swapped for the destination user key
-     * @param autoSyncUsers      List of all the users that have auto sync enabled
+     * @param autoSyncUsers List of all the users that have auto sync enabled
      * @return A list of worklogs with the correct user key mapped to the worker field
      */
     protected List<DestinationWorklogDTO> replaceOriginUserKeyWithCorrectDestinationUserKey(List<DestinationWorklogDTO> worklogsToBeSynced, List<UserSyncDTO> autoSyncUsers) {

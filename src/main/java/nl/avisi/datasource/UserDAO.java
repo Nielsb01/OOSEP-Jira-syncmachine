@@ -86,6 +86,12 @@ public class UserDAO implements IUserDAO {
     }
 
     @Override
+    public UserSyncDTO getSyncUser(int userId) {
+        //todo methode wordt in een andere branch verder uitgewerkt
+        return null;
+    }
+
+    @Override
     public void updateJiraUserKeys(JiraUserKeyDTO jiraUserKeyDTO, int userID) {
         //TODO: in een andere branch uitwerken
     }

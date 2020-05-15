@@ -37,7 +37,6 @@ class JiraWorklogTest {
     private IUserDAO mockedUserDAO;
     private IWorklogDAO mockedWorklogDAO;
 
-
     private static final String WORKER_VALUE = "ttt";
     private static final String STARTED_VALUE = "fff";
     private static final String ACCOUNT_KEY_VALUE = "kkk";
@@ -337,6 +336,7 @@ class JiraWorklogTest {
 
         //Assert
         assertEquals(originWorklogDTO.getWorklogId(), actualValue.get(0).intValue());
+
     }
 
     @Test
@@ -445,6 +445,84 @@ class JiraWorklogTest {
 
         //Act
         sut.synchronise();
+
+        //Assert
+        verify(mockedWorklogDAO).addWorklogId(TEMPO_WORKLOG_ID_VALUE);
+    }
+
+    @Test
+    void testManualSynchronisationCallsGetSyncUser() {
+        //Arrange
+        JSONObject jsonObject = new JSONObject()
+                .put("worker", WORKER_VALUE)
+                .put("started", STARTED_VALUE)
+                .put("issue", new JSONObject().put("accountKey", ACCOUNT_KEY_VALUE))
+                .put("timeSpentSeconds", TIME_SPENT_SECONDS_VALUE)
+                .put("tempoWorklogId", TEMPO_WORKLOG_ID_VALUE);
+
+        String jsonString = new JSONArray().put(jsonObject).toString();
+
+       UserSyncDTO userSyncDTO = new UserSyncDTO().setOriginWorker(WORKER_VALUE).setDestinationWorker("JIRAUSER20");
+
+        when(mockedUserDAO.getSyncUser(1)).thenReturn(userSyncDTO);
+        when(mockedRequest.post(any(), any())).thenReturn(mockedResponse);
+        when(mockedResponse.getBody()).thenReturn(new JsonNode(jsonString));
+        when(mockedResponse.getStatus()).thenReturn(200);
+
+        //Act
+        sut.manualSynchronisation(worklogRequestDTO, 1);
+
+        //Assert
+        verify(mockedUserDAO).getSyncUser(1);
+    }
+
+    @Test
+    void testManualSynchronisationCallsGetAllWorklogIds() {
+        //Arrange
+        JSONObject jsonObject = new JSONObject()
+                .put("worker", WORKER_VALUE)
+                .put("started", STARTED_VALUE)
+                .put("issue", new JSONObject().put("accountKey", ACCOUNT_KEY_VALUE))
+                .put("timeSpentSeconds", TIME_SPENT_SECONDS_VALUE)
+                .put("tempoWorklogId", TEMPO_WORKLOG_ID_VALUE);
+
+        String jsonString = new JSONArray().put(jsonObject).toString();
+
+        UserSyncDTO userSyncDTO = new UserSyncDTO().setOriginWorker(WORKER_VALUE).setDestinationWorker("JIRAUSER20");
+
+        when(mockedUserDAO.getSyncUser(1)).thenReturn(userSyncDTO);
+        when(mockedRequest.post(any(), any())).thenReturn(mockedResponse);
+        when(mockedResponse.getBody()).thenReturn(new JsonNode(jsonString));
+        when(mockedResponse.getStatus()).thenReturn(200);
+
+        //Act
+        sut.manualSynchronisation(worklogRequestDTO, 1);
+
+        //Assert
+        verify(mockedWorklogDAO).getAllWorklogIds();
+    }
+
+    @Test
+    void testManualSynchronisationCallsAddWorklogId() {
+        //Arrange
+        JSONObject jsonObject = new JSONObject()
+                .put("worker", WORKER_VALUE)
+                .put("started", STARTED_VALUE)
+                .put("issue", new JSONObject().put("accountKey", ACCOUNT_KEY_VALUE))
+                .put("timeSpentSeconds", TIME_SPENT_SECONDS_VALUE)
+                .put("tempoWorklogId", TEMPO_WORKLOG_ID_VALUE);
+
+        String jsonString = new JSONArray().put(jsonObject).toString();
+
+        UserSyncDTO userSyncDTO = new UserSyncDTO().setOriginWorker(WORKER_VALUE).setDestinationWorker("JIRAUSER20");
+
+        when(mockedUserDAO.getSyncUser(1)).thenReturn(userSyncDTO);
+        when(mockedRequest.post(any(), any())).thenReturn(mockedResponse);
+        when(mockedResponse.getBody()).thenReturn(new JsonNode(jsonString));
+        when(mockedResponse.getStatus()).thenReturn(200);
+
+        //Act
+        sut.manualSynchronisation(worklogRequestDTO, 1);
 
         //Assert
         verify(mockedWorklogDAO).addWorklogId(TEMPO_WORKLOG_ID_VALUE);
