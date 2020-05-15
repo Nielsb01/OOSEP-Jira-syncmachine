@@ -4,6 +4,7 @@ import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
 import kong.unirest.json.JSONArray;
 import kong.unirest.json.JSONObject;
+import nl.avisi.datasource.contracts.IUserDAO;
 import nl.avisi.exceptions.InvalidUsernameException;
 import nl.avisi.dto.JiraUserKeyDTO;
 import nl.avisi.dto.JiraUsernameDTO;
@@ -15,13 +16,13 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 class JiraUserTest {
 
     private JiraUser sut;
     private JiraSynchronisationProperties mockedProperties;
+    private IUserDAO mockedUserDAO;
 
     private IRequest mockedRequest;
     private HttpResponse mockedResponse;
@@ -38,6 +39,9 @@ class JiraUserTest {
         sut.setRequest(mockedRequest);
 
         mockedResponse = mock(HttpResponse.class);
+
+        mockedUserDAO = mock(IUserDAO.class);
+        sut.setUserDAO(mockedUserDAO);
 
 
         jiraUsernameDTO = new JiraUsernameDTO()
@@ -60,7 +64,7 @@ class JiraUserTest {
         when(mockedResponse.getBody()).thenReturn(new JsonNode(originJsonString), new JsonNode(destinationJsonString));
 
         //Act
-         JiraUserKeyDTO result = sut.retrieveJiraUserKeyByUsername(jiraUsernameDTO);
+        JiraUserKeyDTO result = sut.retrieveJiraUserKeyByUsername(jiraUsernameDTO);
 
         //Assert
         assertEquals("JIRAUSER1010", result.getOriginUserKey());
@@ -96,6 +100,19 @@ class JiraUserTest {
 
                 //Act
                 sut.retrieveJiraUserKeyByUsername(jiraUsernameDTO));
+    }
+
+    @Test
+    void testSetAutoSyncPreferenceCallsSetAutoPreferenceWithCorrectParams() {
+        //Arrange
+        final int userId = 1;
+        final boolean autoSyncOn = true;
+
+        //Act
+        sut.setAutoSyncPreference(userId, autoSyncOn);
+
+        //Assert
+        verify(mockedUserDAO).setAutoSyncPreference(userId, autoSyncOn);
     }
 
 }

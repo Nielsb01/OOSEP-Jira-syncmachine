@@ -33,6 +33,10 @@ public class JiraUser {
      */
     private JiraSynchronisationProperties jiraSynchronisationProperties;
 
+    @Inject
+    public void setUserDAO(IUserDAO userDAO) {
+        this.userDAO = userDAO;
+    }
 
     @Inject
     public void setJiraSynchronisationProperties(JiraSynchronisationProperties jiraSynchronisationProperties) {
@@ -111,7 +115,7 @@ public class JiraUser {
         return jiraUserKey;
     }
 
-    public void setJiraUserKeys(JiraUsernameDTO jiraUsernameDTO, int userId) {
+    public void setJiraUserKeys(JiraUsernameDTO jiraUsernameDTO) {
         // TODO aanroep van retrieveJiraUserKeyByUsername en resultaat in de database knallen
 
         /*
@@ -120,7 +124,16 @@ public class JiraUser {
          */
     }
 
+    /**
+     * Responsible for making the appropriate calls
+     * to update the users auto synchronisation preference
+     *
+     * @param userId     Id of the user that made the request
+     * @param autoSyncOn Boolean value indicating whether or not
+     *                   the user wants their auto synchronisation
+     *                   to be on or not
+     */
     public void setAutoSyncPreference(int userId, boolean autoSyncOn) {
-        //todo in andere branch uitwerken
+        userDAO.setAutoSyncPreference(userId, autoSyncOn);
     }
 }
