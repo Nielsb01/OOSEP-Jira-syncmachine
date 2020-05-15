@@ -158,7 +158,7 @@ public class UserDAO implements IUserDAO {
     /**
      * Updates the Jira user keys that match the
      * given user id
-     * 
+     *
      * @param jiraUserKeyDTO Contain the origin and destination user keys
      * @param userId Id of the user that made the request
      */
