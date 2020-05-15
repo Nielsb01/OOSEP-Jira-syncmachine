@@ -193,9 +193,9 @@ public class JiraWorklog {
          List<UserSyncDTO> userSyncDTO =  new ArrayList<>();
          userSyncDTO.add(userDAO.getSyncUser(userId));
 
-        List<DestinationWorklogDTO> lol =  filterOutAlreadySyncedWorklogs(allWorklogsFromOriginServer, worklogDAO.getAllWorklogIds());
+        List<DestinationWorklogDTO> filteredWorklogs =  filterOutAlreadySyncedWorklogs(allWorklogsFromOriginServer, worklogDAO.getAllWorklogIds());
 
-        Map<DestinationWorklogDTO, Integer> postedWorklogsWithResponseCodes = createWorklogsOnDestinationServer(mapDestinationUserKeyToOriginUserKey(lol, userSyncDTO));
+        Map<DestinationWorklogDTO, Integer> postedWorklogsWithResponseCodes = createWorklogsOnDestinationServer(mapDestinationUserKeyToOriginUserKey(filteredWorklogs, userSyncDTO));
 
         List<Integer> succesfullyPostedWorklogIds =  filterOutFailedPostedWorklogs(allWorklogsFromOriginServer, postedWorklogsWithResponseCodes);
 
