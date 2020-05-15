@@ -28,9 +28,10 @@ class UserControllerTest {
     void testSetJiraUserKeysResponseStatus() {
         //Arrange
         final JiraUsernameDTO jiraUsernameDTO = new JiraUsernameDTO();
+        final int userId = 1;
 
         //Act
-        final Response actualValue = sut.setJiraUserKeys(jiraUsernameDTO);
+        final Response actualValue = sut.setJiraUserKeys(jiraUsernameDTO, userId);
 
         //Assert
         assertEquals(HTTP_STATUS_OK, actualValue.getStatus());
@@ -41,11 +42,40 @@ class UserControllerTest {
         final int userId = 1;
         //Arrange
         final JiraUsernameDTO jiraUsernameDTO = new JiraUsernameDTO();
+        final int userId = 1;
 
         //Act
-        final Response actualValue = sut.setJiraUserKeys(jiraUsernameDTO);
+        final Response actualValue = sut.setJiraUserKeys(jiraUsernameDTO, userId);
 
         //Assert
         verify(mockedJiraUser).setJiraUserKeys(jiraUsernameDTO, userId);
     }
+
+    @Test
+    void testsetAutoSyncPreferenceCallsSetAutoSyncPreference() {
+        //Arrange
+        final int userId = 1;
+        final boolean autoSyncOn = true;
+
+        //Act
+        final Response actualValue = sut.setAutoSyncPreference(userId, autoSyncOn);
+
+        //Assert
+        verify(mockedJiraUser).setAutoSyncPreference(userId, autoSyncOn);
+    }
+
+    @Test
+    void testsetAutoSyncPreferenceResponseStatus() {
+        //Arrange
+        final int userId = 1;
+        final boolean autoSyncOn = true;
+
+        //Act
+        final Response actualValue = sut.setAutoSyncPreference(userId, autoSyncOn);
+
+        //Assert
+        assertEquals(HTTP_STATUS_OK, actualValue.getStatus());
+    }
+
+
 }

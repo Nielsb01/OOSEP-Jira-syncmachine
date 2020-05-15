@@ -127,4 +127,8 @@ public class JiraUser {
     public void setJiraUserKeys(JiraUsernameDTO jiraUsernameDTO, int userId) {
        userDAO.updateJiraUserKeys(retrieveJiraUserKeyByUsername(jiraUsernameDTO), userId);
     }
+
+    public void setAutoSyncPreference(int userId, boolean autoSyncOn) {
+        //todo in andere branch uitwerken
+    }
 }
