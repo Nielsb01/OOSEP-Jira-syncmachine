@@ -136,4 +136,17 @@ public class JiraUser {
     public void setAutoSyncPreference(int userId, boolean autoSyncOn) {
         userDAO.setAutoSyncPreference(userId, autoSyncOn);
     }
+
+    /**
+     * Handles retrieving the correct user keys with
+     * the given usernames and passes them on to
+     * be persisted in the database
+     *
+     * @param jiraUsernameDTO Contain the usernames used to retrieve the
+     *                        correct user keys
+     * @param userId Id of the user that made the request
+     */
+    public void setJiraUserKeys(JiraUsernameDTO jiraUsernameDTO, int userId) {
+        userDAO.updateJiraUserKeys(retrieveJiraUserKeyByUsername(jiraUsernameDTO), userId);
+    }
 }
