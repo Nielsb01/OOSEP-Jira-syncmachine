@@ -51,7 +51,7 @@ public class LoginDAO implements ILoginDAO {
      *                 corresponding information like password and UserID.
      * @return UserDTO containing all the retrieved information like username, password and UserID.
      * @throws InternalServerErrorException when a SQLException is thrown. This will be caught
-     * by the jax-rs ExceptionMapper and produce a response with status code 500.
+     *                                      by the jax-rs ExceptionMapper and produce a response with status code 500.
      */
     @Override
     public UserDTO getLoginInfo(String username) {
@@ -61,7 +61,7 @@ public class LoginDAO implements ILoginDAO {
         try (Connection connection = database.connect(); PreparedStatement stmt = connection.prepareStatement(GET_LOGIN_DATA_SQL)) {
             stmt.setString(1, username);
 
-           userDTO = userDataMapper.toDTO(stmt.executeQuery());
+            userDTO = userDataMapper.toDTO(stmt.executeQuery());
         } catch (SQLException e) {
             throw new InternalServerErrorException(e.getMessage());
         }

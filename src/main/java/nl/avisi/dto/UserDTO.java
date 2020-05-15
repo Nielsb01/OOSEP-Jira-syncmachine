@@ -1,9 +1,9 @@
 package nl.avisi.dto;
 
 public class UserDTO {
-   private int userID;
-   private String username;
-   private String password;
+    private int userID;
+    private String username;
+    private String password;
 
     public int getUserID() {
         return userID;

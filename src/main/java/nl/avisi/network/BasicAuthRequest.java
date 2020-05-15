@@ -8,7 +8,6 @@ import nl.avisi.network.authentication.BasicAuth;
 
 /**
  * Send a request with the basic auth headers
- *
  * The basic auth credentials are set using
  * the constructor
  */
@@ -63,7 +62,7 @@ public class BasicAuthRequest implements IRequest<BasicAuth> {
     /**
      * Post the object to the given url
      *
-     * @param url the endpoint to send the json object to
+     * @param url  the endpoint to send the json object to
      * @param data the object to be sent
      * @return the response of the post request
      */

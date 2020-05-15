@@ -38,7 +38,7 @@ class UserDataMapperTest {
     @Test
     void testToDTOThrowsSQLException() throws SQLException {
         //Arrange
-      when(mockedResultset.next()).thenThrow(SQLException.class);
+        when(mockedResultset.next()).thenThrow(SQLException.class);
 
         //Act & Assert
         assertThrows(SQLException.class, () -> {
@@ -74,6 +74,6 @@ class UserDataMapperTest {
         final UserDTO result = sut.toDTO(mockedResultset);
 
         //Assert
-        verify(mockedResultset,times(1)).next();
+        verify(mockedResultset, times(1)).next();
     }
 }
