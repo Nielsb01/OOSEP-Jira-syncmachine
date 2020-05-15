@@ -40,6 +40,6 @@ public class LoginController {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response login(LoginDTO loginDTO) {
-        return Response.status(200).entity(login.validateCredentials(loginDTO)).build();
+        return Response.status(Response.Status.OK).entity(login.validateCredentials(loginDTO)).build();
     }
 }
