@@ -32,7 +32,7 @@ public class Database {
      *
      * @return a new connection to the database
      * @throws DatabaseDriverNotFoundException when the database driver isn't installed on the system
-     * @throws SQLException                    when no connection to the database could be established
+     * @throws SQLException when no connection to the database could be established
      */
     public Connection connect() throws SQLException {
         final String driverName = databaseProperties.getDriverName();
