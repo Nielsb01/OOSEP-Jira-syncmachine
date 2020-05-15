@@ -1,6 +1,7 @@
 package nl.avisi.datasource;
 
 import nl.avisi.datasource.contracts.IUserDAO;
+import nl.avisi.dto.JiraUserKeyDTO;
 import nl.avisi.propertyreaders.exceptions.DatabaseDriverNotFoundException;
 import nl.avisi.dto.UserSyncDTO;
 
@@ -83,4 +84,21 @@ public class UserDAO implements IUserDAO {
 
         return autoSyncUsers;
     }
+
+    @Override
+    public UserSyncDTO getSyncUser(int userId) {
+        //todo methode wordt in een andere branch verder uitgewerkt
+        return null;
+    }
+
+    @Override
+    public void updateJiraUserKeys(JiraUserKeyDTO jiraUserKeyDTO, int userID) {
+        //TODO: in een andere branch uitwerken
+    }
+
+    @Override
+    public void setAutoSyncPreference(int userId, boolean autoSyncOn) {
+        //todo in andere branch uitwerken
+    }
+
 }

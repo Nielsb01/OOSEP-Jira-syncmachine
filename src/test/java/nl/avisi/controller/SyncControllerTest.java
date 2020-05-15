@@ -27,25 +27,25 @@ class SyncControllerTest {
 
     @Test
     void testManualSynchronisationChecksResponseStatus() {
-        // Setup
+        //Arrange
         WorklogRequestDTO worklogRequestDTO = new WorklogRequestDTO();
 
-        // Run the test
+        //Act
         Response actualValue = sut.manualSynchronisation(worklogRequestDTO, USER_ID);
 
-        // Verify the results
+        //Assert
         assertEquals(HTTP_STATUS_OK, actualValue.getStatus());
     }
 
     @Test
     void testManualSynchronisationCallsManualSynchronisation() {
-        // Setup
+        //Arrange
         WorklogRequestDTO worklogRequestDTO = new WorklogRequestDTO();
 
-        // Run the test
+        //Act
         Response actualValue = sut.manualSynchronisation(worklogRequestDTO, USER_ID);
 
-        // Verify the results
-       verify(mockedJiraWorklog).manualSynchronisation(worklogRequestDTO, USER_ID);
+        //Assert
+        verify(mockedJiraWorklog).manualSynchronisation(worklogRequestDTO, USER_ID);
     }
 }

@@ -34,12 +34,12 @@ public class LoginController {
      * @param loginDTO contains the login information of the user
      *                 needed to verify their identity
      * @return Response containing the UserID corresponding to the
-     *         supplied login information and the appropriate status code.
+     * supplied login information and the appropriate status code.
      */
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response login(LoginDTO loginDTO) {
-        return Response.status(200).entity(login.validateCredentials(loginDTO)).build();
+        return Response.status(Response.Status.OK).entity(login.validateCredentials(loginDTO)).build();
     }
 }
