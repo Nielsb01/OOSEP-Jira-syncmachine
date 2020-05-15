@@ -27,7 +27,7 @@ class JiraUserTest {
     public static final String KEY = "key";
     public static final String DESTINATION_USERNAME = "AvisiUsername";
     public static final String ORIGIN_USERNAME = "ClientUsername";
-    public static final String JSON = "[]";
+    public static final String EMPTY_JSON_ARRAY = "[]";
     private JiraUser sut;
     private JiraSynchronisationProperties mockedProperties;
     private IUserDAO mockedUserDAO;
@@ -84,7 +84,7 @@ class JiraUserTest {
     void testRetrieveJiraUserKeyByUsernameThrowsInvalidUsernameExceptionWhenJSONExceptionOccurs() {
         //Arrange
         when(mockedRequest.get(any())).thenReturn(mockedResponse);
-        when(mockedResponse.getBody()).thenReturn(new JsonNode(JSON));
+        when(mockedResponse.getBody()).thenReturn(new JsonNode(EMPTY_JSON_ARRAY));
 
         //Assert
         assertThrows(InvalidUsernameException.class, () ->
