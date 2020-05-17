@@ -1,19 +1,19 @@
 package nl.avisi.dto;
 /**
  * Class contains the necessary information to
- * handle the logingin of a user
+ * handle the login of a user
  */
 public class LoginDTO {
 
     /**
-     * is the username the user filled in on the frondend
-     * used in the login form and send by frontend to a endpoint here in the backend in form of this DTO
+     * is the username the user filled in on the front-end
+     * used in the login form and send by front-end to a endpoint here in the back-end in form of this DTO
      */
     private String username;
 
     /**
-     * is the password the user filled in on the frondend
-     * used in the login form and send by frontend to a endpoint here in the backend in form of this DTO
+     * is the password the user filled in on the front-end
+     * used in the login form and send by front-end to a endpoint here in the backend in form of this DTO
      */
     private String password;
 
