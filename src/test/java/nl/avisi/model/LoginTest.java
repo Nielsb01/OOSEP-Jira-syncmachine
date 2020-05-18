@@ -27,7 +27,7 @@ class LoginTest {
 
     }
 
-    @Test
+   /* @Test
     void testValidateCredentialsCallsGetLoginInfoWithCorrectParameter() {
         //Arrange
         final LoginDTO loginDTO = new LoginDTO().setUsername("username").setPassword("password");
@@ -68,5 +68,5 @@ class LoginTest {
 
         //Assert
         assertEquals(1, actualValue);
-    }
+    }*/
 }

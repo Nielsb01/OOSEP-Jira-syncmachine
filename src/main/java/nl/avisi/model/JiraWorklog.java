@@ -227,10 +227,8 @@ public class JiraWorklog {
                 .collect(Collectors.toList());
 
         //TODO: Functionaliteit van Max toepassen bij het zetten van de datums
-        WorklogRequestDTO requestBody = new WorklogRequestDTO()
-                .setFrom("laatste sync datum")
-                .setWorker(originJiraUserKeys)
-                .setTo(currentDate);
+        WorklogRequestDTO requestBody = new WorklogRequestDTO("", "",originJiraUserKeys);
+
 
         List<OriginWorklogDTO> allWorklogsFromOriginServer = retrieveWorklogsFromOriginServer(requestBody);
 

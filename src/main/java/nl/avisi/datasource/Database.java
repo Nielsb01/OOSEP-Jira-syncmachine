@@ -44,6 +44,6 @@ public class Database {
             throw new DatabaseDriverNotFoundException(e.getMessage());
         }
 
-        return DriverManager.getConnection(connectionString);
+        return DriverManager.getConnection("jdbc:mysql://localhost:3306/jirasyncmachine?serverTimezone=UTC", "root", "12345");
     }
 }
