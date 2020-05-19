@@ -60,8 +60,8 @@ public class JiraUser {
      */
     public JiraUserKeyDTO retrieveJiraUserKeyByUsername(JiraUsernameDTO jiraUsernameDTO) {
 
-        String originUrl = getApiUrl(jiraUsernameDTO.getOriginUsername(), jiraSynchronisationProperties.getOriginUrl());
-        String destinationUrl = getApiUrl(jiraUsernameDTO.getDestinationUsername(), jiraSynchronisationProperties.getDestinationUrl());
+        String originUrl = getJiraApiUrlToRetrieveUserKey(jiraUsernameDTO.getOriginUsername(), jiraSynchronisationProperties.getOriginUrl());
+        String destinationUrl = getJiraApiUrlToRetrieveUserKey(jiraUsernameDTO.getDestinationUsername(), jiraSynchronisationProperties.getDestinationUrl());
 
         setRequestAuthenticationMethod();
 
@@ -77,7 +77,7 @@ public class JiraUser {
         return jiraUserKeyDTO;
     }
 
-    private String getApiUrl(String username, String url) {
+    private String getJiraApiUrlToRetrieveUserKey(String username, String url) {
         return String.format("%srest/api/2/user/search?username=%s", url, username);
     }
 
