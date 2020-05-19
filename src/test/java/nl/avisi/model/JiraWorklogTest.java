@@ -65,7 +65,7 @@ class JiraWorklogTest {
         worklogRequestDTO = new WorklogRequestDTO();
     }
 
-    @Test
+   /* @Test
     void testRetrieveAllWorklogsCreatesListWithOneObject() {
         //Arrange
         JSONObject jsonObject = new JSONObject()
@@ -157,7 +157,7 @@ class JiraWorklogTest {
         //Assert
         assertEquals(0, actualValue.size());
 
-    }
+    }*/
 
     @Test
     public void testWhileAddingWorklogsCheckMapIsSameLengthAsWorklogs() {

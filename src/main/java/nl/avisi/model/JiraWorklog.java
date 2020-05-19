@@ -74,11 +74,11 @@ public class JiraWorklog {
     }
 
     public void setOriginUrl(String originUrl) {
-        this.originUrl = String.format("%s/rest/tempo-timesheets/4/worklogs/search", originUrl);
+        this.originUrl = String.format("%srest/tempo-timesheets/4/worklogs/search", originUrl);
     }
 
     public void setDestinationUrl(String destinationUrl) {
-        this.destinationUrl = String.format("%s/rest/tempo-timesheets/4/worklogs", destinationUrl);
+        this.destinationUrl = String.format("%srest/tempo-timesheets/4/worklogs", destinationUrl);
     }
 
     public void setBasicAuth(BasicAuth basicAuth) {
@@ -92,7 +92,7 @@ public class JiraWorklog {
      * @param worklogRequestDTO Contains the parameters to specify the worklogs to be retrieved during the HTTP request.
      * @return List of all worklogs that were retrieved from the client server between the two given dates for the specified workers.
      */
-    public List<OriginWorklogDTO> retrieveWorklogsFromOriginServer(WorklogRequestDTO worklogRequestDTO) {
+    public List<DestinationWorklogDTO> retrieveWorklogsFromOriginServer(WorklogRequestDTO worklogRequestDTO) {
         setOriginUrl(jiraSynchronisationProperties.getOriginUrl());
 
         HttpResponse<JsonNode> jsonWorklogs = requestWorklogs(worklogRequestDTO);
@@ -112,8 +112,8 @@ public class JiraWorklog {
      * @param jsonArray All retrieved worklogs in jsonArray form.
      * @return List of all worklogs that were retrieved between the two given dates for the specified workers.
      */
-    protected List<OriginWorklogDTO> createWorklogDTOs(JSONArray jsonArray) {
-        List<OriginWorklogDTO> worklogs = new ArrayList<>();
+    protected List<DestinationWorklogDTO> createWorklogDTOs(JSONArray jsonArray) {
+        List<DestinationWorklogDTO> worklogs = new ArrayList<>();
 
         for (int i = 0; i < jsonArray.length(); i++) {
             JSONObject jsonObject = jsonArray.getJSONObject(i);
@@ -123,11 +123,10 @@ public class JiraWorklog {
                 String started = jsonObject.getString("started");
                 String originTaskId = jsonObject.getJSONObject("issue").getString("accountKey");
                 int timeSpentSeconds = jsonObject.getInt("timeSpentSeconds");
-                int worklogId = jsonObject.getInt("tempoWorklogId");
+                //int worklogId = jsonObject.getInt("tempoWorklogId");
 
                 worklogs.add(
-                        (OriginWorklogDTO) new OriginWorklogDTO()
-                                .setWorklogId(worklogId)
+                         new DestinationWorklogDTO()
                                 .setWorker(worker)
                                 .setStarted(started)
                                 .setOriginTaskId(originTaskId)
@@ -190,22 +189,22 @@ public class JiraWorklog {
      *               worklogs
      */
     public void manualSynchronisation(WorklogRequestDTO worklogRequestDTO, int userId) {
-        List<OriginWorklogDTO> allWorklogsFromOriginServer = retrieveWorklogsFromOriginServer(worklogRequestDTO);
+        List<DestinationWorklogDTO> allWorklogsFromOriginServer = retrieveWorklogsFromOriginServer(worklogRequestDTO);
 
          List<UserSyncDTO> userSyncDTO =  new ArrayList<>();
          userSyncDTO.add(userDAO.getSyncUser(userId));
 
-        List<DestinationWorklogDTO> filteredWorklogs =  filterOutAlreadySyncedWorklogs(allWorklogsFromOriginServer, worklogDAO.getAllWorklogIds());
+       // List<DestinationWorklogDTO> filteredWorklogs =  filterOutAlreadySyncedWorklogs(allWorklogsFromOriginServer, worklogDAO.getAllWorklogIds());
 
-        Map<DestinationWorklogDTO, Integer> postedWorklogsWithResponseCodes = createWorklogsOnDestinationServer(replaceOriginUserKeyWithCorrectDestinationUserKey(filteredWorklogs, userSyncDTO));
+        Map<DestinationWorklogDTO, Integer> postedWorklogsWithResponseCodes = createWorklogsOnDestinationServer(replaceOriginUserKeyWithCorrectDestinationUserKey(allWorklogsFromOriginServer, userSyncDTO));
 
-        List<Integer> succesfullyPostedWorklogIds =  filterOutFailedPostedWorklogs(allWorklogsFromOriginServer, postedWorklogsWithResponseCodes);
+        //List<Integer> succesfullyPostedWorklogIds =  filterOutFailedPostedWorklogs(allWorklogsFromOriginServer, postedWorklogsWithResponseCodes);
 
             //todo functionaliteit inbouwen voor afhandelen van failed posted worklogs en
             //refactor zodat autosync en manualsync allebei gebruik maken van dezelfde
             //sync method
 
-        succesfullyPostedWorklogIds.forEach(worklogId -> worklogDAO.addWorklogId(worklogId));
+        //succesfullyPostedWorklogIds.forEach(worklogId -> worklogDAO.addWorklogId(worklogId));
     }
 
     /**
@@ -230,22 +229,22 @@ public class JiraWorklog {
         WorklogRequestDTO requestBody = new WorklogRequestDTO("", "",originJiraUserKeys);
 
 
-        List<OriginWorklogDTO> allWorklogsFromOriginServer = retrieveWorklogsFromOriginServer(requestBody);
+        List<DestinationWorklogDTO> allWorklogsFromOriginServer = retrieveWorklogsFromOriginServer(requestBody);
 
-        List<DestinationWorklogDTO> filteredOutWorklogs = filterOutAlreadySyncedWorklogs(allWorklogsFromOriginServer, worklogDAO.getAllWorklogIds());
+        //List<DestinationWorklogDTO> filteredOutWorklogs = filterOutAlreadySyncedWorklogs(allWorklogsFromOriginServer, worklogDAO.getAllWorklogIds());
 
-        List<DestinationWorklogDTO> worklogsToBeSynced = replaceOriginUserKeyWithCorrectDestinationUserKey(filteredOutWorklogs, autoSyncUsers);
+        List<DestinationWorklogDTO> worklogsToBeSynced = replaceOriginUserKeyWithCorrectDestinationUserKey(allWorklogsFromOriginServer, autoSyncUsers);
 
         Map<DestinationWorklogDTO, Integer> postedWorklogsWithResponseCodes = createWorklogsOnDestinationServer(worklogsToBeSynced);
 
-        List<Integer> succesfullyPostedWorklogIds = filterOutFailedPostedWorklogs(allWorklogsFromOriginServer, postedWorklogsWithResponseCodes);
+        //List<Integer> succesfullyPostedWorklogIds = filterOutFailedPostedWorklogs(allWorklogsFromOriginServer, postedWorklogsWithResponseCodes);
 
         /*
         TODO: onsuccesvol gesplaatste worklogs verwerken (met groep overleggen wat er moet gebeuren).
         TODO: Synchronise refactoren zodat autoSync en manualSync deze beide kunnen aanspreken
          */
 
-        succesfullyPostedWorklogIds.forEach(worklogId -> worklogDAO.addWorklogId(worklogId));
+       // succesfullyPostedWorklogIds.forEach(worklogId -> worklogDAO.addWorklogId(worklogId));
     }
 
     /**
