@@ -31,7 +31,6 @@ public class LoginDTO {
 
     public void setUsername(String username) {
         this.username = username;
-       // return this;
     }
 
     public String getPassword() {
@@ -40,6 +39,5 @@ public class LoginDTO {
 
     public void setPassword(String password) {
         this.password = password;
-        //return this;
     }
 }
