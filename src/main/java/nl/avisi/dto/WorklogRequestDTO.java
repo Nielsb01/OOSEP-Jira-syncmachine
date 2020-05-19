@@ -24,30 +24,37 @@ public class WorklogRequestDTO {
      */
     private List<String> worker;
 
+    public WorklogRequestDTO(String from, String to, List<String> worker) {
+        this.from = from;
+        this.to = to;
+        this.worker = worker;
+    }
+
+    public WorklogRequestDTO() {
+    }
+
     public String getFrom() {
         return from;
     }
 
-    public WorklogRequestDTO setFrom(String from) {
+    public void setFrom(String from) {
         this.from = from;
-        return this;
+
     }
 
     public String getTo() {
         return to;
     }
 
-    public WorklogRequestDTO setTo(String to) {
+    public void setTo(String to) {
         this.to = to;
-        return this;
     }
 
     public List<String> getWorker() {
         return worker;
     }
 
-    public WorklogRequestDTO setWorker(List<String> worker) {
+    public void setWorker(List<String> worker) {
         this.worker = worker;
-        return this;
     }
 }

@@ -60,13 +60,13 @@ public class JiraUser {
      */
     public JiraUserKeyDTO retrieveJiraUserKeyByUsername(JiraUsernameDTO jiraUsernameDTO) {
 
-        String originUrl = jiraSynchronisationProperties.getOriginUrl();
-        String destinationUrl = jiraSynchronisationProperties.getDestinationUrl();
+        String originUrl = getJiraApiUrlToRetrieveUserKey(jiraUsernameDTO.getOriginUsername(), jiraSynchronisationProperties.getOriginUrl());
+        String destinationUrl = getJiraApiUrlToRetrieveUserKey(jiraUsernameDTO.getDestinationUsername(), jiraSynchronisationProperties.getDestinationUrl());
 
         setRequestAuthenticationMethod();
 
-        HttpResponse<JsonNode> jsonOriginJiraUser = request.get(originUrl + jiraUsernameDTO.getOriginUsername());
-        HttpResponse<JsonNode> jsonDestinationJiraUser = request.get(destinationUrl + jiraUsernameDTO.getDestinationUsername());
+        HttpResponse<JsonNode> jsonOriginJiraUser = request.get(originUrl);
+        HttpResponse<JsonNode> jsonDestinationJiraUser = request.get(destinationUrl);
 
         JiraUserKeyDTO jiraUserKeyDTO = createJiraUserKeyDTO(jsonOriginJiraUser, jsonDestinationJiraUser);
 
@@ -75,6 +75,10 @@ public class JiraUser {
         }
 
         return jiraUserKeyDTO;
+    }
+
+    private String getJiraApiUrlToRetrieveUserKey(String username, String url) {
+        return String.format("%srest/api/2/user/search?username=%s", url, username);
     }
 
     private void setRequestAuthenticationMethod() {
