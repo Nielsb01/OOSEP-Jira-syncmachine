@@ -2,7 +2,7 @@
 package nl.avisi.controller;
 
 import nl.avisi.dto.JiraUsernameDTO;
-import nl.avisi.model.JiraUser;
+import nl.avisi.model.contracts.IJiraUser;
 
 import javax.inject.Inject;
 import javax.ws.rs.*;
@@ -16,10 +16,10 @@ import javax.ws.rs.core.Response;
 
 @Path("user")
 public class UserController {
-    private JiraUser jiraUser;
+    private IJiraUser jiraUser;
 
     @Inject
-    public void setJiraUser(JiraUser jiraUser) {
+    public void setJiraUser(IJiraUser jiraUser) {
         this.jiraUser = jiraUser;
     }
 
