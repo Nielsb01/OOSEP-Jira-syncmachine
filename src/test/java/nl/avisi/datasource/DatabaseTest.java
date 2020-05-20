@@ -1,5 +1,6 @@
 package nl.avisi.datasource;
 
+import nl.avisi.datasource.database.Database;
 import nl.avisi.datasource.exceptions.DatabaseDriverNotFoundException;
 import nl.avisi.propertyreaders.DatabaseProperties;
 import org.junit.jupiter.api.BeforeEach;

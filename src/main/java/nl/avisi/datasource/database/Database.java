@@ -1,4 +1,4 @@
-package nl.avisi.datasource;
+package nl.avisi.datasource.database;
 
 import nl.avisi.datasource.exceptions.DatabaseDriverNotFoundException;
 import nl.avisi.propertyreaders.DatabaseProperties;

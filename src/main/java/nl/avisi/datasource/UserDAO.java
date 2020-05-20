@@ -1,6 +1,7 @@
 package nl.avisi.datasource;
 
 import nl.avisi.datasource.contracts.IUserDAO;
+import nl.avisi.datasource.database.Database;
 import nl.avisi.datasource.datamappers.IDataMapper;
 import nl.avisi.dto.JiraUserKeyDTO;
 import nl.avisi.dto.UserSyncDTO;
