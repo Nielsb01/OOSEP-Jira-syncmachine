@@ -3,7 +3,7 @@ package nl.avisi.datasource;
 import nl.avisi.datasource.contracts.IUserDAO;
 import nl.avisi.datasource.datamappers.IDataMapper;
 import nl.avisi.dto.JiraUserKeyDTO;
-import nl.avisi.propertyreaders.exceptions.DatabaseDriverNotFoundException;
+import nl.avisi.datasource.exceptions.DatabaseDriverNotFoundException;
 import nl.avisi.dto.UserSyncDTO;
 
 import javax.inject.Inject;
