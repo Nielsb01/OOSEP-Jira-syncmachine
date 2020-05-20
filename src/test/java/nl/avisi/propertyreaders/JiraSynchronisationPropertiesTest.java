@@ -88,12 +88,150 @@ public class JiraSynchronisationPropertiesTest {
     }
 
     @Test
-    void testGetSynchronisationMomentReturnsPropertyReaderGetPropertyCalendar() {
+    void testGetSynchronisationMomentReturnsPropertyReaderGetPropertyCalendarIfDayIsSunday() {
         // Arrange
         String configMoment = "Zondag 12:30";
 
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.DAY_OF_WEEK, 1);
+        calendar.set(Calendar.HOUR, 12);
+        calendar.set(Calendar.MINUTE, 30);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+
+        Date expected = calendar.getTime();
+
+        Mockito.when(mockedPropertyReader.getProperty("synchronisationMoment")).thenReturn(configMoment);
+
+        // Act
+        Calendar actual = sut.getSynchronisationMoment();
+
+        // Assert
+        assertEquals(expected, actual.getTime());
+    }
+
+    @Test
+    void testGetSynchronisationMomentReturnsPropertyReaderGetPropertyCalendarIfDayIsMonday() {
+        // Arrange
+        String configMoment = "Maandag 12:30";
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.DAY_OF_WEEK, 2);
+        calendar.set(Calendar.HOUR, 12);
+        calendar.set(Calendar.MINUTE, 30);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+
+        Date expected = calendar.getTime();
+
+        Mockito.when(mockedPropertyReader.getProperty("synchronisationMoment")).thenReturn(configMoment);
+
+        // Act
+        Calendar actual = sut.getSynchronisationMoment();
+
+        // Assert
+        assertEquals(expected, actual.getTime());
+    }
+
+    @Test
+    void testGetSynchronisationMomentReturnsPropertyReaderGetPropertyCalendarIfDayIsTuesday() {
+        // Arrange
+        String configMoment = "Dinsdag 12:30";
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.DAY_OF_WEEK, 3);
+        calendar.set(Calendar.HOUR, 12);
+        calendar.set(Calendar.MINUTE, 30);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+
+        Date expected = calendar.getTime();
+
+        Mockito.when(mockedPropertyReader.getProperty("synchronisationMoment")).thenReturn(configMoment);
+
+        // Act
+        Calendar actual = sut.getSynchronisationMoment();
+
+        // Assert
+        assertEquals(expected, actual.getTime());
+    }
+
+    @Test
+    void testGetSynchronisationMomentReturnsPropertyReaderGetPropertyCalendarIfDayIsWednesday() {
+        // Arrange
+        String configMoment = "Woensdag 12:30";
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.DAY_OF_WEEK, 4);
+        calendar.set(Calendar.HOUR, 12);
+        calendar.set(Calendar.MINUTE, 30);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+
+        Date expected = calendar.getTime();
+
+        Mockito.when(mockedPropertyReader.getProperty("synchronisationMoment")).thenReturn(configMoment);
+
+        // Act
+        Calendar actual = sut.getSynchronisationMoment();
+
+        // Assert
+        assertEquals(expected, actual.getTime());
+    }
+
+    @Test
+    void testGetSynchronisationMomentReturnsPropertyReaderGetPropertyCalendarIfDayIsThursday() {
+        // Arrange
+        String configMoment = "Donderdag 12:30";
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.DAY_OF_WEEK, 5);
+        calendar.set(Calendar.HOUR, 12);
+        calendar.set(Calendar.MINUTE, 30);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+
+        Date expected = calendar.getTime();
+
+        Mockito.when(mockedPropertyReader.getProperty("synchronisationMoment")).thenReturn(configMoment);
+
+        // Act
+        Calendar actual = sut.getSynchronisationMoment();
+
+        // Assert
+        assertEquals(expected, actual.getTime());
+    }
+
+    @Test
+    void testGetSynchronisationMomentReturnsPropertyReaderGetPropertyCalendarIfDayIsFriday() {
+        // Arrange
+        String configMoment = "Vrijdag 12:30";
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.DAY_OF_WEEK, 6);
+        calendar.set(Calendar.HOUR, 12);
+        calendar.set(Calendar.MINUTE, 30);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+
+        Date expected = calendar.getTime();
+
+        Mockito.when(mockedPropertyReader.getProperty("synchronisationMoment")).thenReturn(configMoment);
+
+        // Act
+        Calendar actual = sut.getSynchronisationMoment();
+
+        // Assert
+        assertEquals(expected, actual.getTime());
+    }
+
+    @Test
+    void testGetSynchronisationMomentReturnsPropertyReaderGetPropertyCalendarIfDayIsSaturday() {
+        // Arrange
+        String configMoment = "Zaterdag 12:30";
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.DAY_OF_WEEK, 7);
         calendar.set(Calendar.HOUR, 12);
         calendar.set(Calendar.MINUTE, 30);
         calendar.set(Calendar.SECOND, 0);
