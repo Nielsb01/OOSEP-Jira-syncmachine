@@ -4,7 +4,7 @@ import kong.unirest.*;
 
 import kong.unirest.json.JSONException;
 import nl.avisi.datasource.contracts.IUserDAO;
-import nl.avisi.exceptions.InvalidUsernameException;
+import nl.avisi.model.exceptions.InvalidUsernameException;
 import nl.avisi.dto.JiraUserKeyDTO;
 import nl.avisi.dto.JiraUsernameDTO;
 import nl.avisi.model.contracts.IJiraUser;
