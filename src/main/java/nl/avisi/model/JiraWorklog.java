@@ -93,13 +93,14 @@ public class JiraWorklog implements IJiraWorklog {
      * @param worklogRequestDTO Contains the parameters to specify the worklogs to be retrieved during the HTTP request.
      * @return List of all worklogs that were retrieved from the client server between the two given dates for the specified workers.
      */
-    public List<DestinationWorklogDTO> retrieveWorklogsFromOriginServer(WorklogRequestDTO worklogRequestDTO) {
+    public Map<Integer, DestinationWorklogDTO> retrieveWorklogsFromOriginServer(WorklogRequestDTO worklogRequestDTO) {
+
         setOriginUrl(jiraSynchronisationProperties.getOriginUrl());
 
         HttpResponse<JsonNode> jsonWorklogs = requestWorklogs(worklogRequestDTO);
 
         if (jsonWorklogs.getBody() == null || !jsonWorklogs.getBody().isArray()) {
-            return new ArrayList<>();
+            return new HashMap<>();
         }
 
         JSONArray jsonArray = jsonWorklogs.getBody().getArray();
@@ -113,8 +114,9 @@ public class JiraWorklog implements IJiraWorklog {
      * @param jsonArray All retrieved worklogs in jsonArray form.
      * @return List of all worklogs that were retrieved between the two given dates for the specified workers.
      */
-    protected List<DestinationWorklogDTO> createWorklogDTOs(JSONArray jsonArray) {
-        List<DestinationWorklogDTO> worklogs = new ArrayList<>();
+    protected Map<Integer, DestinationWorklogDTO> createWorklogDTOs(JSONArray jsonArray) {
+        Map<Integer, DestinationWorklogDTO> worklogs = new HashMap<>();
+
 
         for (int i = 0; i < jsonArray.length(); i++) {
             JSONObject jsonObject = jsonArray.getJSONObject(i);
@@ -126,16 +128,17 @@ public class JiraWorklog implements IJiraWorklog {
                 int timeSpentSeconds = jsonObject.getInt("timeSpentSeconds");
                 int worklogId = jsonObject.getInt("tempoWorklogId");
 
-                worklogs.add(
-                         new DestinationWorklogDTO()
-                                .setWorker(worker)
-                                .setStarted(started)
-                                .setOriginTaskId(originTaskId)
-                                .setTimeSpentSeconds(timeSpentSeconds)
-                );
+                worklogs.put(worklogId, new DestinationWorklogDTO()
+                        .setWorker(worker)
+                        .setStarted(started)
+                        .setOriginTaskId(originTaskId)
+                        .setTimeSpentSeconds(timeSpentSeconds));
+
+
+
 
             } catch (JSONException e) {
-                return new ArrayList<>();
+                return new HashMap<>();
             }
         }
 
