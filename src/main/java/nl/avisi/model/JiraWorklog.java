@@ -7,7 +7,6 @@ import kong.unirest.json.JSONObject;
 import nl.avisi.datasource.contracts.IUserDAO;
 import nl.avisi.datasource.contracts.IWorklogDAO;
 import nl.avisi.dto.DestinationWorklogDTO;
-import nl.avisi.dto.OriginWorklogDTO;
 import nl.avisi.dto.UserSyncDTO;
 import nl.avisi.dto.WorklogRequestDTO;
 import nl.avisi.model.contracts.IJiraWorklog;
@@ -262,7 +261,7 @@ public class JiraWorklog implements IJiraWorklog {
     protected List<Integer> filterOutFailedPostedWorklogs(Map<Integer, Integer> postedWorklogsWithResponseCodes) {
         return postedWorklogsWithResponseCodes
                 .entrySet().stream()
-                .filter(worklog -> worklog.getValue() != 200)
+                .filter(worklog -> worklog.getValue().intValue() != 200)
                 .map(Map.Entry::getKey)
                 .collect(Collectors.toList());
     }
@@ -277,12 +276,12 @@ public class JiraWorklog implements IJiraWorklog {
      *                          This data is retrieved from the database
      * @return list of DestinationWorklogDTOs that only contain not yet synced worklogs
      */
-    protected List<DestinationWorklogDTO> filterOutAlreadySyncedWorklogs(List<OriginWorklogDTO> retrievedWorklogs, List<Integer> allWorklogIds) {
-        return retrievedWorklogs
+    protected Map<Integer, DestinationWorklogDTO> filterOutAlreadySyncedWorklogs(Map<Integer, DestinationWorklogDTO> retrievedWorklogs, List<Integer> allWorklogIds) {
+        return retrievedWorklogs.entrySet()
                 .stream()
                 .filter(worklog -> allWorklogIds.stream()
-                        .noneMatch(worklogId -> worklogId == worklog.getWorklogId()))
-                .collect(Collectors.toList());
+                        .noneMatch(worklogId -> worklogId.equals(worklog.getKey())))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
     /**
@@ -295,24 +294,24 @@ public class JiraWorklog implements IJiraWorklog {
      * @param autoSyncUsers      List of all the users that have auto sync enabled
      * @return A list of worklogs with the correct user key mapped to the worker field
      */
-    protected List<DestinationWorklogDTO> replaceOriginUserKeyWithCorrectDestinationUserKey(List<DestinationWorklogDTO> worklogsToBeSynced, List<UserSyncDTO> autoSyncUsers) {
+    protected Map<Integer, DestinationWorklogDTO> replaceOriginUserKeyWithCorrectDestinationUserKey(Map<Integer, DestinationWorklogDTO> worklogsToBeSynced, List<UserSyncDTO> autoSyncUsers) {
 
-        List<DestinationWorklogDTO> worklogsWithoutMatchingKey = new ArrayList<>();
+        List<Integer> worklogsWithoutMatchingKey = new ArrayList<>();
 
-        worklogsToBeSynced.forEach(worklog -> {
+        for (Integer worklogId : worklogsToBeSynced.keySet()) {
             Optional<String> matchingKey = autoSyncUsers.stream()
-                    .filter(user -> user.getOriginWorker().equals(worklog.getWorker()))
+                    .filter(user -> user.getOriginWorker().equals(worklogsToBeSynced.get(worklogId).getWorker()))
                     .map(UserSyncDTO::getDestinationWorker)
                     .reduce((u, v) -> {
                         throw new IllegalStateException("More than one user key found");
                     });
 
             if (matchingKey.isPresent()) {
-                worklog.setWorker(matchingKey.get());
+                worklogsToBeSynced.get(worklogId).setWorker(matchingKey.get());
             } else {
-                worklogsWithoutMatchingKey.add(worklog);
+                worklogsWithoutMatchingKey.add(worklogId);
             }
-        });
+        }
 
         worklogsWithoutMatchingKey.forEach(worklogsToBeSynced::remove);
 
