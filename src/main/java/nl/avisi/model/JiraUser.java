@@ -3,6 +3,7 @@ package nl.avisi.model;
 import kong.unirest.*;
 
 import kong.unirest.json.JSONException;
+import nl.avisi.api.JiraInterface;
 import nl.avisi.datasource.contracts.IUserDAO;
 import nl.avisi.exceptions.InvalidUsernameException;
 import nl.avisi.dto.JiraUserKeyDTO;
@@ -19,11 +20,6 @@ import javax.inject.Inject;
 public class JiraUser {
 
     /**
-     * Method by which HTTP requests are sent
-     */
-    private IRequest<BasicAuth> request;
-
-    /**
      * Used for interacting with the database
      */
     private IUserDAO userDAO;
@@ -32,6 +28,8 @@ public class JiraUser {
      * Is used to read the necessary property information
      */
     private JiraSynchronisationProperties jiraSynchronisationProperties;
+
+    private JiraInterface jiraInterface;
 
     @Inject
     public void setUserDAO(IUserDAO userDAO) {
@@ -44,8 +42,8 @@ public class JiraUser {
     }
 
     @Inject
-    public void setRequest(IRequest<BasicAuth> request) {
-        this.request = request;
+    public void setJiraInterface(JiraInterface jiraInterface) {
+        this.jiraInterface = jiraInterface;
     }
 
     /**
@@ -60,13 +58,8 @@ public class JiraUser {
      */
     public JiraUserKeyDTO retrieveJiraUserKeyByUsername(JiraUsernameDTO jiraUsernameDTO) {
 
-        String originUrl = getJiraApiUrlToRetrieveUserKey(jiraUsernameDTO.getOriginUsername(), jiraSynchronisationProperties.getOriginUrl());
-        String destinationUrl = getJiraApiUrlToRetrieveUserKey(jiraUsernameDTO.getDestinationUsername(), jiraSynchronisationProperties.getDestinationUrl());
-
-        setRequestAuthenticationMethod();
-
-        HttpResponse<JsonNode> jsonOriginJiraUser = request.get(originUrl);
-        HttpResponse<JsonNode> jsonDestinationJiraUser = request.get(destinationUrl);
+        HttpResponse<JsonNode> jsonOriginJiraUser = jiraInterface.getOriginUserKey(jiraUsernameDTO.getOriginUsername());
+        HttpResponse<JsonNode> jsonDestinationJiraUser = jiraInterface.getDestinationUserKey(jiraUsernameDTO.getDestinationUsername());
 
         JiraUserKeyDTO jiraUserKeyDTO = createJiraUserKeyDTO(jsonOriginJiraUser, jsonDestinationJiraUser);
 
@@ -77,16 +70,7 @@ public class JiraUser {
         return jiraUserKeyDTO;
     }
 
-    private String getJiraApiUrlToRetrieveUserKey(String username, String url) {
-        return String.format("%srest/api/2/user/search?username=%s", url, username);
-    }
 
-    private void setRequestAuthenticationMethod() {
-        BasicAuth basicAuth = new BasicAuth()
-                .setUsername(jiraSynchronisationProperties.getAdminUsername())
-                .setPassword(jiraSynchronisationProperties.getAdminPassword());
-        request.setAuthentication(basicAuth);
-    }
 
     private JiraUserKeyDTO createJiraUserKeyDTO(HttpResponse<JsonNode> jsonOriginUserKey, HttpResponse<JsonNode> jsonDestinationUserKey) {
         JiraUserKeyDTO jiraUserKeyDTO = new JiraUserKeyDTO();
