@@ -16,9 +16,9 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 
-public class JiraWorklogRetrieverTest {
+public class JiraWorklogReaderTest {
 
-    private JiraWorklogRetriever sut;
+    private JiraWorklogReader sut;
 
     private TempoInterface mockedTempoInterface;
     private HttpResponse mockedHttpResponse;
@@ -41,7 +41,7 @@ public class JiraWorklogRetrieverTest {
 
     @BeforeEach
     void setUp() {
-        sut = new JiraWorklogRetriever();
+        sut = new JiraWorklogReader();
 
         mockedTempoInterface = Mockito.mock(TempoInterface.class);
         sut.setTempoInterface(mockedTempoInterface);
@@ -52,7 +52,7 @@ public class JiraWorklogRetrieverTest {
     }
 
     @Test
-    void testRetrieveAllWorklogsMapsValuesToCorrectVariablesOfObjectInList() {
+    void testReadWorklogsFromOriginServerMapsValuesToCorrectVariablesOfObjectInList() {
         //Arrange
         JSONObject jsonObject = new JSONObject()
                 .put("worker", WORKER_VALUE)
@@ -67,7 +67,7 @@ public class JiraWorklogRetrieverTest {
         when(mockedHttpResponse.getBody()).thenReturn(new JsonNode(jsonString));
 
         //Act
-        List<OriginWorklogDTO> actual = sut.retrieveWorklogsFromOriginServer(worklogRequestDTO);
+        List<OriginWorklogDTO> actual = sut.readWorklogsFromOriginServer(worklogRequestDTO);
 
         //Assert
         assertEquals(TEMPO_WORKLOG_ID_VALUE, actual.get(0).getWorklogId());
@@ -78,7 +78,7 @@ public class JiraWorklogRetrieverTest {
     }
 
     @Test
-    void testRetrieveWorklogsFromOriginServerCreatesListWithThreeObjects() {
+    void testReadWorklogsFromOriginServerCreatesListWithThreeObjects() {
         //Arrange
         int expectedSize = 3;
 
@@ -88,30 +88,30 @@ public class JiraWorklogRetrieverTest {
         when(mockedHttpResponse.getBody()).thenReturn(new JsonNode(jsonString));
 
         //Act
-        List<OriginWorklogDTO> actual = sut.retrieveWorklogsFromOriginServer(worklogRequestDTO);
+        List<OriginWorklogDTO> actual = sut.readWorklogsFromOriginServer(worklogRequestDTO);
 
         //Assert
         assertEquals(expectedSize, actual.size());
     }
 
     @Test
-    void testRetrieveAllWorklogsCreatesEmptyListIfResponseIsNull() {
+    void testReadWorklogsFromOriginServerCreatesEmptyListIfResponseIsNull() {
 
         when(mockedTempoInterface.requestOriginJiraWorklogs(worklogRequestDTO)).thenReturn(mockedHttpResponse);
         when(mockedHttpResponse.getBody()).thenReturn(null);
 
-        List<OriginWorklogDTO> actualValue = sut.retrieveWorklogsFromOriginServer(worklogRequestDTO);
+        List<OriginWorklogDTO> actualValue = sut.readWorklogsFromOriginServer(worklogRequestDTO);
 
         assertEquals(0, actualValue.size());
     }
 
     @Test
-    void testRetrieveAllWorklogsCreatesEmptyListIfResponseIsEmpty() {
+    void testReadWorklogsFromOriginServerCreatesEmptyListIfResponseIsEmpty() {
 
         when(mockedTempoInterface.requestOriginJiraWorklogs(worklogRequestDTO)).thenReturn(mockedHttpResponse);
         when(mockedHttpResponse.getBody()).thenReturn(new JsonNode("[]"));
 
-        List<OriginWorklogDTO> actualValue = sut.retrieveWorklogsFromOriginServer(worklogRequestDTO);
+        List<OriginWorklogDTO> actualValue = sut.readWorklogsFromOriginServer(worklogRequestDTO);
 
         assertEquals(0, actualValue.size());
     }

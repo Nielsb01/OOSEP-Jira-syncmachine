@@ -12,7 +12,7 @@ import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class JiraWorklogRetriever {
+public class JiraWorklogReader {
 
     private TempoInterface tempoInterface;
 
@@ -28,7 +28,7 @@ public class JiraWorklogRetriever {
      * @param worklogRequestDTO Contains the parameters to specify the worklogs to be retrieved during the HTTP request.
      * @return List of all worklogs that were retrieved from the client server between the two given dates for the specified workers.
      */
-    public List<OriginWorklogDTO> retrieveWorklogsFromOriginServer(WorklogRequestDTO worklogRequestDTO) {
+    public List<OriginWorklogDTO> readWorklogsFromOriginServer(WorklogRequestDTO worklogRequestDTO) {
         HttpResponse<JsonNode> worklogs = tempoInterface.requestOriginJiraWorklogs(worklogRequestDTO);
 
         if (worklogs.getBody() == null || !worklogs.getBody().isArray()) {

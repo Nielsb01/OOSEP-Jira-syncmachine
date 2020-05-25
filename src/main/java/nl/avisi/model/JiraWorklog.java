@@ -8,7 +8,7 @@ import nl.avisi.dto.UserSyncDTO;
 import nl.avisi.dto.WorklogRequestDTO;
 import nl.avisi.model.contracts.IJiraWorklog;
 import nl.avisi.model.worklog_crud.JiraWorklogCreator;
-import nl.avisi.model.worklog_crud.JiraWorklogRetriever;
+import nl.avisi.model.worklog_crud.JiraWorklogReader;
 
 import javax.inject.Inject;
 import java.text.SimpleDateFormat;
@@ -24,7 +24,7 @@ public class JiraWorklog implements IJiraWorklog {
 
     private IWorklogDAO worklogDAO;
 
-    private JiraWorklogRetriever jiraWorklogRetriever;
+    private JiraWorklogReader jiraWorklogReader;
 
     private JiraWorklogCreator jiraWorklogCreator;
 
@@ -39,8 +39,8 @@ public class JiraWorklog implements IJiraWorklog {
     }
 
     @Inject
-    public void setJiraWorklogRetriever(JiraWorklogRetriever jiraWorklogRetriever) {
-        this.jiraWorklogRetriever = jiraWorklogRetriever;
+    public void setJiraWorklogReader(JiraWorklogReader jiraWorklogReader) {
+        this.jiraWorklogReader = jiraWorklogReader;
     }
 
     @Inject
@@ -60,7 +60,7 @@ public class JiraWorklog implements IJiraWorklog {
      *                          worklogs
      */
     public void manualSynchronisation(WorklogRequestDTO worklogRequestDTO, int userId) {
-        List<OriginWorklogDTO> allWorklogsFromOriginServer = jiraWorklogRetriever.retrieveWorklogsFromOriginServer(worklogRequestDTO);
+        List<OriginWorklogDTO> allWorklogsFromOriginServer = jiraWorklogReader.readWorklogsFromOriginServer(worklogRequestDTO);
 
         List<UserSyncDTO> userSyncDTO = new ArrayList<>();
         userSyncDTO.add(userDAO.getSyncUser(userId));
@@ -100,7 +100,7 @@ public class JiraWorklog implements IJiraWorklog {
         WorklogRequestDTO requestBody = new WorklogRequestDTO("", "", originJiraUserKeys);
 
 
-        List<OriginWorklogDTO> allWorklogsFromOriginServer = jiraWorklogRetriever.retrieveWorklogsFromOriginServer(requestBody);
+        List<OriginWorklogDTO> allWorklogsFromOriginServer = jiraWorklogReader.readWorklogsFromOriginServer(requestBody);
 
         List<DestinationWorklogDTO> filteredOutWorklogs = filterOutAlreadySyncedWorklogs(allWorklogsFromOriginServer, worklogDAO.getAllWorklogIds());
 
@@ -128,7 +128,7 @@ public class JiraWorklog implements IJiraWorklog {
      *                          This data is retrieved from the database
      * @return list of DestinationWorklogDTOs that only contain not yet synced worklogs
      */
-    private List<DestinationWorklogDTO> filterOutAlreadySyncedWorklogs(List<OriginWorklogDTO> retrievedWorklogs, List<Integer> allWorklogIds) {
+    protected List<DestinationWorklogDTO> filterOutAlreadySyncedWorklogs(List<OriginWorklogDTO> retrievedWorklogs, List<Integer> allWorklogIds) {
         return retrievedWorklogs
                 .stream()
                 .filter(worklog -> allWorklogIds.stream()
@@ -145,7 +145,7 @@ public class JiraWorklog implements IJiraWorklog {
      * @param postedWorklogsWithResponseCodes      Map of worklogs that were posted with the respective response status
      * @return List of all the worklogIds that had a status code of 200
      */
-    private List<Integer> filterOutFailedPostedWorklogs(List<OriginWorklogDTO> allRetrievedWorklogsFromOriginServer, Map<DestinationWorklogDTO, Integer> postedWorklogsWithResponseCodes) {
+    protected List<Integer> filterOutFailedPostedWorklogs(List<OriginWorklogDTO> allRetrievedWorklogsFromOriginServer, Map<DestinationWorklogDTO, Integer> postedWorklogsWithResponseCodes) {
         List<Integer> idsOfSuccesfullyPostedworklogs = new ArrayList<>();
 
         postedWorklogsWithResponseCodes.forEach((key, value) -> allRetrievedWorklogsFromOriginServer.forEach(worklog -> {
@@ -167,7 +167,7 @@ public class JiraWorklog implements IJiraWorklog {
      * @param autoSyncUsers      List of all the users that have auto sync enabled
      * @return A list of worklogs with the correct user key mapped to the worker field
      */
-    private List<DestinationWorklogDTO> replaceOriginUserKeyWithCorrectDestinationUserKey(List<DestinationWorklogDTO> worklogsToBeSynced, List<UserSyncDTO> autoSyncUsers) {
+    protected List<DestinationWorklogDTO> replaceOriginUserKeyWithCorrectDestinationUserKey(List<DestinationWorklogDTO> worklogsToBeSynced, List<UserSyncDTO> autoSyncUsers) {
 
         List<DestinationWorklogDTO> worklogsWithoutMatchingKey = new ArrayList<>();
 
