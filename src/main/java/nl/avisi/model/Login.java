@@ -4,6 +4,7 @@ package nl.avisi.model;
 import nl.avisi.datasource.contracts.ILoginDAO;
 import nl.avisi.dto.LoginDTO;
 import nl.avisi.dto.UserDTO;
+import nl.avisi.model.contracts.ILogin;
 import org.apache.commons.codec.digest.DigestUtils;
 
 import javax.inject.Inject;
@@ -13,7 +14,7 @@ import javax.ws.rs.NotAuthorizedException;
  * Handles all logic that has to do with
  * logging in.
  */
-public class Login {
+public class Login implements ILogin {
 
     /**
      * Resource responsible for communicating

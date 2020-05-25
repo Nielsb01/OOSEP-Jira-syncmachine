@@ -1,6 +1,6 @@
 package nl.avisi.timer;
 
-import nl.avisi.model.JiraWorklog;
+import nl.avisi.model.contracts.IJiraWorklog;
 
 import javax.inject.Inject;
 import java.text.SimpleDateFormat;
@@ -13,7 +13,7 @@ public class SynchroniseTask extends TimerTask {
     /**
      * Is the owner of the method that is to be performed when the timer finishes
      */
-    private JiraWorklog jiraWorklog;
+    private IJiraWorklog jiraWorklog;
 
     /**
      * The last date a synchronisation took place
@@ -21,7 +21,7 @@ public class SynchroniseTask extends TimerTask {
     private Calendar lastSynchronisationDate;
 
     @Inject
-    public void setJiraWorklog(JiraWorklog jiraWorklog) {
+    public void setJiraWorklog(IJiraWorklog jiraWorklog) {
         this.jiraWorklog = jiraWorklog;
     }
 

@@ -1,4 +1,4 @@
-package nl.avisi.exceptions;
+package nl.avisi.model.exceptions;
 
 public class InvalidUsernameException extends RuntimeException {
 }

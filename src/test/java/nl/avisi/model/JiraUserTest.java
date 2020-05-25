@@ -1,22 +1,14 @@
 package nl.avisi.model;
 
 import kong.unirest.HttpResponse;
-import kong.unirest.JsonNode;
-import kong.unirest.json.JSONArray;
-import kong.unirest.json.JSONObject;
 import nl.avisi.datasource.contracts.IUserDAO;
-import nl.avisi.exceptions.InvalidUsernameException;
-import nl.avisi.dto.JiraUserKeyDTO;
 import nl.avisi.dto.JiraUsernameDTO;
 import nl.avisi.network.IRequest;
 import nl.avisi.propertyreaders.JiraSynchronisationProperties;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.*;
 
 class JiraUserTest {
 

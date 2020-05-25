@@ -4,9 +4,10 @@ import kong.unirest.*;
 
 import kong.unirest.json.JSONException;
 import nl.avisi.datasource.contracts.IUserDAO;
-import nl.avisi.exceptions.InvalidUsernameException;
+import nl.avisi.model.exceptions.InvalidUsernameException;
 import nl.avisi.dto.JiraUserKeyDTO;
 import nl.avisi.dto.JiraUsernameDTO;
+import nl.avisi.model.contracts.IJiraUser;
 import nl.avisi.network.IRequest;
 import nl.avisi.network.authentication.BasicAuth;
 import nl.avisi.propertyreaders.JiraSynchronisationProperties;
@@ -16,7 +17,7 @@ import javax.inject.Inject;
 /**
  * Responsible for everything that has to do with the JiraUser
  */
-public class JiraUser {
+public class JiraUser implements IJiraUser {
 
     /**
      * Method by which HTTP requests are sent

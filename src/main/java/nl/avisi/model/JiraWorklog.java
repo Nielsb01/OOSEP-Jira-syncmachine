@@ -10,6 +10,7 @@ import nl.avisi.dto.DestinationWorklogDTO;
 import nl.avisi.dto.OriginWorklogDTO;
 import nl.avisi.dto.UserSyncDTO;
 import nl.avisi.dto.WorklogRequestDTO;
+import nl.avisi.model.contracts.IJiraWorklog;
 import nl.avisi.network.IRequest;
 import nl.avisi.network.authentication.BasicAuth;
 import nl.avisi.propertyreaders.JiraSynchronisationProperties;
@@ -22,7 +23,7 @@ import java.util.stream.Collectors;
 /**
  * Responsible for retrieving and creating worklogs on the specified Jira server through the Tempo API with HTTP requests
  */
-public class JiraWorklog {
+public class JiraWorklog implements IJiraWorklog {
 
     /**
      * base URL where the Jira server of the client is being hosted
