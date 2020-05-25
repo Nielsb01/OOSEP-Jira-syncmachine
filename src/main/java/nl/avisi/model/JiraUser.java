@@ -70,18 +70,11 @@ public class JiraUser {
         return jiraUserKeyDTO;
     }
 
-
-
     private JiraUserKeyDTO createJiraUserKeyDTO(HttpResponse<JsonNode> jsonOriginUserKey, HttpResponse<JsonNode> jsonDestinationUserKey) {
-        JiraUserKeyDTO jiraUserKeyDTO = new JiraUserKeyDTO();
-
         String originUserKey = getJiraUserKeyFromJson(jsonOriginUserKey);
         String destinationUserKey = getJiraUserKeyFromJson(jsonDestinationUserKey);
 
-        jiraUserKeyDTO.setOriginUserKey(originUserKey);
-        jiraUserKeyDTO.setDestinationUserKey(destinationUserKey);
-
-        return jiraUserKeyDTO;
+        return new JiraUserKeyDTO(originUserKey, destinationUserKey);
     }
 
     /**

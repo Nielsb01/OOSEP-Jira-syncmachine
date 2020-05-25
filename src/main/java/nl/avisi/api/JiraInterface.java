@@ -28,7 +28,7 @@ public class JiraInterface {
     }
 
     /**
-     * Fetches the corresponding jirauserkey from the origin server based on the given username
+     * Fetches the corresponding jira user key from the origin server based on the given username
      * @param jiraUsername Username which's userkey should be returned
      * @return The jira user key that corresponds to the given jiraUsername in json format
      */
@@ -50,6 +50,8 @@ public class JiraInterface {
 
         return request.get(jiraRetrieveUserKeyUrl);
     }
+
+
 
     private void setRequestAuthenticationMethod() {
         BasicAuth basicAuth = new BasicAuth()
