@@ -28,6 +28,7 @@ public class TempoInterface {
     @Inject
     public void setJiraSynchronisationProperties(JiraSynchronisationProperties jiraSynchronisationProperties) {
         this.jiraSynchronisationProperties = jiraSynchronisationProperties;
+        setRequestAuthenticationMethod();
     }
 
     /**
@@ -42,7 +43,19 @@ public class TempoInterface {
         return worklogs;
     }
 
+    /**
+     * Creates a worklog on the destination server
+     * @param worklog The worklog to be created
+     * @return The response given by tempo
+     */
     public HttpResponse<JsonNode> createWorklogOnDestinationServer(DestinationWorklogDTO worklog) {
          return request.post(jiraSynchronisationProperties.getDestinationUrl(), worklog);
+    }
+
+    private void setRequestAuthenticationMethod() {
+        BasicAuth basicAuth = new BasicAuth()
+                .setUsername(jiraSynchronisationProperties.getAdminUsername())
+                .setPassword(jiraSynchronisationProperties.getAdminPassword());
+        request.setAuthentication(basicAuth);
     }
 }

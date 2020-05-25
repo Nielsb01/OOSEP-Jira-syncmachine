@@ -20,6 +20,7 @@ public class JiraInterface {
     @Inject
     public void setRequest(IRequest<BasicAuth> request) {
         this.request = request;
+        setRequestAuthenticationMethod();
     }
 
     @Inject
@@ -50,8 +51,6 @@ public class JiraInterface {
 
         return request.get(jiraRetrieveUserKeyUrl);
     }
-
-
 
     private void setRequestAuthenticationMethod() {
         BasicAuth basicAuth = new BasicAuth()

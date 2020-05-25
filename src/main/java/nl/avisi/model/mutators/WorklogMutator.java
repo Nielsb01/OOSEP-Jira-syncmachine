@@ -15,41 +15,7 @@ import java.util.stream.Collectors;
 
 public class WorklogMutator {
 
-    /**
-     * Creates WorklogDTOs from the passed in JSONArray and puts them in a list
-     *
-     * @param jsonArray All retrieved worklogs in jsonArray form.
-     * @return List of all worklogs that were retrieved between the two given dates for the specified workers.
-     */
-    public List<OriginWorklogDTO> createWorklogDTOs(JSONArray jsonArray) {
-        List<OriginWorklogDTO> worklogs = new ArrayList<>();
 
-        for (int i = 0; i < jsonArray.length(); i++) {
-            JSONObject jsonObject = jsonArray.getJSONObject(i);
-
-            try {
-                String worker = jsonObject.getString("worker");
-                String started = jsonObject.getString("started");
-                String originTaskId = jsonObject.getJSONObject("issue").getString("accountKey");
-                int timeSpentSeconds = jsonObject.getInt("timeSpentSeconds");
-                int worklogId = jsonObject.getInt("tempoWorklogId");
-
-                worklogs.add(
-                        (OriginWorklogDTO) new OriginWorklogDTO()
-                                .setWorklogId(worklogId)
-                                .setWorker(worker)
-                                .setStarted(started)
-                                .setOriginTaskId(originTaskId)
-                                .setTimeSpentSeconds(timeSpentSeconds)
-                );
-
-            } catch (JSONException e) {
-                return new ArrayList<>();
-            }
-        }
-
-        return worklogs;
-    }
 
     /**
      * Filters out worklogs from the worklogs retrieved from the origin server by

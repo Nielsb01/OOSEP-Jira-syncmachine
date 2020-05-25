@@ -1,8 +1,5 @@
 package nl.avisi.model;
 
-import kong.unirest.*;
-import kong.unirest.json.JSONArray;
-import nl.avisi.api.TempoInterface;
 import nl.avisi.datasource.contracts.IUserDAO;
 import nl.avisi.datasource.contracts.IWorklogDAO;
 import nl.avisi.dto.DestinationWorklogDTO;
@@ -11,6 +8,8 @@ import nl.avisi.dto.UserSyncDTO;
 import nl.avisi.dto.WorklogRequestDTO;
 import nl.avisi.model.contracts.IJiraWorklog;
 import nl.avisi.model.mutators.WorklogMutator;
+import nl.avisi.model.worklog_crud.WorklogCreator;
+import nl.avisi.model.worklog_crud.WorklogRetriever;
 
 import javax.inject.Inject;
 import java.text.SimpleDateFormat;
@@ -28,11 +27,13 @@ public class JiraWorklog implements IJiraWorklog {
 
     private WorklogMutator worklogMutator;
 
-    private TempoInterface tempoInterface;
+    private WorklogRetriever worklogRetriever;
+
+    private WorklogCreator worklogCreator;
 
     @Inject
-    public void setWorklogMutator(WorklogMutator worklogMutator) {
-        this.worklogMutator = worklogMutator;
+    public void setUserDAO(IUserDAO userDAO) {
+        this.userDAO = userDAO;
     }
 
     @Inject
@@ -41,32 +42,18 @@ public class JiraWorklog implements IJiraWorklog {
     }
 
     @Inject
-    public void setUserDAO(IUserDAO userDAO) {
-        this.userDAO = userDAO;
+    public void setWorklogMutator(WorklogMutator worklogMutator) {
+        this.worklogMutator = worklogMutator;
     }
 
     @Inject
-    public void setTempoInterface(TempoInterface tempoInterface) {
-        this.tempoInterface = tempoInterface;
+    public void setWorklogRetriever(WorklogRetriever worklogRetriever) {
+        this.worklogRetriever = worklogRetriever;
     }
 
-    /**
-     * Method creates worklog for a user by sending a post request to the Tempo API,
-     * the location of where the worklog should be created is specified by the originTaskId in the {@link DestinationWorklogDTO}.
-     * the standard comment of the {@link DestinationWorklogDTO} will be "Logging from JavaSyncApp"
-     *
-     * @param worklogs ArrayList consisting of WorklogDTO's this list are all the worklogs retrieved from client Jira-server.
-     * @return A map of worklogDTO's with their corresponding status codes after being posted.
-     */
-    public Map<DestinationWorklogDTO, Integer> createWorklogsOnDestinationServer(List<DestinationWorklogDTO> worklogs) {
-        Map<DestinationWorklogDTO, Integer> responseCodes = new HashMap<>();
-
-        for (DestinationWorklogDTO worklog : worklogs) {
-            HttpResponse<JsonNode> response = tempoInterface.createWorklogOnDestinationServer(worklog);
-            responseCodes.put(worklog, response.getStatus());
-        }
-
-        return responseCodes;
+    @Inject
+    public void setWorklogCreator(WorklogCreator worklogCreator) {
+        this.worklogCreator = worklogCreator;
     }
 
     /**
@@ -80,14 +67,14 @@ public class JiraWorklog implements IJiraWorklog {
      *               worklogs
      */
     public void manualSynchronisation(WorklogRequestDTO worklogRequestDTO, int userId) {
-        List<OriginWorklogDTO> allWorklogsFromOriginServer = retrieveWorklogsFromOriginServer(worklogRequestDTO);
+        List<OriginWorklogDTO> allWorklogsFromOriginServer = worklogRetriever.retrieveWorklogsFromOriginServer(worklogRequestDTO);
 
         List<UserSyncDTO> userSyncDTO = new ArrayList<>();
         userSyncDTO.add(userDAO.getSyncUser(userId));
 
         List<DestinationWorklogDTO> filteredWorklogs = worklogMutator.filterOutAlreadySyncedWorklogs(allWorklogsFromOriginServer, worklogDAO.getAllWorklogIds());
 
-        Map<DestinationWorklogDTO, Integer> postedWorklogsWithResponseCodes = createWorklogsOnDestinationServer(worklogMutator.replaceOriginUserKeyWithCorrectDestinationUserKey(filteredWorklogs, userSyncDTO));
+        Map<DestinationWorklogDTO, Integer> postedWorklogsWithResponseCodes = worklogCreator.createWorklogsOnDestinationServer(worklogMutator.replaceOriginUserKeyWithCorrectDestinationUserKey(filteredWorklogs, userSyncDTO));
 
         List<Integer> succesfullyPostedWorklogIds = worklogMutator.filterOutFailedPostedWorklogs(allWorklogsFromOriginServer, postedWorklogsWithResponseCodes);
 
@@ -96,25 +83,6 @@ public class JiraWorklog implements IJiraWorklog {
             //sync method
 
         succesfullyPostedWorklogIds.forEach(worklogId -> worklogDAO.addWorklogId(worklogId));
-    }
-
-    /**
-     * Makes a HTTP post request to the tempo api containing the Jira user keys of the workers and a date range to
-     * retrieve the worklogs matching that query.
-     *
-     * @param worklogRequestDTO Contains the parameters to specify the worklogs to be retrieved during the HTTP request.
-     * @return List of all worklogs that were retrieved from the client server between the two given dates for the specified workers.
-     */
-    public List<OriginWorklogDTO> retrieveWorklogsFromOriginServer(WorklogRequestDTO worklogRequestDTO) {
-        HttpResponse<JsonNode> jsonWorklogs = tempoInterface.requestOriginJiraWorklogs(worklogRequestDTO);
-
-        if (jsonWorklogs.getBody() == null || !jsonWorklogs.getBody().isArray()) {
-            return new ArrayList<>();
-        }
-
-        JSONArray worklogJsonArray = jsonWorklogs.getBody().getArray();
-
-        return worklogMutator.createWorklogDTOs(worklogJsonArray);
     }
 
     /**
@@ -139,13 +107,13 @@ public class JiraWorklog implements IJiraWorklog {
         WorklogRequestDTO requestBody = new WorklogRequestDTO("", "",originJiraUserKeys);
 
 
-        List<OriginWorklogDTO> allWorklogsFromOriginServer = retrieveWorklogsFromOriginServer(requestBody);
+        List<OriginWorklogDTO> allWorklogsFromOriginServer = worklogRetriever.retrieveWorklogsFromOriginServer(requestBody);
 
         List<DestinationWorklogDTO> filteredOutWorklogs = worklogMutator.filterOutAlreadySyncedWorklogs(allWorklogsFromOriginServer, worklogDAO.getAllWorklogIds());
 
         List<DestinationWorklogDTO> worklogsToBeSynced = worklogMutator.replaceOriginUserKeyWithCorrectDestinationUserKey(filteredOutWorklogs, autoSyncUsers);
 
-        Map<DestinationWorklogDTO, Integer> postedWorklogsWithResponseCodes = createWorklogsOnDestinationServer(worklogsToBeSynced);
+        Map<DestinationWorklogDTO, Integer> postedWorklogsWithResponseCodes = worklogCreator.createWorklogsOnDestinationServer(worklogsToBeSynced);
 
         List<Integer> succesfullyPostedWorklogIds = worklogMutator.filterOutFailedPostedWorklogs(allWorklogsFromOriginServer, postedWorklogsWithResponseCodes);
 
