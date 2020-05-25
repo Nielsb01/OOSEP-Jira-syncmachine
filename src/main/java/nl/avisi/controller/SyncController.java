@@ -2,7 +2,7 @@ package nl.avisi.controller;
 
 
 import nl.avisi.dto.WorklogRequestDTO;
-import nl.avisi.model.JiraWorklog;
+import nl.avisi.model.contracts.IJiraWorklog;
 
 import javax.inject.Inject;
 import javax.ws.rs.*;
@@ -17,10 +17,10 @@ import javax.ws.rs.core.Response;
 @Path("synchronise")
 public class SyncController {
 
-    private JiraWorklog jiraWorklog;
+    private IJiraWorklog jiraWorklog;
 
     @Inject
-    public void setJiraWorklog(JiraWorklog jiraWorklog) {
+    public void setJiraWorklog(IJiraWorklog jiraWorklog) {
         this.jiraWorklog = jiraWorklog;
     }
 
