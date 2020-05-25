@@ -10,9 +10,7 @@ import nl.avisi.dto.OriginWorklogDTO;
 import nl.avisi.dto.UserSyncDTO;
 import nl.avisi.dto.WorklogRequestDTO;
 import nl.avisi.model.contracts.IJiraWorklog;
-import nl.avisi.network.IRequest;
-import nl.avisi.network.authentication.BasicAuth;
-import nl.avisi.propertyreaders.JiraSynchronisationProperties;
+import nl.avisi.model.mutators.WorklogMutator;
 
 import javax.inject.Inject;
 import java.text.SimpleDateFormat;
@@ -24,26 +22,13 @@ import java.util.stream.Collectors;
  */
 public class JiraWorklog implements IJiraWorklog {
 
-    /**
-     * Method by which HTTP requests are sent
-     */
-    private IRequest<BasicAuth> request;
-
-    /**
-     * Contains information for the authentication required to make a HTTP request
-     */
-    private BasicAuth basicAuth;
-
-    /**
-     * is used to read the necessary property information
-     */
-    private JiraSynchronisationProperties jiraSynchronisationProperties;
-
     private IUserDAO userDAO;
 
     private IWorklogDAO worklogDAO;
 
     private WorklogMutator worklogMutator;
+
+    private TempoInterface tempoInterface;
 
     @Inject
     public void setWorklogMutator(WorklogMutator worklogMutator) {
@@ -61,26 +46,9 @@ public class JiraWorklog implements IJiraWorklog {
     }
 
     @Inject
-    public void setJiraSynchronisationProperties(JiraSynchronisationProperties jiraSynchronisationProperties) {
-        this.jiraSynchronisationProperties = jiraSynchronisationProperties;
-    }
-
-    @Inject
-    public void setRequest(IRequest<BasicAuth> request) {
-        this.request = request;
-    }
-
-    public void setBasicAuth(BasicAuth basicAuth) {
-        this.basicAuth = basicAuth;
-    }
-
-    private TempoInterface tempoInterface;
-
-    @Inject
     public void setTempoInterface(TempoInterface tempoInterface) {
         this.tempoInterface = tempoInterface;
     }
-
 
     /**
      * Method creates worklog for a user by sending a post request to the Tempo API,
@@ -100,7 +68,6 @@ public class JiraWorklog implements IJiraWorklog {
 
         return responseCodes;
     }
-
 
     /**
      * Synchronises the worklogs of one person after the user sent
@@ -189,5 +156,4 @@ public class JiraWorklog implements IJiraWorklog {
 
         succesfullyPostedWorklogIds.forEach(worklogId -> worklogDAO.addWorklogId(worklogId));
     }
-
-    }
+}

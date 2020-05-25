@@ -1,4 +1,4 @@
-package nl.avisi.model;
+package nl.avisi.model.mutators;
 
 import kong.unirest.json.JSONArray;
 import kong.unirest.json.JSONException;

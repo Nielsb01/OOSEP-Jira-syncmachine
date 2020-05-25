@@ -9,8 +9,6 @@ import java.util.List;
 import java.util.Map;
 
 public interface IJiraWorklog {
-    void setDestinationUrl(String destinationUrl);
-    void setBasicAuth(BasicAuth basicAuth);
     List<OriginWorklogDTO> retrieveWorklogsFromOriginServer(WorklogRequestDTO worklogRequestDTO);
     Map<DestinationWorklogDTO, Integer> createWorklogsOnDestinationServer(List<DestinationWorklogDTO> worklogs);
     void manualSynchronisation(WorklogRequestDTO worklogRequestDTO, int userId);
