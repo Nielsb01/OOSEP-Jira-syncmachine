@@ -9,7 +9,6 @@ import nl.avisi.network.authentication.BasicAuth;
 import nl.avisi.propertyreaders.JiraSynchronisationProperties;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
 
 public class TempoInterface {
 
@@ -38,9 +37,7 @@ public class TempoInterface {
      * @return httpResponse containing the worklogs in JsonNode form.
      */
     public HttpResponse<JsonNode> requestOriginJiraWorklogs(WorklogRequestDTO requestBody) {
-        HttpResponse<JsonNode> worklogs = request.post(jiraSynchronisationProperties.getOriginUrl(), requestBody);
-
-        return worklogs;
+        return request.post(jiraSynchronisationProperties.getOriginUrl(), requestBody);
     }
 
     /**
