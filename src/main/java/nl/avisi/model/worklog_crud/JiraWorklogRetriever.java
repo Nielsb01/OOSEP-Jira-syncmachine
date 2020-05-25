@@ -3,7 +3,6 @@ package nl.avisi.model.worklog_crud;
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
 import kong.unirest.json.JSONArray;
-import kong.unirest.json.JSONException;
 import kong.unirest.json.JSONObject;
 import nl.avisi.api.TempoInterface;
 import nl.avisi.dto.OriginWorklogDTO;
@@ -13,7 +12,7 @@ import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WorklogRetriever {
+public class JiraWorklogRetriever {
 
     private TempoInterface tempoInterface;
 
@@ -30,15 +29,13 @@ public class WorklogRetriever {
      * @return List of all worklogs that were retrieved from the client server between the two given dates for the specified workers.
      */
     public List<OriginWorklogDTO> retrieveWorklogsFromOriginServer(WorklogRequestDTO worklogRequestDTO) {
-        HttpResponse<JsonNode> jsonWorklogs = tempoInterface.requestOriginJiraWorklogs(worklogRequestDTO);
+        HttpResponse<JsonNode> worklogs = tempoInterface.requestOriginJiraWorklogs(worklogRequestDTO);
 
-        if (jsonWorklogs.getBody() == null || !jsonWorklogs.getBody().isArray()) {
+        if (worklogs.getBody() == null || !worklogs.getBody().isArray()) {
             return new ArrayList<>();
         }
 
-        JSONArray worklogJsonArray = jsonWorklogs.getBody().getArray();
-
-        return createWorklogDTOs(worklogJsonArray);
+        return createWorklogDTOs(worklogs.getBody().getArray());
     }
 
     private List<OriginWorklogDTO> createWorklogDTOs(JSONArray jsonArray) {
@@ -47,20 +44,14 @@ public class WorklogRetriever {
         for (int i = 0; i < jsonArray.length(); i++) {
             JSONObject jsonObject = jsonArray.getJSONObject(i);
 
-            try {
-                String worker = jsonObject.getString("worker");
-                String started = jsonObject.getString("started");
-                String originTaskId = jsonObject.getJSONObject("issue").getString("accountKey");
-                int timeSpentSeconds = jsonObject.getInt("timeSpentSeconds");
-                int worklogId = jsonObject.getInt("tempoWorklogId");
-
-                worklogs.add(
-                        new OriginWorklogDTO(worker, started, timeSpentSeconds, originTaskId, worklogId)
-                );
-
-            } catch (JSONException e) {
-                return new ArrayList<>();
-            }
+            worklogs.add(
+                    new OriginWorklogDTO(
+                            jsonObject.getString("worker"),
+                            jsonObject.getString("started"),
+                            jsonObject.getInt("timeSpentSeconds"),
+                            jsonObject.getJSONObject("issue").getString("accountKey"),
+                            jsonObject.getInt("tempoWorklogId"))
+            );
         }
 
         return worklogs;
