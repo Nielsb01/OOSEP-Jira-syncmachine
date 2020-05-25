@@ -8,8 +8,6 @@ import nl.avisi.datasource.contracts.IUserDAO;
 import nl.avisi.exceptions.InvalidUsernameException;
 import nl.avisi.dto.JiraUserKeyDTO;
 import nl.avisi.dto.JiraUsernameDTO;
-import nl.avisi.network.IRequest;
-import nl.avisi.network.authentication.BasicAuth;
 import nl.avisi.propertyreaders.JiraSynchronisationProperties;
 
 import javax.inject.Inject;
@@ -24,21 +22,11 @@ public class JiraUser {
      */
     private IUserDAO userDAO;
 
-    /**
-     * Is used to read the necessary property information
-     */
-    private JiraSynchronisationProperties jiraSynchronisationProperties;
-
     private JiraInterface jiraInterface;
 
     @Inject
     public void setUserDAO(IUserDAO userDAO) {
         this.userDAO = userDAO;
-    }
-
-    @Inject
-    public void setJiraSynchronisationProperties(JiraSynchronisationProperties jiraSynchronisationProperties) {
-        this.jiraSynchronisationProperties = jiraSynchronisationProperties;
     }
 
     @Inject
