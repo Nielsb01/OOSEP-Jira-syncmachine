@@ -96,23 +96,27 @@ public class JiraWorklogReaderTest {
 
     @Test
     void testReadWorklogsFromOriginServerCreatesEmptyListIfResponseIsNull() {
-
+        // Arrange
         when(mockedTempoInterface.requestOriginJiraWorklogs(worklogRequestDTO)).thenReturn(mockedHttpResponse);
         when(mockedHttpResponse.getBody()).thenReturn(null);
 
+        // Act
         List<OriginWorklogDTO> actualValue = sut.readWorklogsFromOriginServer(worklogRequestDTO);
 
+        // Assert
         assertEquals(0, actualValue.size());
     }
 
     @Test
     void testReadWorklogsFromOriginServerCreatesEmptyListIfResponseIsEmpty() {
-
+        // Arrange
         when(mockedTempoInterface.requestOriginJiraWorklogs(worklogRequestDTO)).thenReturn(mockedHttpResponse);
         when(mockedHttpResponse.getBody()).thenReturn(new JsonNode("[]"));
 
+        // Act
         List<OriginWorklogDTO> actualValue = sut.readWorklogsFromOriginServer(worklogRequestDTO);
 
+        // Assert
         assertEquals(0, actualValue.size());
     }
 }
