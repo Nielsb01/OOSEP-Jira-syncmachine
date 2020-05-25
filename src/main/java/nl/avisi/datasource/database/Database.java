@@ -1,6 +1,6 @@
-package nl.avisi.datasource;
+package nl.avisi.datasource.database;
 
-import nl.avisi.propertyreaders.exceptions.DatabaseDriverNotFoundException;
+import nl.avisi.datasource.exceptions.DatabaseDriverNotFoundException;
 import nl.avisi.propertyreaders.DatabaseProperties;
 
 import javax.inject.Inject;

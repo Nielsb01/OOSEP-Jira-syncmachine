@@ -1,6 +1,7 @@
 package nl.avisi.datasource;
 
 import nl.avisi.datasource.contracts.IWorklogDAO;
+import nl.avisi.datasource.database.Database;
 import nl.avisi.datasource.datamappers.IDataMapper;
 
 import javax.inject.Inject;

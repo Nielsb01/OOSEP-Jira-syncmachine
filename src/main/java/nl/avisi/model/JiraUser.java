@@ -5,17 +5,17 @@ import kong.unirest.*;
 import kong.unirest.json.JSONException;
 import nl.avisi.api.JiraInterface;
 import nl.avisi.datasource.contracts.IUserDAO;
-import nl.avisi.exceptions.InvalidUsernameException;
+import nl.avisi.model.exceptions.InvalidUsernameException;
 import nl.avisi.dto.JiraUserKeyDTO;
 import nl.avisi.dto.JiraUsernameDTO;
-import nl.avisi.propertyreaders.JiraSynchronisationProperties;
+import nl.avisi.model.contracts.IJiraUser;
 
 import javax.inject.Inject;
 
 /**
  * Responsible for everything that has to do with the JiraUser
  */
-public class JiraUser {
+public class JiraUser implements IJiraUser {
 
     /**
      * Used for interacting with the database
