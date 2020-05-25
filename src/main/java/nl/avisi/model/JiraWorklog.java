@@ -168,14 +168,14 @@ public class JiraWorklog implements IJiraWorklog {
      * @param worklogs ArrayList consisting of WorklogDTO's this list are all the worklogs retrieved from client Jira-server.
      * @return A map of worklogDTO's with their corresponding status codes after being posted.
      */
-    public Map<DestinationWorklogDTO, Integer> createWorklogsOnDestinationServer(List<DestinationWorklogDTO> worklogs) {
+    public Map<Integer, Integer> createWorklogsOnDestinationServer(Map<Integer, DestinationWorklogDTO> worklogs) {
         setDestinationUrl(jiraSynchronisationProperties.getDestinationUrl());
 
-        Map<DestinationWorklogDTO, Integer> responseCodes = new HashMap<>();
+        Map<Integer, Integer> responseCodes = new HashMap<>();
 
-        for (DestinationWorklogDTO worklog : worklogs) {
-            HttpResponse<JsonNode> response = request.post(destinationUrl, worklog);
-            responseCodes.put(worklog, response.getStatus());
+        for (Integer worklogId : worklogs.keySet()) {
+            HttpResponse<JsonNode> response = request.post(destinationUrl, worklogs.get(worklogId));
+            responseCodes.put(worklogId, response.getStatus());
         }
 
         return responseCodes;
