@@ -123,7 +123,7 @@ public class JiraWorklog {
                 String started = jsonObject.getString("started");
                 String originTaskId = jsonObject.getJSONObject("issue").getString("accountKey");
                 int timeSpentSeconds = jsonObject.getInt("timeSpentSeconds");
-                //int worklogId = jsonObject.getInt("tempoWorklogId");
+                int worklogId = jsonObject.getInt("tempoWorklogId");
 
                 worklogs.add(
                          new DestinationWorklogDTO()
@@ -194,11 +194,11 @@ public class JiraWorklog {
          List<UserSyncDTO> userSyncDTO =  new ArrayList<>();
          userSyncDTO.add(userDAO.getSyncUser(userId));
 
-       // List<DestinationWorklogDTO> filteredWorklogs =  filterOutAlreadySyncedWorklogs(allWorklogsFromOriginServer, worklogDAO.getAllWorklogIds());
+       // List<DestinationWorklogDTO> filteredWorklogs = filterOutAlreadySyncedWorklogs(allWorklogsFromOriginServer, worklogDAO.getAllWorklogIds());
 
         Map<DestinationWorklogDTO, Integer> postedWorklogsWithResponseCodes = createWorklogsOnDestinationServer(replaceOriginUserKeyWithCorrectDestinationUserKey(allWorklogsFromOriginServer, userSyncDTO));
 
-        //List<Integer> succesfullyPostedWorklogIds =  filterOutFailedPostedWorklogs(allWorklogsFromOriginServer, postedWorklogsWithResponseCodes);
+        //List<Integer> succesfullyPostedWorklogIds = filterOutFailedPostedWorklogs(allWorklogsFromOriginServer, postedWorklogsWithResponseCodes);
 
             //todo functionaliteit inbouwen voor afhandelen van failed posted worklogs en
             //refactor zodat autosync en manualsync allebei gebruik maken van dezelfde
