@@ -23,14 +23,13 @@ public class UserDataMapper implements IDataMapper<UserDTO> {
      */
     @Override
     public UserDTO toDTO(ResultSet resultSet) throws SQLException {
-        UserDTO userDTO = new UserDTO();
+
 
         resultSet.next();
 
-        userDTO.setUsername(resultSet.getString("username"))
-                .setPassword(resultSet.getString("password"))
-                .setUserID(resultSet.getInt("user_id"));
-
-        return userDTO;
+        return new UserDTO(
+                resultSet.getInt("user_id"),
+                resultSet.getString("username"),resultSet.getString("password")
+        );
     }
 }
