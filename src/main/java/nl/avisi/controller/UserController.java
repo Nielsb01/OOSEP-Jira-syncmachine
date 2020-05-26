@@ -61,4 +61,11 @@ public class UserController {
         jiraUser.setAutoSyncPreference(userId, autoSyncOn);
         return Response.status(Response.Status.OK).build();
     }
+
+    @Path("/autoSync/{userId}")
+    @GET
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response getAutoSyncPreference(@PathParam("userId") int userId) {
+        return Response.status(Response.Status.OK).entity(jiraUser.getAutoSyncPreference(userId)).build();
+    }
 }

@@ -1,5 +1,6 @@
 package nl.avisi.datasource;
 
+import com.mysql.cj.protocol.Resultset;
 import nl.avisi.datasource.database.Database;
 import nl.avisi.datasource.datamappers.IDataMapper;
 import nl.avisi.dto.JiraUserKeyDTO;
@@ -7,6 +8,7 @@ import nl.avisi.datasource.exceptions.DatabaseDriverNotFoundException;
 import nl.avisi.dto.UserSyncDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 
 import javax.ws.rs.InternalServerErrorException;
 import java.sql.*;
@@ -293,5 +295,37 @@ public class UserDAOTest {
         verify(mockedConnection).close();
         verify(mockedDatabase).connect();
         verify(mockedStatement).close();
+    }
+
+    @Test
+    void testGetUserAutoSyncPreferenceReturnsFalseWhenSqlExceptionIsThrown() {
+        // Arrange
+        when(mockedDatabase).thenThrow(new SQLException());
+
+        // Act
+        boolean result = sut.getUserAutoSyncPreference(0);
+
+        // Assert
+        assertTrue(result);
+    }
+
+    @Test
+    void testGetUserAutoSyncPreferenceReturnsTrueWhenDataIsReturned() throws SQLException {
+        // Arrange
+        Connection mockedConnection = mock(Connection.class);
+        PreparedStatement mockedStatement = mock(PreparedStatement.class);
+        ResultSet mockedResultSet = mock(ResultSet.class);
+
+        when(mockedResultSet.next()).thenReturn(true, false);
+        when(mockedResultSet.getBoolean(anyString())).thenReturn(false);
+        when(mockedStatement.executeQuery()).thenReturn(mockedResultSet);
+        when(mockedConnection.prepareStatement(anyString())).thenReturn(mockedStatement);
+        when(mockedDatabase.connect()).thenReturn(mockedConnection);
+
+        // Act
+        boolean result = sut.getUserAutoSyncPreference(0);
+
+        // Assert
+        assertFalse(result);
     }
 }

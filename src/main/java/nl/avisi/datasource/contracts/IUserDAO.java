@@ -13,4 +13,6 @@ public interface IUserDAO {
     void setAutoSyncPreference(int userId, boolean autoSyncOn);
 
     UserSyncDTO getSyncUser(int userId);
+
+    boolean getUserAutoSyncPreference(int userId);
 }

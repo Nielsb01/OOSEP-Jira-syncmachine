@@ -44,6 +44,12 @@ public class UserDAO implements IUserDAO {
     private static final String GET_ALL_AUTO_SYNC_USERS_SQL = String.format("SELECT %s, %s FROM Jirausers WHERE syncStatus = ?", JIRA_ORIGIN_WORKER_COLUMN_NAME, JIRA_DESTINATION_WORKER_COLUMN_NAME);
 
     /**
+     * SQL Query to retrieve the auto sync preference
+     * for a user
+     */
+    private static final String GET_AUTO_SYNC_PREFERENCE_FOR_USER_SQL = "SELECT auto_sync FROM jira_user WHERE user_id = ?";
+
+    /**
      * SQL statement to update the
      * jira user keys for a user
      */
@@ -106,6 +112,31 @@ public class UserDAO implements IUserDAO {
         }
 
         return autoSyncUsers;
+    }
+
+    /**
+     * Get the auto sync preference for the user
+     *
+     * @param userId the user for which to get the auto sync preference
+     * @return the auto sync preference value
+     */
+    public boolean getUserAutoSyncPreference(int userId) {
+        boolean autoSyncPreference = false;
+
+        try (Connection connection = database.connect();
+             PreparedStatement stmt = connection.prepareStatement(GET_AUTO_SYNC_PREFERENCE_FOR_USER_SQL)) {
+            stmt.setInt(1, userId);
+
+            ResultSet result = stmt.executeQuery();
+
+            while (result.next()) {
+                autoSyncPreference = result.getBoolean("auto_sync");
+            }
+        } catch (SQLException e) {
+            System.err.printf("Error occurred fetching the preference for the user: %d\n, error: %s\n", userId, e.getMessage());
+        }
+
+        return autoSyncPreference;
     }
 
     /**
