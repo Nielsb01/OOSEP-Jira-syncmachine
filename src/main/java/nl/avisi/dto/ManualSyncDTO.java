@@ -1,8 +1,24 @@
 package nl.avisi.dto;
 
+/**
+ * holds information for manually
+ * synchronising worklogs for the
+ * user
+ */
 public class ManualSyncDTO {
+    /**
+     * Date from which to retrieve worklogs
+     */
     private String fromDate;
+
+    /**
+     * Date until to retrieve worklogs
+     */
     private String untilDate;
+
+    /**
+     * Id of the user to sync for 
+     */
     private int userId;
 
     public ManualSyncDTO() {

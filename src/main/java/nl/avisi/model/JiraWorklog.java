@@ -86,7 +86,13 @@ public class JiraWorklog implements IJiraWorklog {
      * synchronise all the worklogs from the origin server to the destination server.
      * Only worklogs from users with auto synchronisation enabled will be synchronised.
      * The ids of successfully posted worklogs will be added to the database to prevent
-     * wrongfully synchronising worklogs in the future.
+     * wrongfully synchronising worklogs in the future
+     *
+     * @param fromDate Date from which to retrieve worklogs. This is the last date
+     *                 that auto synchronisation was completed
+     * @param toDate Outer date to retrieve worklog up until this data. This is
+     *               the current date
+     *
      */
     @Override
     public void autoSynchronisation(String fromDate, String toDate) {
