@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -40,11 +41,15 @@ public class JiraWorklogCreatorTest {
         when(mockedTempoInterface.createWorklogOnDestinationServer(any())).thenReturn(mockedHttpResponse);
         when(mockedHttpResponse.getStatus()).thenReturn(expected);
 
+        Map<Integer, DestinationWorklogDTO> destinationWorklogDTOS = new HashMap<Integer, DestinationWorklogDTO>();
+        destinationWorklogDTOS.put(1, new DestinationWorklogDTO());
+
         // Act
-        Map<DestinationWorklogDTO, Integer> actual = sut.createWorklogsOnDestinationServer(new ArrayList<>());
+        Map<Integer, Integer> actual = sut.createWorklogsOnDestinationServer(destinationWorklogDTOS);
+        int actualStatus = actual.get(actual.keySet().toArray()[0]);
 
         // Assert
-        assertEquals(expected, actual.get());
+        assertEquals(expected, actualStatus);
     }
 
     @Test
@@ -52,16 +57,16 @@ public class JiraWorklogCreatorTest {
         // Arrange
         int expected = 3;
 
-        List<DestinationWorklogDTO> destinationWorklogDTOS = new ArrayList<>();
-        destinationWorklogDTOS.add(new DestinationWorklogDTO());
-        destinationWorklogDTOS.add(new DestinationWorklogDTO());
-        destinationWorklogDTOS.add(new DestinationWorklogDTO());
+        Map<Integer, DestinationWorklogDTO> destinationWorklogDTOS = new HashMap<Integer, DestinationWorklogDTO>();
+        destinationWorklogDTOS.put(1, new DestinationWorklogDTO());
+        destinationWorklogDTOS.put(2, new DestinationWorklogDTO());
+        destinationWorklogDTOS.put(3, new DestinationWorklogDTO());
 
         when(mockedTempoInterface.createWorklogOnDestinationServer(any())).thenReturn(mockedHttpResponse);
         when(mockedHttpResponse.getStatus()).thenReturn(200);
 
         // Act
-        Map<DestinationWorklogDTO, Integer> actual = sut.createWorklogsOnDestinationServer(destinationWorklogDTOS);
+        Map<Integer, Integer> actual = sut.createWorklogsOnDestinationServer(destinationWorklogDTOS);
 
         // Assert
         assertEquals(expected, actual.size());
