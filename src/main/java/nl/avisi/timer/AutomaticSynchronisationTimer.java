@@ -57,9 +57,9 @@ public class AutomaticSynchronisationTimer {
     public void autoSynchronise(Timer timer) {
         String currentDate = getCurrentDate();
 
-        jiraWorklog.synchronise();
-
+        jiraWorklog.autoSynchronisation(lastSynchronisationDate, currentDate);
         lastSynchronisationDate = currentDate;
+
     }
 
     private String getCurrentDate() {

@@ -7,6 +7,7 @@ import org.mockito.Mockito;
 
 import javax.ejb.Timer;
 
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.verify;
 
 
@@ -33,6 +34,6 @@ public class AutomaticSynchronisationTimerTest {
         sut.autoSynchronise(mockedTimer);
 
         // Assert
-        verify(mockedJiraWorklog).synchronise();
+        verify(mockedJiraWorklog).autoSynchronisation(any(), any());
     }
 }
