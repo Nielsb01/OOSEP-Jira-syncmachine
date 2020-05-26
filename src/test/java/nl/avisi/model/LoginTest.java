@@ -18,6 +18,8 @@ class LoginTest {
     private Login sut;
     private ILoginDAO mockedLoginDAO;
 
+    private final LoginDTO LOGIN_DTO = new LoginDTO("username", "password");
+
     @BeforeEach
     void setUp() {
         sut = new Login();
@@ -27,46 +29,42 @@ class LoginTest {
 
     }
 
-   /* @Test
+    @Test
     void testValidateCredentialsCallsGetLoginInfoWithCorrectParameter() {
         //Arrange
-        final LoginDTO loginDTO = new LoginDTO().setUsername("username").setPassword("password");
         when(mockedLoginDAO.getLoginInfo("username"))
-                .thenReturn(new UserDTO().setUsername("username").setPassword("5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8").setUserID(1));
+                .thenReturn(new UserDTO(1, "username", "5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8"));
 
         //Act
-        int actualValue = sut.validateCredentials(loginDTO);
+        int actualValue = sut.validateCredentials(LOGIN_DTO);
 
         //Assert
-        verify(mockedLoginDAO).getLoginInfo(loginDTO.getUsername());
+        verify(mockedLoginDAO).getLoginInfo(LOGIN_DTO.getUsername());
     }
 
     @Test
     void testValidateCredentialsThrowsExceptionWhenPasswordsDontMatch() {
         //Arrange
-        final LoginDTO loginDTO = new LoginDTO().setUsername("username").setPassword("password");
-
         when(mockedLoginDAO.getLoginInfo("username"))
-                .thenReturn(new UserDTO().setUsername("username").setPassword("wrong password").setUserID(1));
+                .thenReturn(new UserDTO(1, "username", "wrong password"));
 
         //Act & Assert
-        Assertions.assertThrows(NotAuthorizedException.class, () -> sut.validateCredentials(loginDTO));
+        Assertions.assertThrows(NotAuthorizedException.class, () -> sut.validateCredentials(LOGIN_DTO));
     }
 
     @Test
     void testValidateCredentialsReturnsUserIdWhenPasswordMatches() {
         //Arrange
-        final LoginDTO loginDTO = new LoginDTO().setUsername("username").setPassword("password");
-
         when(mockedLoginDAO.getLoginInfo("username"))
-                .thenReturn(new UserDTO().setUsername("username")
-                        .setPassword("5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8")
-                        .setUserID(1));
+                .thenReturn(new UserDTO(
+                        1,
+                        "username",
+                        "5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8"));
 
         //Act
-        int actualValue = sut.validateCredentials(loginDTO);
+        int actualValue = sut.validateCredentials(LOGIN_DTO);
 
         //Assert
         assertEquals(1, actualValue);
-    }*/
+    }
 }
