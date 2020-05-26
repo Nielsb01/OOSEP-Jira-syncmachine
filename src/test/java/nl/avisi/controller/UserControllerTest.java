@@ -1,6 +1,7 @@
 package nl.avisi.controller;
 
 import nl.avisi.dto.JiraUsernameDTO;
+import nl.avisi.dto.UserPreferenceDTO;
 import nl.avisi.model.JiraUser;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -8,8 +9,7 @@ import org.junit.jupiter.api.Test;
 import javax.ws.rs.core.Response;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 class UserControllerTest {
 
@@ -76,5 +76,19 @@ class UserControllerTest {
         assertEquals(HTTP_STATUS_OK, actualValue.getStatus());
     }
 
+    @Test
+    void testGetAutoSyncPreferenceReturnsCorrectDataWithStatusCode() {
+        // Arrange
+        final int userId = 1;
+        final UserPreferenceDTO preferences = new UserPreferenceDTO(false);
 
+        when(mockedJiraUser.getAutoSyncPreference(anyInt())).thenReturn(preferences);
+
+        // Act
+        final Response actualValue = sut.getAutoSyncPreference(userId);
+
+        // Assert
+        assertEquals(HTTP_STATUS_OK, actualValue.getStatus());
+        assertEquals(preferences, actualValue.getEntity());
+    }
 }

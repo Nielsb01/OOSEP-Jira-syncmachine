@@ -18,12 +18,12 @@ public class JiraUsernameDTO {
      */
     private String destinationUsername;
 
+    public JiraUsernameDTO() {
+    }
+
     public JiraUsernameDTO(String originUsername, String destinationUsername) {
         this.originUsername = originUsername;
         this.destinationUsername = destinationUsername;
-    }
-
-    public JiraUsernameDTO() {
     }
 
     public String getOriginUsername() {

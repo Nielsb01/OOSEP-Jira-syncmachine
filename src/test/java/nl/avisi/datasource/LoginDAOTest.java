@@ -80,10 +80,7 @@ class LoginDAOTest {
         when(mockedConnection.prepareStatement(anyString())).thenReturn(mockedStatement);
         when(mockedStatement.executeQuery()).thenReturn(mockedResultSet);
         when(mockedIDataMapper.toDTO(mockedResultSet)).thenReturn(
-                new UserDTO()
-                        .setUserID(1)
-                        .setPassword("password")
-                        .setUsername("username"));
+                new UserDTO(1,"username","password"));
 
         // Act
         UserDTO actualValue = sut.getLoginInfo("username");

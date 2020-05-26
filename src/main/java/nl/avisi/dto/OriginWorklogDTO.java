@@ -14,7 +14,6 @@ public class OriginWorklogDTO extends DestinationWorklogDTO {
     private int worklogId;
 
     public OriginWorklogDTO() {
-        //
     }
 
     public OriginWorklogDTO(String worker, String started, int timeSpentSeconds, String originTaskId, int worklogId) {
