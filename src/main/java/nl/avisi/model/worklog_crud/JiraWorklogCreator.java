@@ -24,15 +24,16 @@ public class JiraWorklogCreator {
      * the location of where the worklog should be created is specified by the originTaskId in the {@link DestinationWorklogDTO}.
      * the standard comment of the {@link DestinationWorklogDTO} will be "Logging from JavaSyncApp"
      *
-     * @param worklogs ArrayList consisting of WorklogDTO's this list are all the worklogs retrieved from client Jira-server.
-     * @return A map of worklogDTO's with their corresponding status codes after being posted.
+     * @param worklogs Map consisting of worklogIds and {@link DestinationWorklogDTO}.
+     *                this Map contains are all the worklogs retrieved from client Jira-server
+     * @return A map of worklogIds with their corresponding status codes after being posted.
      */
-    public Map<DestinationWorklogDTO, Integer> createWorklogsOnDestinationServer(List<DestinationWorklogDTO> worklogs) {
-        Map<DestinationWorklogDTO, Integer> responseCodes = new HashMap<>();
+    public Map<Integer, Integer> createWorklogsOnDestinationServer(Map<Integer, DestinationWorklogDTO> worklogs) {
+        Map<Integer, Integer> responseCodes = new HashMap<>();
 
-        for (DestinationWorklogDTO worklog : worklogs) {
-            HttpResponse<JsonNode> response = tempoInterface.createWorklogOnDestinationServer(worklog);
-            responseCodes.put(worklog, response.getStatus());
+        for (Integer worklogId : worklogs.keySet()) {
+            HttpResponse<JsonNode> response = tempoInterface.createWorklogOnDestinationServer(worklogs.get(worklogId));
+            responseCodes.put(worklogId, response.getStatus());
         }
 
         return responseCodes;
