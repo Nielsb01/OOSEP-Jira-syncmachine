@@ -24,13 +24,13 @@ public class WorklogRequestDTO {
      */
     private List<String> worker;
 
+    public WorklogRequestDTO() {
+    }
+
     public WorklogRequestDTO(String from, String to, List<String> worker) {
         this.from = from;
         this.to = to;
         this.worker = worker;
-    }
-
-    public WorklogRequestDTO() {
     }
 
     public String getFrom() {
