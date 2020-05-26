@@ -90,12 +90,12 @@ public class JiraWorklog implements IJiraWorklog {
      *
      * @param fromDate Date from which to retrieve worklogs. This is the last date
      *                 that auto synchronisation was completed
-     * @param toDate Outer date to retrieve worklog up until this data. This is
+     * @param untilDate Outer date to retrieve worklog up until this data. This is
      *               the current date
      *
      */
     @Override
-    public void autoSynchronisation(String fromDate, String toDate) {
+    public void autoSynchronisation(String fromDate, String untilDate) {
         List<UserSyncDTO> syncUsers = userDAO.getAllAutoSyncUsers();
 
         List<String> originWorkers = syncUsers.stream().map(UserSyncDTO::getOriginWorker).collect(Collectors.toList());
