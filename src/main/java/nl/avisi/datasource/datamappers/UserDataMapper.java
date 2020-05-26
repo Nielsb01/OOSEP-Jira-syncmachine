@@ -27,6 +27,9 @@ public class UserDataMapper implements IDataMapper<UserDTO> {
 
         resultSet.next();
 
-        return new UserDTO(resultSet.getInt("user_id"),resultSet.getString("username"),resultSet.getString("password"));
+        return new UserDTO(
+                resultSet.getInt("user_id"),
+                resultSet.getString("username"),resultSet.getString("password")
+        );
     }
 }
