@@ -85,14 +85,14 @@ public class JiraWorklogReaderTest {
         //Arrange
         int expectedSize = 3;
 
-        JSONObject JSON_OBJECT_2 = new JSONObject()
+        JSONObject jsonObject2 = new JSONObject()
                 .put("worker", WORKER_VALUE)
                 .put("started", STARTED_VALUE)
                 .put("issue", new JSONObject().put("accountKey", ACCOUNT_KEY_VALUE))
                 .put("timeSpentSeconds", TIME_SPENT_SECONDS_VALUE)
                 .put("tempoWorklogId", 2);
 
-        JSONObject JSON_OBJECT_3 = new JSONObject()
+        JSONObject jsonObject3 = new JSONObject()
                 .put("worker", WORKER_VALUE)
                 .put("started", STARTED_VALUE)
                 .put("issue", new JSONObject().put("accountKey", ACCOUNT_KEY_VALUE))
@@ -101,8 +101,8 @@ public class JiraWorklogReaderTest {
 
         String jsonString = new JSONArray()
                 .put(JSON_OBJECT)
-                .put(JSON_OBJECT_2)
-                .put(JSON_OBJECT_3)
+                .put(jsonObject2)
+                .put(jsonObject3)
                 .toString();
 
         when(mockedTempoInterface.requestOriginJiraWorklogs(worklogRequestDTO)).thenReturn(mockedHttpResponse);
@@ -139,5 +139,30 @@ public class JiraWorklogReaderTest {
 
         // Assert
         assertEquals(0, actual.size());
+    }
+
+    @Test
+    void testReadWorklogsFromOriginServerCreatesEmptyMapIfJsonExceptionOccurs() {
+        // Arrange
+        int expectedSize = 0;
+
+        JSONObject wrong_json_object = new JSONObject()
+                .put("worker", WORKER_VALUE)
+                .put("started", STARTED_VALUE)
+                .put("issue", new JSONObject().put("accountKey", ACCOUNT_KEY_VALUE))
+                .put("timeSpentSeconds", TIME_SPENT_SECONDS_VALUE);
+
+        String jsonString = new JSONArray()
+                .put(wrong_json_object)
+                .toString();
+
+        when(mockedTempoInterface.requestOriginJiraWorklogs(worklogRequestDTO)).thenReturn(mockedHttpResponse);
+        when(mockedHttpResponse.getBody()).thenReturn(new JsonNode(jsonString));
+
+        // Act
+        Map<Integer, DestinationWorklogDTO> actual = sut.retrieveWorklogsFromOriginServer(worklogRequestDTO);
+
+        // Assert
+        assertEquals(expectedSize, actual.size());
     }
 }

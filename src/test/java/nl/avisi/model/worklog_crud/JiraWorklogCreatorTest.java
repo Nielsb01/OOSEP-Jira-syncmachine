@@ -49,21 +49,21 @@ public class JiraWorklogCreatorTest {
 
     @Test
     void testCreateWorklogsOnDestinationServerReturnsThreeResponseCodes() {
-/*        // Arrange
-        int expected = 3;
-
-        List<DestinationWorklogDTO> destinationWorklogDTOS = new ArrayList<>();
-        destinationWorklogDTOS.add(new DestinationWorklogDTO());
-        destinationWorklogDTOS.add(new DestinationWorklogDTO());
-        destinationWorklogDTOS.add(new DestinationWorklogDTO());
-
-        when(mockedTempoInterface.createWorklogOnDestinationServer(any())).thenReturn(mockedHttpResponse);
-        when(mockedHttpResponse.getStatus()).thenReturn(200);
-
-        // Act
-        Map<DestinationWorklogDTO, Integer> actual = sut.createWorklogsOnDestinationServer(destinationWorklogDTOS);
-
-        // Assert
-        assertEquals(expected, actual.size());*/
+//        // Arrange
+//        int expected = 3;
+//
+//        List<DestinationWorklogDTO> destinationWorklogDTOS = new ArrayList<>();
+//        destinationWorklogDTOS.add(new DestinationWorklogDTO());
+//        destinationWorklogDTOS.add(new DestinationWorklogDTO());
+//        destinationWorklogDTOS.add(new DestinationWorklogDTO());
+//
+//        when(mockedTempoInterface.createWorklogOnDestinationServer(any())).thenReturn(mockedHttpResponse);
+//        when(mockedHttpResponse.getStatus()).thenReturn(200);
+//
+//        // Act
+//        Map<DestinationWorklogDTO, Integer> actual = sut.createWorklogsOnDestinationServer(destinationWorklogDTOS);
+//
+//        // Assert
+//        assertEquals(expected, actual.size());
     }
 }
