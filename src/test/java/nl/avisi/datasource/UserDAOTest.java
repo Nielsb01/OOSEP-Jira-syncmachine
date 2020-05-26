@@ -298,15 +298,15 @@ public class UserDAOTest {
     }
 
     @Test
-    void testGetUserAutoSyncPreferenceReturnsFalseWhenSqlExceptionIsThrown() {
+    void testGetUserAutoSyncPreferenceReturnsFalseWhenSqlExceptionIsThrown() throws SQLException {
         // Arrange
-        when(mockedDatabase).thenThrow(new SQLException());
+        when(mockedDatabase.connect()).thenThrow(new SQLException());
 
         // Act
         boolean result = sut.getUserAutoSyncPreference(0);
 
         // Assert
-        assertTrue(result);
+        assertFalse(result);
     }
 
     @Test
@@ -317,7 +317,7 @@ public class UserDAOTest {
         ResultSet mockedResultSet = mock(ResultSet.class);
 
         when(mockedResultSet.next()).thenReturn(true, false);
-        when(mockedResultSet.getBoolean(anyString())).thenReturn(false);
+        when(mockedResultSet.getBoolean(anyString())).thenReturn(true);
         when(mockedStatement.executeQuery()).thenReturn(mockedResultSet);
         when(mockedConnection.prepareStatement(anyString())).thenReturn(mockedStatement);
         when(mockedDatabase.connect()).thenReturn(mockedConnection);
@@ -326,6 +326,6 @@ public class UserDAOTest {
         boolean result = sut.getUserAutoSyncPreference(0);
 
         // Assert
-        assertFalse(result);
+        assertTrue(result);
     }
 }

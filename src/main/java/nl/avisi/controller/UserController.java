@@ -62,6 +62,13 @@ public class UserController {
         return Response.status(Response.Status.OK).build();
     }
 
+    /**
+     * Responsible for retrieving the preferences for
+     * the user
+     *
+     * @param userId Id of the user that is requesting it's preferences
+     * @return A HTTP response with the preferences JSON object
+     */
     @Path("/autoSync/{userId}")
     @GET
     @Consumes(MediaType.APPLICATION_JSON)
