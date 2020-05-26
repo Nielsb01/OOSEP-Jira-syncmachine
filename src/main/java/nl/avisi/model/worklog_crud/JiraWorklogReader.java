@@ -52,7 +52,7 @@ public class JiraWorklogReader {
      * @return Map of all worklogs that were retrieved between the two given dates for the specified workers with their
      * corresponding worklogId.
      */
-    protected Map<Integer, DestinationWorklogDTO> createWorklogDTOs(JSONArray jsonArray) {
+    private Map<Integer, DestinationWorklogDTO> createWorklogDTOs(JSONArray jsonArray) {
         Map<Integer, DestinationWorklogDTO> worklogs = new HashMap<>();
 
 
