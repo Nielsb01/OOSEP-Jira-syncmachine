@@ -191,14 +191,14 @@ public class JiraWorklog implements IJiraWorklog {
      *                          worklogs
      */
     public void manualSynchronisation(WorklogRequestDTO worklogRequestDTO, int userId) {
-        List<DestinationWorklogDTO> allWorklogsFromOriginServer = retrieveWorklogsFromOriginServer(worklogRequestDTO);
+        Map<Integer, DestinationWorklogDTO> allWorklogsFromOriginServer = retrieveWorklogsFromOriginServer(worklogRequestDTO);
 
         List<UserSyncDTO> userSyncDTO = new ArrayList<>();
         userSyncDTO.add(userDAO.getSyncUser(userId));
 
         // List<DestinationWorklogDTO> filteredWorklogs = filterOutAlreadySyncedWorklogs(allWorklogsFromOriginServer, worklogDAO.getAllWorklogIds());
 
-        Map<DestinationWorklogDTO, Integer> postedWorklogsWithResponseCodes = createWorklogsOnDestinationServer(replaceOriginUserKeyWithCorrectDestinationUserKey(allWorklogsFromOriginServer, userSyncDTO));
+        Map<Integer, Integer> postedWorklogsWithResponseCodes = createWorklogsOnDestinationServer(replaceOriginUserKeyWithCorrectDestinationUserKey(allWorklogsFromOriginServer, userSyncDTO));
 
         //List<Integer> succesfullyPostedWorklogIds = filterOutFailedPostedWorklogs(allWorklogsFromOriginServer, postedWorklogsWithResponseCodes);
 
@@ -231,13 +231,13 @@ public class JiraWorklog implements IJiraWorklog {
         WorklogRequestDTO requestBody = new WorklogRequestDTO("", "", originJiraUserKeys);
 
 
-        List<DestinationWorklogDTO> allWorklogsFromOriginServer = retrieveWorklogsFromOriginServer(requestBody);
+        Map<Integer, DestinationWorklogDTO> allWorklogsFromOriginServer = retrieveWorklogsFromOriginServer(requestBody);
 
         //List<DestinationWorklogDTO> filteredOutWorklogs = filterOutAlreadySyncedWorklogs(allWorklogsFromOriginServer, worklogDAO.getAllWorklogIds());
 
-        List<DestinationWorklogDTO> worklogsToBeSynced = replaceOriginUserKeyWithCorrectDestinationUserKey(allWorklogsFromOriginServer, autoSyncUsers);
+        Map<Integer, DestinationWorklogDTO> worklogsToBeSynced = replaceOriginUserKeyWithCorrectDestinationUserKey(allWorklogsFromOriginServer, autoSyncUsers);
 
-        Map<DestinationWorklogDTO, Integer> postedWorklogsWithResponseCodes = createWorklogsOnDestinationServer(worklogsToBeSynced);
+        Map<Integer, Integer> postedWorklogsWithResponseCodes = createWorklogsOnDestinationServer(worklogsToBeSynced);
 
         //List<Integer> succesfullyPostedWorklogIds = filterOutFailedPostedWorklogs(allWorklogsFromOriginServer, postedWorklogsWithResponseCodes);
 
@@ -261,7 +261,7 @@ public class JiraWorklog implements IJiraWorklog {
     protected List<Integer> filterOutFailedPostedWorklogs(Map<Integer, Integer> postedWorklogsWithResponseCodes) {
         return postedWorklogsWithResponseCodes
                 .entrySet().stream()
-                .filter(worklog -> worklog.getValue().intValue() != 200)
+                .filter(worklog -> worklog.getValue() != 200)
                 .map(Map.Entry::getKey)
                 .collect(Collectors.toList());
     }
