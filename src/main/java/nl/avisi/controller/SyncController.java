@@ -1,6 +1,7 @@
 package nl.avisi.controller;
 
 
+import nl.avisi.dto.ManualSyncDTO;
 import nl.avisi.dto.WorklogRequestDTO;
 import nl.avisi.model.contracts.IJiraWorklog;
 
@@ -25,7 +26,8 @@ public class SyncController {
     }
 
     /**
-     * @param worklogRequestDTO Contains the necessary information needed to retrieve worklogs from the server
+     * @param manualSyncDTO Contains the necessary information needed to manually sync
+     *                      the users data
      * @param userId Id of the user that made the request
      * @return HTTP response with corresponding status code
      */
@@ -33,8 +35,8 @@ public class SyncController {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response manualSynchronisation(WorklogRequestDTO worklogRequestDTO, @PathParam("userId") int userId) {
-        jiraWorklog.manualSynchronisation(worklogRequestDTO, userId);
+    public Response manualSynchronisation(ManualSyncDTO manualSyncDTO, @PathParam("userId") int userId) {
+        jiraWorklog.manualSynchronisation(manualSyncDTO, userId);
         return Response.status(Response.Status.OK).build();
     }
 }
