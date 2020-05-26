@@ -48,7 +48,7 @@ public class DatabaseProperties {
     }
 
     /**
-     * Get the connection string
+     * Get the. connection string
      *
      * @return the connection string for the database
      */
