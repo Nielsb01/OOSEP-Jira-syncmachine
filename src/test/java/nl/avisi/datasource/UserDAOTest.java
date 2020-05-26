@@ -71,20 +71,6 @@ public class UserDAOTest {
     }
 
     @Test
-    void testGetAllAutoSyncUsersReturnsEmptyListWhenDatabaseDriverNotFoundExceptionIsThrown() throws SQLException, DatabaseDriverNotFoundException {
-        // Arrange
-        final int expectedResultSize = 0;
-
-        when(mockedDatabase.connect()).thenThrow(new DatabaseDriverNotFoundException(""));
-
-        // Act
-        List<UserSyncDTO> results = sut.getAllAutoSyncUsers();
-
-        // Assert
-        assertEquals(expectedResultSize, results.size());
-    }
-
-    @Test
     void testGetAllAutoSyncUsersReturnsListWithObjectsFromDatabase() throws SQLException, DatabaseDriverNotFoundException {
         // Arrange
         UserSyncDTO userSyncDTO = new UserSyncDTO()
