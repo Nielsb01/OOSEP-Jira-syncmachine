@@ -24,7 +24,7 @@ class LoginControllerTest {
         sut.setLogin(mockedLogin);
     }
 
- /*   @Test
+    @Test
     void testLoginResponseEntity() {
         //Arrange
         final LoginDTO loginDTO = new LoginDTO();
@@ -66,5 +66,5 @@ class LoginControllerTest {
 
         //Assert
         verify(mockedLogin).validateCredentials(loginDTO);
-    }*/
+    }
 }
