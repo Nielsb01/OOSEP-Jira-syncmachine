@@ -73,13 +73,9 @@ public class UserDAOTest {
     @Test
     void testGetAllAutoSyncUsersReturnsListWithObjectsFromDatabase() throws SQLException, DatabaseDriverNotFoundException {
         // Arrange
-        UserSyncDTO userSyncDTO = new UserSyncDTO()
-                .setOriginWorker(JIRAUSER_1010)
-                .setDestinationWorker(JIRAUSER_1000);
+        UserSyncDTO userSyncDTO = new UserSyncDTO(JIRAUSER_1010,JIRAUSER_1000);
 
-        UserSyncDTO userSyncDTO1 = new UserSyncDTO()
-                .setOriginWorker(JIRAUSER_1010)
-                .setDestinationWorker(JIRAUSER_1000);
+        UserSyncDTO userSyncDTO1 = new UserSyncDTO(JIRAUSER_1010,JIRAUSER_1000);
 
         ResultSet mockedResultSet = mock(ResultSet.class);
         PreparedStatement mockedStatement = mock(PreparedStatement.class);
@@ -178,9 +174,8 @@ public class UserDAOTest {
     @Test
     void testGetSyncUserReturnsCorrectObject() throws SQLException {
         //Arrange
-        UserSyncDTO userSyncDTO = new UserSyncDTO()
-                .setDestinationWorker(JIRAUSER_1000)
-                .setOriginWorker(JIRAUSER_1010);
+        UserSyncDTO userSyncDTO = new UserSyncDTO(JIRAUSER_1010,JIRAUSER_1000);
+
         PreparedStatement mockedStatement = mock(PreparedStatement.class);
         Connection mockedConnection = mock(Connection.class);
         ResultSet mockedResultSet = mock(ResultSet.class);
@@ -201,9 +196,8 @@ public class UserDAOTest {
     @Test
     void testGetSyncUserThrowsInternalServerErrorWhenSQLExceptionIsThrown() throws SQLException {
         //Arrange
-        UserSyncDTO userSyncDTO = new UserSyncDTO()
-                .setDestinationWorker(JIRAUSER_1000)
-                .setOriginWorker(JIRAUSER_1010);
+        UserSyncDTO userSyncDTO = new UserSyncDTO(JIRAUSER_1010,JIRAUSER_1000);
+
         PreparedStatement mockedStatement = mock(PreparedStatement.class);
         Connection mockedConnection = mock(Connection.class);
         ResultSet mockedResultSet = mock(ResultSet.class);
@@ -220,9 +214,8 @@ public class UserDAOTest {
     @Test
     void testGetSyncUserCallsDataMapper() throws SQLException {
         //Arrange
-        UserSyncDTO userSyncDTO = new UserSyncDTO()
-                .setDestinationWorker(JIRAUSER_1000)
-                .setOriginWorker(JIRAUSER_1010);
+        UserSyncDTO userSyncDTO = new UserSyncDTO(JIRAUSER_1010,JIRAUSER_1000);
+
         PreparedStatement mockedStatement = mock(PreparedStatement.class);
         Connection mockedConnection = mock(Connection.class);
         ResultSet mockedResultSet = mock(ResultSet.class);
@@ -241,9 +234,8 @@ public class UserDAOTest {
 
     @Test
     void testUpdateJiraUserKeysThrowsInternalServerErrorWhenSQLExceptionIsThrown() throws SQLException {
-        JiraUserKeyDTO jiraUserKeyDTO = new JiraUserKeyDTO()
-                .setOriginUserKey(JIRAUSER_1000)
-                .setDestinationUserKey(JIRAUSER_1010);
+        JiraUserKeyDTO jiraUserKeyDTO = new JiraUserKeyDTO(JIRAUSER_1000,JIRAUSER_1010);
+
         //Arrange
         PreparedStatement mockedStatement = mock(PreparedStatement.class);
         Connection mockedConnection = mock(Connection.class);
@@ -257,9 +249,8 @@ public class UserDAOTest {
 
     @Test
     void testUpdateJiraUserKeysThrowsCallsConnectAndClose() throws SQLException {
-        JiraUserKeyDTO jiraUserKeyDTO = new JiraUserKeyDTO()
-                .setOriginUserKey(JIRAUSER_1000)
-                .setDestinationUserKey(JIRAUSER_1010);
+        JiraUserKeyDTO jiraUserKeyDTO = new JiraUserKeyDTO(JIRAUSER_1000,JIRAUSER_1010);
+
         //Arrange
         PreparedStatement mockedStatement = mock(PreparedStatement.class);
         Connection mockedConnection = mock(Connection.class);
@@ -277,9 +268,8 @@ public class UserDAOTest {
 
     @Test
     void testUpdateJiraUserKeysMakesConnectionAndClosesIt() throws SQLException {
-        JiraUserKeyDTO jiraUserKeyDTO = new JiraUserKeyDTO()
-                .setOriginUserKey(JIRAUSER_1000)
-                .setDestinationUserKey(JIRAUSER_1010);
+        JiraUserKeyDTO jiraUserKeyDTO = new JiraUserKeyDTO(JIRAUSER_1000,JIRAUSER_1010);
+
         //Arrange
         PreparedStatement mockedStatement = mock(PreparedStatement.class);
         Connection mockedConnection = mock(Connection.class);

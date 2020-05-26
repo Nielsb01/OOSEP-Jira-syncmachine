@@ -17,17 +17,15 @@ public class JiraUserKeyDTO {
         return originUserKey;
     }
 
-    public JiraUserKeyDTO setOriginUserKey(String originUserKey) {
+    public void setOriginUserKey(String originUserKey) {
         this.originUserKey = originUserKey;
-        return this;
     }
 
     public String getDestinationUserKey() {
         return destinationUserKey;
     }
 
-    public JiraUserKeyDTO setDestinationUserKey(String destinationUserKey) {
+    public void setDestinationUserKey(String destinationUserKey) {
         this.destinationUserKey = destinationUserKey;
-        return this;
     }
 }
