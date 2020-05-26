@@ -298,15 +298,15 @@ public class UserDAOTest {
     }
 
     @Test
-    void testGetUserAutoSyncPreferenceReturnsFalseWhenSqlExceptionIsThrown() throws SQLException {
+    void testGetUserAutoSyncPreferenceThrowsInternalServerErrorSqlExceptionIsThrown() throws SQLException {
         // Arrange
+        final int userId = 0;
         when(mockedDatabase.connect()).thenThrow(new SQLException());
 
-        // Act
-        boolean result = sut.getUserAutoSyncPreference(0);
-
-        // Assert
-        assertFalse(result);
+        // Act & assert
+        assertThrows(InternalServerErrorException.class, () -> {
+            sut.getUserAutoSyncPreference(userId);
+        });
     }
 
     @Test

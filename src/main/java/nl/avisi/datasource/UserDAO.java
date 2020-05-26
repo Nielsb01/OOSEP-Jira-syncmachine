@@ -38,6 +38,12 @@ public class UserDAO implements IUserDAO {
     private static final String JIRA_DESTINATION_WORKER_COLUMN_NAME = "destination_instance_user_key";
 
     /**
+     * Column name for the auto sync preference
+     * of the user
+     */
+    private static final String AUTO_SYNC_COLUMN_NAME = "auto_sync";
+
+    /**
      * SQL Query to retrieve all users who
      * have chosen to use the auto sync feature
      */
@@ -47,7 +53,7 @@ public class UserDAO implements IUserDAO {
      * SQL Query to retrieve the auto sync preference
      * for a user
      */
-    private static final String GET_AUTO_SYNC_PREFERENCE_FOR_USER_SQL = "SELECT auto_sync FROM jira_user WHERE user_id = ?";
+    private static final String GET_AUTO_SYNC_PREFERENCE_FOR_USER_SQL = String.format("SELECT %s FROM jira_user WHERE user_id = ?", AUTO_SYNC_COLUMN_NAME);
 
     /**
      * SQL statement to update the
@@ -60,7 +66,7 @@ public class UserDAO implements IUserDAO {
      * auto synchronisation preference
      * for a user
      */
-    private static final String UPDATE_AUTO_SYNC_PREFERENCE_SQL = "UPDATE jira_user SET auto_sync = ? WHERE user_id = ?";
+    private static final String UPDATE_AUTO_SYNC_PREFERENCE_SQL = String.format("UPDATE jira_user SET %s = ? WHERE user_id = ?", AUTO_SYNC_COLUMN_NAME);
 
     /**
      * SQL query to retrieve
@@ -121,22 +127,18 @@ public class UserDAO implements IUserDAO {
      * @return the auto sync preference value
      */
     public boolean getUserAutoSyncPreference(int userId) {
-        boolean autoSyncPreference = false;
-
         try (Connection connection = database.connect();
              PreparedStatement stmt = connection.prepareStatement(GET_AUTO_SYNC_PREFERENCE_FOR_USER_SQL)) {
             stmt.setInt(1, userId);
 
             ResultSet result = stmt.executeQuery();
 
-            while (result.next()) {
-                autoSyncPreference = result.getBoolean("auto_sync");
-            }
-        } catch (SQLException e) {
-            System.err.printf("Error occurred fetching the preference for the user: %d\n, error: %s\n", userId, e.getMessage());
-        }
+            result.next();
 
-        return autoSyncPreference;
+            return result.getBoolean(AUTO_SYNC_COLUMN_NAME);
+        } catch (SQLException e) {
+            throw new InternalServerErrorException(String.format("Error occurred fetching the preference for the user: %d error: %s", userId, e.getMessage()));
+        }
     }
 
     /**
