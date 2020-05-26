@@ -31,48 +31,54 @@ public class DestinationWorklogDTO {
      */
     private String originTaskId;
 
+    public DestinationWorklogDTO() {
+        //
+    }
+
+    public DestinationWorklogDTO(String worker, String started, int timeSpentSeconds, String originTaskId) {
+        this.worker = worker;
+        this.started = started;
+        this.timeSpentSeconds = timeSpentSeconds;
+        this.originTaskId = originTaskId;
+    }
+
     public String getWorker() {
         return worker;
     }
 
-    public DestinationWorklogDTO setWorker(String worker) {
+    public void setWorker(String worker) {
         this.worker = worker;
-        return this;
     }
 
     public String getComment() {
         return comment;
     }
 
-    public DestinationWorklogDTO setComment(String comment) {
+    public void setComment(String comment) {
         this.comment = comment;
-        return this;
     }
 
     public String getStarted() {
         return started;
     }
 
-    public DestinationWorklogDTO setStarted(String started) {
+    public void setStarted(String started) {
         this.started = started;
-        return this;
     }
 
     public int getTimeSpentSeconds() {
         return timeSpentSeconds;
     }
 
-    public DestinationWorklogDTO setTimeSpentSeconds(int timeSpentSeconds) {
+    public void setTimeSpentSeconds(int timeSpentSeconds) {
         this.timeSpentSeconds = timeSpentSeconds;
-        return this;
     }
 
     public String getOriginTaskId() {
         return originTaskId;
     }
 
-    public DestinationWorklogDTO setOriginTaskId(String originTaskId) {
+    public void setOriginTaskId(String originTaskId) {
         this.originTaskId = originTaskId;
-        return this;
     }
 }

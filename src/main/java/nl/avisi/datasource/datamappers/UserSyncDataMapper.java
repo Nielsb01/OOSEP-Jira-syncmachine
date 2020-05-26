@@ -4,8 +4,6 @@ import nl.avisi.dto.UserSyncDTO;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Responsible for converting data
