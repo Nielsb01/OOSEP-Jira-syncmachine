@@ -27,6 +27,7 @@ class UserPreferenceDataMapperTest {
     void testToDTOReturnsUserPreferenceDTO() throws Exception {
         //Arrange
         when(mockedResultset.next()).thenReturn(false);
+
         //Act
         final UserPreferenceDTO result = sut.toDTO(mockedResultset);
 
