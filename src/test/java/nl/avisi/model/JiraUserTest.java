@@ -1,14 +1,23 @@
 package nl.avisi.model;
 
 import kong.unirest.HttpResponse;
+import kong.unirest.JsonNode;
+import kong.unirest.json.JSONArray;
+import kong.unirest.json.JSONObject;
+import nl.avisi.api.JiraInterface;
 import nl.avisi.datasource.contracts.IUserDAO;
+import nl.avisi.dto.JiraUserKeyDTO;
 import nl.avisi.dto.JiraUsernameDTO;
+import nl.avisi.model.exceptions.InvalidUsernameException;
 import nl.avisi.network.IRequest;
 import nl.avisi.propertyreaders.JiraSynchronisationProperties;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.*;
 
 class JiraUserTest {
 
@@ -21,32 +30,21 @@ class JiraUserTest {
     public static final String ORIGIN_USERNAME = "ClientUsername";
     public static final String EMPTY_JSON_ARRAY = "[]";
     private JiraUser sut;
-    private JiraSynchronisationProperties mockedProperties;
+
     private IUserDAO mockedUserDAO;
+    private JiraInterface mockedJiraInterface;
 
-    private IRequest mockedRequest;
     private HttpResponse mockedResponse;
-    private JiraUsernameDTO jiraUsernameDTO;
+    private JiraUsernameDTO jiraUsernameDTO = new JiraUsernameDTO(ORIGIN_USERNAME, DESTINATION_USERNAME);
 
-   /* @BeforeEach
+    @BeforeEach
     void setUp() {
         sut = new JiraUser();
 
-        mockedProperties = mock(JiraSynchronisationProperties.class);
-        sut.setJiraSynchronisationProperties(mockedProperties);
+        mockedResponse = Mockito.mock(HttpResponse.class);
 
-        mockedRequest = mock(IRequest.class);
-        sut.setRequest(mockedRequest);
-
-        mockedResponse = mock(HttpResponse.class);
-
-        mockedUserDAO = mock(IUserDAO.class);
+        mockedUserDAO = Mockito.mock(IUserDAO.class);
         sut.setUserDAO(mockedUserDAO);
-
-
-        jiraUsernameDTO = new JiraUsernameDTO()
-                .setDestinationUsername(DESTINATION_USERNAME)
-                .setOriginUsername(ORIGIN_USERNAME);
     }
 
     @Test
@@ -60,8 +58,7 @@ class JiraUserTest {
                 .put(KEY, JIRAUSER_1000);
         String destinationJsonString = new JSONArray().put(destinationJsonObject).toString();
 
-        when(mockedRequest.get(any())).thenReturn(mockedResponse);
-        when(mockedResponse.getBody()).thenReturn(new JsonNode(originJsonString), new JsonNode(destinationJsonString));
+        Mockito.when(mockedResponse.getBody()).thenReturn(new JsonNode(originJsonString), new JsonNode(destinationJsonString));
 
         //Act
         JiraUserKeyDTO result = sut.retrieveJiraUserKeyByUsername(jiraUsernameDTO);
@@ -69,18 +66,15 @@ class JiraUserTest {
         //Assert
         assertEquals(JIRAUSER_1010, result.getOriginUserKey());
         assertEquals(JIRAUSER_1000, result.getDestinationUserKey());
-
     }
 
     @Test
     void testRetrieveJiraUserKeyByUsernameThrowsInvalidUsernameExceptionWhenJSONExceptionOccurs() {
         //Arrange
-        when(mockedRequest.get(any())).thenReturn(mockedResponse);
-        when(mockedResponse.getBody()).thenReturn(new JsonNode(EMPTY_JSON_ARRAY));
+        Mockito.when(mockedResponse.getBody()).thenReturn(new JsonNode(EMPTY_JSON_ARRAY));
 
         //Assert
         assertThrows(InvalidUsernameException.class, () ->
-
                 //Act
                 sut.retrieveJiraUserKeyByUsername(jiraUsernameDTO));
     }
@@ -92,40 +86,13 @@ class JiraUserTest {
                 .put(KEY, "");
         String jsonString = new JSONArray().put(jsonObject).toString();
 
-        when(mockedRequest.get(any())).thenReturn(mockedResponse);
-        when(mockedResponse.getBody()).thenReturn(new JsonNode(jsonString));
+        Mockito.when(mockedResponse.getBody()).thenReturn(new JsonNode(jsonString));
 
         //Assert
         assertThrows(InvalidUsernameException.class, () ->
 
                 //Act
                 sut.retrieveJiraUserKeyByUsername(jiraUsernameDTO));
-    }
-
-    @Test
-    void testSetJiraUserKeysCallsUpdateJiraUserKeys() {
-        //Arrange
-        final int userId = 1;
-        JiraUsernameDTO jiraUsernameDTO = new JiraUsernameDTO()
-                .setDestinationUsername(TEST_GMAIL_COM)
-                .setOriginUsername(TEST_HOTMAIL_COM);
-
-        JSONObject originJsonObject = new JSONObject()
-                .put(KEY, JIRAUSER_1010);
-        String originJsonString = new JSONArray().put(originJsonObject).toString();
-
-        JSONObject destinationJsonObject = new JSONObject()
-                .put(KEY, JIRAUSER_1000);
-        String destinationJsonString = new JSONArray().put(destinationJsonObject).toString();
-
-        when(mockedRequest.get(any())).thenReturn(mockedResponse);
-        when(mockedResponse.getBody()).thenReturn(new JsonNode(originJsonString), new JsonNode(destinationJsonString));
-
-        //Act
-        sut.setJiraUserKeys(jiraUsernameDTO, userId);
-
-        //Assert
-        verify(mockedUserDAO).updateJiraUserKeys(anyObject(), anyInt());
     }
 
     @Test
@@ -138,6 +105,29 @@ class JiraUserTest {
         sut.setAutoSyncPreference(userId, autoSyncOn);
 
         //Assert
-        verify(mockedUserDAO).setAutoSyncPreference(userId, autoSyncOn);
-    }*/
+        Mockito.verify(mockedUserDAO).setAutoSyncPreference(userId, autoSyncOn);
+    }
+
+    @Test
+    void testSetJiraUserKeysCallsUpdateJiraUserKeys() {
+        //Arrange
+        final int userId = 1;
+        JiraUsernameDTO jiraUsernameDTO = new JiraUsernameDTO(TEST_HOTMAIL_COM, TEST_GMAIL_COM);
+
+        JSONObject originJsonObject = new JSONObject()
+                .put(KEY, JIRAUSER_1010);
+        String originJsonString = new JSONArray().put(originJsonObject).toString();
+
+        JSONObject destinationJsonObject = new JSONObject()
+                .put(KEY, JIRAUSER_1000);
+        String destinationJsonString = new JSONArray().put(destinationJsonObject).toString();
+
+        Mockito.when(mockedResponse.getBody()).thenReturn(new JsonNode(originJsonString), new JsonNode(destinationJsonString));
+
+        //Act
+        sut.setJiraUserKeys(jiraUsernameDTO, userId);
+
+        //Assert
+        Mockito.verify(mockedUserDAO).updateJiraUserKeys(anyObject(), anyInt());
+    }
 }
