@@ -127,13 +127,8 @@ public class JiraWorklog implements IJiraWorklog {
                 int timeSpentSeconds = jsonObject.getInt("timeSpentSeconds");
                 int worklogId = jsonObject.getInt("tempoWorklogId");
 
-                worklogs.put(worklogId, new DestinationWorklogDTO()
-                        .setWorker(worker)
-                        .setStarted(started)
-                        .setOriginTaskId(originTaskId)
-                        .setTimeSpentSeconds(timeSpentSeconds));
-
-
+                worklogs.put(worklogId, new DestinationWorklogDTO(worker, started, timeSpentSeconds, originTaskId));
+                
             } catch (JSONException e) {
                 return new HashMap<>();
             }

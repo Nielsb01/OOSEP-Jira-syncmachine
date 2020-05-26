@@ -32,7 +32,6 @@ public class DestinationWorklogDTO {
     private String originTaskId;
 
     public DestinationWorklogDTO() {
-        //
     }
 
     public DestinationWorklogDTO(String worker, String started, int timeSpentSeconds, String originTaskId) {
