@@ -1,14 +1,13 @@
 package nl.avisi.datasource;
 
-import com.mysql.cj.protocol.Resultset;
 import nl.avisi.datasource.database.Database;
 import nl.avisi.datasource.datamappers.IDataMapper;
 import nl.avisi.dto.JiraUserKeyDTO;
 import nl.avisi.datasource.exceptions.DatabaseDriverNotFoundException;
+import nl.avisi.dto.UserPreferenceDTO;
 import nl.avisi.dto.UserSyncDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 
 import javax.ws.rs.InternalServerErrorException;
 import java.sql.*;
@@ -25,16 +24,19 @@ public class UserDAOTest {
     public static final String JIRAUSER_1000 = "JIRAUSER1000";
     private UserDAO sut;
     private Database mockedDatabase;
-    private IDataMapper mockedDataMapper;
+    private IDataMapper<UserSyncDTO> mockedUserSyncDataMapper;
+    private IDataMapper<UserPreferenceDTO> mockedUserPreferenceMapper;
 
     @BeforeEach
     void setUp() {
         sut = new UserDAO();
         mockedDatabase = mock(Database.class);
-        mockedDataMapper = mock(IDataMapper.class);
+        mockedUserSyncDataMapper = mock(IDataMapper.class);
+        mockedUserPreferenceMapper = mock(IDataMapper.class);
 
         sut.setDatabase(mockedDatabase);
-        sut.setUserSyncDataMapper(mockedDataMapper);
+        sut.setUserSyncDataMapper(mockedUserSyncDataMapper);
+        sut.setUserPreferenceDataMapper(mockedUserPreferenceMapper);
     }
 
     @Test
@@ -91,7 +93,7 @@ public class UserDAOTest {
         when(mockedConnection.prepareStatement(anyString())).thenReturn(mockedStatement);
         when(mockedStatement.executeQuery()).thenReturn(mockedResultSet);
         when(mockedResultSet.next()).thenReturn(true, true, false);
-        when(mockedDataMapper.toDTO(mockedResultSet)).thenReturn(userSyncDTO, userSyncDTO1);
+        when(mockedUserSyncDataMapper.toDTO(mockedResultSet)).thenReturn(userSyncDTO, userSyncDTO1);
 
         // Act
         List<UserSyncDTO> results = sut.getAllAutoSyncUsers();
@@ -190,7 +192,7 @@ public class UserDAOTest {
         when(mockedDatabase.connect()).thenReturn(mockedConnection);
         when(mockedConnection.prepareStatement(any())).thenReturn(mockedStatement);
         when(mockedStatement.executeQuery()).thenReturn(mockedResultSet);
-        when(mockedDataMapper.toDTO(mockedResultSet)).thenReturn(userSyncDTO);
+        when(mockedUserSyncDataMapper.toDTO(mockedResultSet)).thenReturn(userSyncDTO);
 
         //Act
         UserSyncDTO result = sut.getSyncUser(USER_ID);
@@ -213,7 +215,7 @@ public class UserDAOTest {
         when(mockedDatabase.connect()).thenThrow(SQLException.class);
         when(mockedConnection.prepareStatement(any())).thenReturn(mockedStatement);
         when(mockedStatement.executeQuery()).thenReturn(mockedResultSet);
-        when(mockedDataMapper.toDTO(mockedResultSet)).thenReturn(userSyncDTO);
+        when(mockedUserSyncDataMapper.toDTO(mockedResultSet)).thenReturn(userSyncDTO);
 
         //Act & Assert
         assertThrows(InternalServerErrorException.class, () -> sut.getSyncUser(USER_ID));
@@ -232,13 +234,13 @@ public class UserDAOTest {
         when(mockedDatabase.connect()).thenReturn(mockedConnection);
         when(mockedConnection.prepareStatement(any())).thenReturn(mockedStatement);
         when(mockedStatement.executeQuery()).thenReturn(mockedResultSet);
-        when(mockedDataMapper.toDTO(mockedResultSet)).thenReturn(userSyncDTO);
+        when(mockedUserSyncDataMapper.toDTO(mockedResultSet)).thenReturn(userSyncDTO);
 
         //Act
         UserSyncDTO result = sut.getSyncUser(USER_ID);
 
         //Assert
-        verify(mockedDataMapper).toDTO(mockedResultSet);
+        verify(mockedUserSyncDataMapper).toDTO(mockedResultSet);
     }
 
     @Test
@@ -312,20 +314,24 @@ public class UserDAOTest {
     @Test
     void testGetUserAutoSyncPreferenceReturnsTrueWhenDataIsReturned() throws SQLException {
         // Arrange
+        final boolean autoSyncOn = true;
+        final UserPreferenceDTO expectedResult = new UserPreferenceDTO(autoSyncOn);
+
         Connection mockedConnection = mock(Connection.class);
         PreparedStatement mockedStatement = mock(PreparedStatement.class);
         ResultSet mockedResultSet = mock(ResultSet.class);
 
         when(mockedResultSet.next()).thenReturn(true, false);
-        when(mockedResultSet.getBoolean(anyString())).thenReturn(true);
+        when(mockedResultSet.getBoolean(anyString())).thenReturn(autoSyncOn);
         when(mockedStatement.executeQuery()).thenReturn(mockedResultSet);
         when(mockedConnection.prepareStatement(anyString())).thenReturn(mockedStatement);
         when(mockedDatabase.connect()).thenReturn(mockedConnection);
+        when(mockedUserPreferenceMapper.toDTO(any())).thenReturn(expectedResult);
 
         // Act
-        boolean result = sut.getUserAutoSyncPreference(0);
+        UserPreferenceDTO result = sut.getUserAutoSyncPreference(0);
 
         // Assert
-        assertTrue(result);
+        assertTrue(result.getAutoSyncOn());
     }
 }

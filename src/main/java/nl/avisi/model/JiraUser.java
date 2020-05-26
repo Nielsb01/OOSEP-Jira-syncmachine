@@ -66,9 +66,7 @@ public class JiraUser implements IJiraUser {
      * @return the preferences for the user
      */
     public UserPreferenceDTO getAutoSyncPreference(int userId) {
-        boolean autoSyncPreference = userDAO.getUserAutoSyncPreference(userId);
-
-        return new UserPreferenceDTO(autoSyncPreference);
+        return userDAO.getUserAutoSyncPreference(userId);
     }
 
     private JiraUserKeyDTO createJiraUserKeyDTO(HttpResponse<JsonNode> jsonOriginUserKey, HttpResponse<JsonNode> jsonDestinationUserKey) {

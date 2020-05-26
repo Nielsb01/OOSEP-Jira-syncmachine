@@ -12,7 +12,7 @@ public class UserPreferenceDTO {
         this.autoSyncOn = autoSyncOn;
     }
 
-    public boolean isAutoSyncOn() {
+    public boolean getAutoSyncOn() {
         return autoSyncOn;
     }
 

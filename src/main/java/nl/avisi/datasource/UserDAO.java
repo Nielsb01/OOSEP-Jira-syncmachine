@@ -4,6 +4,7 @@ import nl.avisi.datasource.contracts.IUserDAO;
 import nl.avisi.datasource.database.Database;
 import nl.avisi.datasource.datamappers.IDataMapper;
 import nl.avisi.dto.JiraUserKeyDTO;
+import nl.avisi.dto.UserPreferenceDTO;
 import nl.avisi.dto.UserSyncDTO;
 
 import javax.inject.Inject;
@@ -85,9 +86,19 @@ public class UserDAO implements IUserDAO {
      */
     private IDataMapper<UserSyncDTO> userSyncDataMapper;
 
+    /**
+     * Maps resultSet to in-application object
+     */
+    private IDataMapper<UserPreferenceDTO> userPreferenceDataMapper;
+
     @Inject
     public void setUserSyncDataMapper(IDataMapper<UserSyncDTO> userSyncDataMapper) {
         this.userSyncDataMapper = userSyncDataMapper;
+    }
+
+    @Inject
+    public void setUserPreferenceDataMapper(IDataMapper<UserPreferenceDTO> userPreferenceDataMapper) {
+        this.userPreferenceDataMapper = userPreferenceDataMapper;
     }
 
     @Inject
@@ -126,16 +137,14 @@ public class UserDAO implements IUserDAO {
      * @param userId the user for which to get the auto sync preference
      * @return the auto sync preference value
      */
-    public boolean getUserAutoSyncPreference(int userId) {
+    public UserPreferenceDTO getUserAutoSyncPreference(int userId) {
         try (Connection connection = database.connect();
              PreparedStatement stmt = connection.prepareStatement(GET_AUTO_SYNC_PREFERENCE_FOR_USER_SQL)) {
             stmt.setInt(1, userId);
 
             ResultSet result = stmt.executeQuery();
 
-            result.next();
-
-            return result.getBoolean(AUTO_SYNC_COLUMN_NAME);
+            return userPreferenceDataMapper.toDTO(result);
         } catch (SQLException e) {
             throw new InternalServerErrorException(String.format("Error occurred fetching the preference for the user: %d error: %s", userId, e.getMessage()));
         }
