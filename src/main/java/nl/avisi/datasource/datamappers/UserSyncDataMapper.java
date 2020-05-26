@@ -26,6 +26,7 @@ public class UserSyncDataMapper implements IDataMapper<UserSyncDTO> {
      */
     @Override
     public UserSyncDTO toDTO(ResultSet resultSet) throws SQLException {
+        resultSet.next();
        return new UserSyncDTO()
                 .setOriginWorker(resultSet.getString(ORIGIN_INSTANCE_USER_KEY))
                 .setDestinationWorker(resultSet.getString(DESTINATION_INSTANCE_USER_KEY));
