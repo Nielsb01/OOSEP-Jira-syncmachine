@@ -2,7 +2,6 @@ package nl.avisi.controller;
 
 
 import nl.avisi.dto.ManualSyncDTO;
-import nl.avisi.dto.WorklogRequestDTO;
 import nl.avisi.model.contracts.IJiraWorklog;
 
 import javax.inject.Inject;

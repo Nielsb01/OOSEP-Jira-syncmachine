@@ -11,7 +11,6 @@ import javax.ws.rs.NotAuthorizedException;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.when;
 
 class LoginTest {
 

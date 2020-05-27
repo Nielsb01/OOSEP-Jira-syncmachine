@@ -7,7 +7,6 @@ import nl.avisi.dto.DestinationWorklogDTO;
 
 import javax.inject.Inject;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class JiraWorklogCreator {

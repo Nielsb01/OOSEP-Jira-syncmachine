@@ -1,15 +1,15 @@
 package nl.avisi.model;
 
-import kong.unirest.*;
-
+import kong.unirest.HttpResponse;
+import kong.unirest.JsonNode;
 import kong.unirest.json.JSONException;
 import nl.avisi.api.JiraInterface;
 import nl.avisi.datasource.contracts.IUserDAO;
-import nl.avisi.dto.UserPreferenceDTO;
-import nl.avisi.model.exceptions.InvalidUsernameException;
 import nl.avisi.dto.JiraUserKeyDTO;
 import nl.avisi.dto.JiraUsernameDTO;
+import nl.avisi.dto.UserPreferenceDTO;
 import nl.avisi.model.contracts.IJiraUser;
+import nl.avisi.model.exceptions.InvalidUsernameException;
 
 import javax.inject.Inject;
 import javax.ws.rs.InternalServerErrorException;

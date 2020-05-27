@@ -6,10 +6,6 @@ import nl.avisi.dto.JiraUsernameDTO;
 import nl.avisi.network.IRequest;
 import nl.avisi.propertyreaders.JiraSynchronisationProperties;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Matchers.any;
-
 class JiraUserTest {
 
     public static final String JIRAUSER_1000 = "JIRAUSER1000";

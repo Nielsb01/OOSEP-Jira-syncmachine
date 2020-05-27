@@ -1,9 +1,5 @@
 package nl.avisi.model;
 
-import kong.unirest.*;
-import kong.unirest.json.JSONArray;
-import kong.unirest.json.JSONException;
-import kong.unirest.json.JSONObject;
 import nl.avisi.datasource.contracts.IUserDAO;
 import nl.avisi.datasource.contracts.IWorklogDAO;
 import nl.avisi.dto.DestinationWorklogDTO;
@@ -13,13 +9,12 @@ import nl.avisi.dto.WorklogRequestDTO;
 import nl.avisi.model.contracts.IJiraWorklog;
 import nl.avisi.model.worklog_crud.JiraWorklogCreator;
 import nl.avisi.model.worklog_crud.JiraWorklogReader;
-import nl.avisi.network.IRequest;
-import nl.avisi.network.authentication.BasicAuth;
-import nl.avisi.propertyreaders.JiraSynchronisationProperties;
 
 import javax.inject.Inject;
-import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**

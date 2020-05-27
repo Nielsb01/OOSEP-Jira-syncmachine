@@ -3,7 +3,6 @@ package nl.avisi.propertyreaders;
 import nl.avisi.propertyreaders.exceptions.InvalidConfigFormatException;
 
 import javax.inject.Inject;
-import java.util.Calendar;
 
 /**
  * Used for querying jiraSyncrhonisation.properties
