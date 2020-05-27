@@ -1,411 +1,203 @@
-//package nl.avisi.model;
-//
-//import kong.unirest.HttpResponse;
-//import kong.unirest.JsonNode;
-//import kong.unirest.json.JSONArray;
-//import kong.unirest.json.JSONObject;
-//import nl.avisi.datasource.contracts.IUserDAO;
-//import nl.avisi.datasource.contracts.IWorklogDAO;
-//import nl.avisi.dto.DestinationWorklogDTO;
-//import nl.avisi.dto.OriginWorklogDTO;
-//import nl.avisi.dto.UserSyncDTO;
-//import nl.avisi.dto.WorklogRequestDTO;
-//import nl.avisi.network.IRequest;
-//import nl.avisi.network.authentication.BasicAuth;
-//import nl.avisi.propertyreaders.JiraSynchronisationProperties;
-//import org.junit.jupiter.api.BeforeEach;
-//import org.junit.jupiter.api.Test;
-//
-//import java.util.ArrayList;
-//import java.util.HashMap;
-//import java.util.List;
-//import java.util.Map;
-//
-//import static org.junit.Assert.assertEquals;
-//import static org.junit.Assert.assertTrue;
-//import static org.junit.jupiter.api.Assertions.assertThrows;
-//import static org.mockito.Matchers.any;
-//import static org.mockito.Mockito.*;
-//
-//class JiraWorklogTest {
-//
-//    public static final int TEMPO_WORKLOG_ID_VALUE = 1;
-//    private JiraWorklog sut;
-//    private IRequest mockedRequest;
-//    private HttpResponse mockedResponse;
-//    private JiraSynchronisationProperties mockedProperties;
-//    private IUserDAO mockedUserDAO;
-//    private IWorklogDAO mockedWorklogDAO;
-//
-//    private static final String WORKER_VALUE = "ttt";
-//    private static final String STARTED_VALUE = "fff";
-//    private static final String ACCOUNT_KEY_VALUE = "kkk";
-//    private static final int TIME_SPENT_SECONDS_VALUE = 1234;
-//
-//    private WorklogRequestDTO worklogRequestDTO;
-//
-//    @BeforeEach
-//    void setUp() {
-//
-//        sut = new JiraWorklog();
-//        mockedRequest = mock(IRequest.class);
-//        mockedResponse = mock(HttpResponse.class);
-//        mockedProperties = mock(JiraSynchronisationProperties.class);
-//        mockedUserDAO = mock(IUserDAO.class);
-//        mockedWorklogDAO = mock(IWorklogDAO.class);
-//
-//        sut.setUserDAO(mockedUserDAO);
-//        sut.setWorklogDAO(mockedWorklogDAO);
-//        sut.setOriginUrl("http://127.0.0.1/");
-//        sut.setDestinationUrl("http://127.0.0.1/");
-//        sut.setRequest(mockedRequest);
-//        sut.setBasicAuth(new BasicAuth());
-//        sut.setJiraSynchronisationProperties(mockedProperties);
-//
-//        worklogRequestDTO = new WorklogRequestDTO();
-//    }
-//
-//
-//
-//    @Test
-//    public void testWhileAddingWorklogsCheckMapIsSameLengthAsWorklogs() {
-//        // Arrange
-//        List<DestinationWorklogDTO> mockWorklogs = new ArrayList<>();
-//        String adminAuthUserName = "Nielsb01";
-//        String adminAuthPass = "OOSEGENUA";
-//
-//        mockWorklogs.add(new DestinationWorklogDTO().setWorker("JIRAUSER10000").setStarted("2020-05-07").setTimeSpentSeconds(660).setOriginTaskId("KNBPU-2"));
-//        mockWorklogs.add(new DestinationWorklogDTO().setWorker("JIRAUSER10100").setStarted("2020-05-07").setTimeSpentSeconds(840).setOriginTaskId("KNBPU-2"));
-//
-//        when(mockedRequest.post(any(), any())).thenReturn(mockedResponse);
-//        when(mockedResponse.getStatus()).thenReturn(200);
-//
-//        // Act
-//        Map actualvalue = sut.createWorklogsOnDestinationServer(mockWorklogs);
-//
-//        //Assert
-//        assertEquals(2, actualvalue.size());
-//    }
-//
-//    @Test
-//    public void testWhileAddingWorklogsCheckMapNotAllStatuscodes200() {
-//        // Arrange
-//        List<DestinationWorklogDTO> mockWorklogs = new ArrayList<>();
-//        String adminAuthUserName = "Nielsb01";
-//        String adminAuthPass = "OOSEGENUA";
-//
-//        mockWorklogs.add(new DestinationWorklogDTO().setWorker("JIRAUSER10000").setStarted("2020-05-07").setTimeSpentSeconds(660).setOriginTaskId("KNBPU-2"));
-//        mockWorklogs.add(new DestinationWorklogDTO().setWorker("JIRAUSER10100").setStarted("2020-05-07").setTimeSpentSeconds(840).setOriginTaskId("KNBPU-4"));
-//
-//        when(mockedRequest.post(any(), any())).thenReturn(mockedResponse);
-//        when(mockedResponse.getStatus()).thenReturn(200, 400);
-//
-//        // Act
-//        Map actualvalue = sut.createWorklogsOnDestinationServer(mockWorklogs);
-//
-//        //Assert
-//        assertTrue(actualvalue.containsValue(400));
-//        assertTrue(actualvalue.containsValue(200));
-//    }
-//
-//    @Test
-//    void testFilterOutAlreadySyncedWorklogsReturnsCorrectlySizedListAfterFiltering() {
-//        //Arrange
-//        List<OriginWorklogDTO> originList = new ArrayList<>();
-//        originList.add(new OriginWorklogDTO().setWorklogId(1));
-//        originList.add(new OriginWorklogDTO().setWorklogId(2));
-//        originList.add(new OriginWorklogDTO().setWorklogId(3));
-//
-//        List<Integer> allWorklogIds = new ArrayList<>();
-//        allWorklogIds.add(1);
-//        allWorklogIds.add(2);
-//
-//        //Act
-//        List<DestinationWorklogDTO> destinationList = sut.filterOutAlreadySyncedWorklogs(originList, allWorklogIds);
-//
-//        //Assert
-//        assertEquals(1, destinationList.size());
-//    }
-//
-//    @Test
-//    void testFilterOutAlreadySyncedWorklogsReturnsListWithCorrectObject() {
-//        //Arrange
-//        List<OriginWorklogDTO> originList = new ArrayList<>();
-//        OriginWorklogDTO originWorklogDTO = new OriginWorklogDTO().setWorklogId(3);
-//        originList.add(new OriginWorklogDTO().setWorklogId(1));
-//        originList.add(new OriginWorklogDTO().setWorklogId(2));
-//        originList.add(originWorklogDTO);
-//
-//        List<Integer> allWorklogIds = new ArrayList<>();
-//        allWorklogIds.add(1);
-//        allWorklogIds.add(2);
-//
-//        //Act
-//        List<DestinationWorklogDTO> destinationList = sut.filterOutAlreadySyncedWorklogs(originList, allWorklogIds);
-//
-//        //Assert
-//        assertEquals(originWorklogDTO, destinationList.get(0));
-//    }
-//
-//    @Test
-//    void testmapDestinationUserKeyToOriginUserKeyReturnsObjectsWithCorrectlyMappedUserKeys() {
-//        //Arrange
-//        List<DestinationWorklogDTO> destinationWorklogDTOS = new ArrayList<>();
-//        destinationWorklogDTOS.add(new DestinationWorklogDTO().setWorker("JIRAUSER10"));
-//        destinationWorklogDTOS.add(new DestinationWorklogDTO().setWorker("JIRAUSER11"));
-//
-//        List<UserSyncDTO> userSyncDTOS = new ArrayList<>();
-//        userSyncDTOS.add(new UserSyncDTO().setOriginWorker("JIRAUSER10").setDestinationWorker("JIRAUSER20"));
-//        userSyncDTOS.add(new UserSyncDTO().setOriginWorker("JIRAUSER11").setDestinationWorker("JIRAUSER21"));
-//
-//        //Act
-//        List<DestinationWorklogDTO> destinationList = sut.replaceOriginUserKeyWithCorrectDestinationUserKey(destinationWorklogDTOS, userSyncDTOS);
-//
-//        //Assert
-//        assertEquals("JIRAUSER20", destinationList.get(0).getWorker());
-//        assertEquals("JIRAUSER21", destinationList.get(1).getWorker());
-//    }
-//
-//    @Test
-//    void testmapDestinationUserKeyToOriginUserKeyThrowsIllegalStateExceptionWhenMultipleMatchingOriginUserKeysAreFound() {
-//        //Arrange
-//        List<DestinationWorklogDTO> destinationWorklogDTOS = new ArrayList<>();
-//        destinationWorklogDTOS.add(new DestinationWorklogDTO().setWorker("JIRAUSER10"));
-//        destinationWorklogDTOS.add(new DestinationWorklogDTO().setWorker("JIRAUSER11"));
-//
-//        List<UserSyncDTO> userSyncDTOS = new ArrayList<>();
-//        userSyncDTOS.add(new UserSyncDTO().setOriginWorker("JIRAUSER10").setDestinationWorker("JIRAUSER20"));
-//        userSyncDTOS.add(new UserSyncDTO().setOriginWorker("JIRAUSER10").setDestinationWorker("JIRAUSER21"));
-//
-//        //Act & Assert
-//        assertThrows(IllegalStateException.class, () -> sut.replaceOriginUserKeyWithCorrectDestinationUserKey(destinationWorklogDTOS, userSyncDTOS));
-//    }
-//
-//    @Test
-//    void testmapDestinationUserKeyToOriginUserKeyRemovesObjectFromListWhenNoMatchingKeyIsFound() {
-//        //Arrange
-//        List<DestinationWorklogDTO> destinationWorklogDTOS = new ArrayList<>();
-//        destinationWorklogDTOS.add(new DestinationWorklogDTO().setWorker("JIRAUSER10"));
-//        destinationWorklogDTOS.add(new DestinationWorklogDTO().setWorker("JIRAUSER11"));
-//
-//        List<UserSyncDTO> userSyncDTOS = new ArrayList<>();
-//        userSyncDTOS.add(new UserSyncDTO().setOriginWorker("JIRAUSER9").setDestinationWorker("JIRAUSER20"));
-//        userSyncDTOS.add(new UserSyncDTO().setOriginWorker("JIRAUSER11").setDestinationWorker("JIRAUSER21"));
-//
-//        //Act
-//        List<DestinationWorklogDTO> destinationList = sut.replaceOriginUserKeyWithCorrectDestinationUserKey(destinationWorklogDTOS, userSyncDTOS);
-//
-//        //Assert
-//        assertEquals(1, destinationList.size());
-//
-//    }
-//
-//    @Test
-//    void testfilterOutFailedPostedWorklogsReturnListWithCorrectObject() {
-//        //Arrange
-//        List<OriginWorklogDTO> originList = new ArrayList<>();
-//        OriginWorklogDTO originWorklogDTO = new OriginWorklogDTO().setWorklogId(3);
-//        originList.add(new OriginWorklogDTO().setWorklogId(1));
-//        originList.add(new OriginWorklogDTO().setWorklogId(2));
-//        originList.add(originWorklogDTO);
-//
-//        Map<DestinationWorklogDTO, Integer> worklogsWithResponsecodes = new HashMap<>();
-//        worklogsWithResponsecodes.put(originWorklogDTO, 200);
-//
-//        //Act
-//        List<Integer> actualValue = sut.filterOutFailedPostedWorklogs(originList, worklogsWithResponsecodes);
-//
-//        //Assert
-//        assertEquals(originWorklogDTO.getWorklogId(), actualValue.get(0).intValue());
-//
-//    }
-//
-//    @Test
-//    void testfilterOutFailedPostedWorklogsReturnCorrectlySizedList() {
-//        //Arrange
-//        List<OriginWorklogDTO> originList = new ArrayList<>();
-//        OriginWorklogDTO originWorklogDTO = new OriginWorklogDTO().setWorklogId(3);
-//        originList.add(new OriginWorklogDTO().setWorklogId(1));
-//        originList.add(new OriginWorklogDTO().setWorklogId(2));
-//        originList.add(originWorklogDTO);
-//
-//        Map<DestinationWorklogDTO, Integer> worklogsWithResponsecodes = new HashMap<>();
-//        worklogsWithResponsecodes.put(originWorklogDTO, 200);
-//
-//        //Act
-//        List<Integer> actualValue = sut.filterOutFailedPostedWorklogs(originList, worklogsWithResponsecodes);
-//
-//        //Assert
-//        assertEquals(1, actualValue.size());
-//    }
-//
-//    @Test
-//    void testfilterOutFailedPostedWorklogsReturnEmptyListWhenNoObjectsMatch() {
-//        //Arrange
-//        List<OriginWorklogDTO> originList = new ArrayList<>();
-//        OriginWorklogDTO originWorklogDTO = new OriginWorklogDTO().setWorklogId(3);
-//        originList.add(new OriginWorklogDTO().setWorklogId(1));
-//        originList.add(new OriginWorklogDTO().setWorklogId(2));
-//        originList.add(originWorklogDTO);
-//
-//        Map<DestinationWorklogDTO, Integer> worklogsWithResponsecodes = new HashMap<>();
-//        worklogsWithResponsecodes.put(originWorklogDTO, 400);
-//
-//        //Act
-//        List<Integer> actualValue = sut.filterOutFailedPostedWorklogs(originList, worklogsWithResponsecodes);
-//
-//        //Assert
-//        assertEquals(0, actualValue.size());
-//    }
-//
-//    @Test
-//    void testSynchroniseCallsGetAllAutoSyncUsers() {
-//        //Arrange
-//        JSONObject jsonObject = new JSONObject()
-//                .put("worker", WORKER_VALUE)
-//                .put("started", STARTED_VALUE)
-//                .put("issue", new JSONObject().put("accountKey", ACCOUNT_KEY_VALUE))
-//                .put("timeSpentSeconds", TIME_SPENT_SECONDS_VALUE)
-//                .put("tempoWorklogId", TEMPO_WORKLOG_ID_VALUE);
-//
-//        String jsonString = new JSONArray().put(jsonObject).toString();
-//
-//
-//        when(mockedRequest.post(any(), any())).thenReturn(mockedResponse);
-//        when(mockedResponse.getBody()).thenReturn(new JsonNode(jsonString));
-//
-//        //Act
-//        sut.synchronise();
-//
-//        //Assert
-//        verify(mockedUserDAO).getAllAutoSyncUsers();
-//    }
-//
-//    @Test
-//    void testSynchroniseCallsGetAllWorklogIds() {
-//        //Arrange
-//        JSONObject jsonObject = new JSONObject()
-//                .put("worker", WORKER_VALUE)
-//                .put("started", STARTED_VALUE)
-//                .put("issue", new JSONObject().put("accountKey", ACCOUNT_KEY_VALUE))
-//                .put("timeSpentSeconds", TIME_SPENT_SECONDS_VALUE)
-//                .put("tempoWorklogId", TEMPO_WORKLOG_ID_VALUE);
-//
-//        String jsonString = new JSONArray().put(jsonObject).toString();
-//
-//
-//        when(mockedRequest.post(any(), any())).thenReturn(mockedResponse);
-//        when(mockedResponse.getBody()).thenReturn(new JsonNode(jsonString));
-//
-//        //Act
-//        sut.synchronise();
-//
-//        //Assert
-//        verify(mockedWorklogDAO).getAllWorklogIds();
-//    }
-//
-//    @Test
-//    void testSynchroniseCallsAddWorklogId() {
-//        //Arrange
-//        JSONObject jsonObject = new JSONObject()
-//                .put("worker", WORKER_VALUE)
-//                .put("started", STARTED_VALUE)
-//                .put("issue", new JSONObject().put("accountKey", ACCOUNT_KEY_VALUE))
-//                .put("timeSpentSeconds", TIME_SPENT_SECONDS_VALUE)
-//                .put("tempoWorklogId", TEMPO_WORKLOG_ID_VALUE);
-//
-//        String jsonString = new JSONArray().put(jsonObject).toString();
-//
-//        List<UserSyncDTO> userSyncDTOS = new ArrayList<>();
-//        userSyncDTOS.add(new UserSyncDTO().setOriginWorker(WORKER_VALUE).setDestinationWorker("JIRAUSER20"));
-//
-//        when(mockedUserDAO.getAllAutoSyncUsers()).thenReturn(userSyncDTOS);
-//        when(mockedRequest.post(any(), any())).thenReturn(mockedResponse);
-//        when(mockedResponse.getBody()).thenReturn(new JsonNode(jsonString));
-//        when(mockedResponse.getStatus()).thenReturn(200);
-//
-//        //Act
-//        sut.synchronise();
-//
-//        //Assert
-//        verify(mockedWorklogDAO).addWorklogId(TEMPO_WORKLOG_ID_VALUE);
-//    }
-//
-//    @Test
-//    void testManualSynchronisationCallsGetSyncUser() {
-//        //Arrange
-//        JSONObject jsonObject = new JSONObject()
-//                .put("worker", WORKER_VALUE)
-//                .put("started", STARTED_VALUE)
-//                .put("issue", new JSONObject().put("accountKey", ACCOUNT_KEY_VALUE))
-//                .put("timeSpentSeconds", TIME_SPENT_SECONDS_VALUE)
-//                .put("tempoWorklogId", TEMPO_WORKLOG_ID_VALUE);
-//
-//        String jsonString = new JSONArray().put(jsonObject).toString();
-//
-//       UserSyncDTO userSyncDTO = new UserSyncDTO().setOriginWorker(WORKER_VALUE).setDestinationWorker("JIRAUSER20");
-//
-//        when(mockedUserDAO.getSyncUser(1)).thenReturn(userSyncDTO);
-//        when(mockedRequest.post(any(), any())).thenReturn(mockedResponse);
-//        when(mockedResponse.getBody()).thenReturn(new JsonNode(jsonString));
-//        when(mockedResponse.getStatus()).thenReturn(200);
-//
-//        //Act
-//        sut.manualSynchronisation(worklogRequestDTO, 1);
-//
-//        //Assert
-//        verify(mockedUserDAO).getSyncUser(1);
-//    }
-//
-//    @Test
-//    void testManualSynchronisationCallsGetAllWorklogIds() {
-//        //Arrange
-//        JSONObject jsonObject = new JSONObject()
-//                .put("worker", WORKER_VALUE)
-//                .put("started", STARTED_VALUE)
-//                .put("issue", new JSONObject().put("accountKey", ACCOUNT_KEY_VALUE))
-//                .put("timeSpentSeconds", TIME_SPENT_SECONDS_VALUE)
-//                .put("tempoWorklogId", TEMPO_WORKLOG_ID_VALUE);
-//
-//        String jsonString = new JSONArray().put(jsonObject).toString();
-//
-//        UserSyncDTO userSyncDTO = new UserSyncDTO().setOriginWorker(WORKER_VALUE).setDestinationWorker("JIRAUSER20");
-//
-//        when(mockedUserDAO.getSyncUser(1)).thenReturn(userSyncDTO);
-//        when(mockedRequest.post(any(), any())).thenReturn(mockedResponse);
-//        when(mockedResponse.getBody()).thenReturn(new JsonNode(jsonString));
-//        when(mockedResponse.getStatus()).thenReturn(200);
-//
-//        //Act
-//        sut.manualSynchronisation(worklogRequestDTO, 1);
-//
-//        //Assert
-//        verify(mockedWorklogDAO).getAllWorklogIds();
-//    }
-//
-//    @Test
-//    void testManualSynchronisationCallsAddWorklogId() {
-//        //Arrange
-//        JSONObject jsonObject = new JSONObject()
-//                .put("worker", WORKER_VALUE)
-//                .put("started", STARTED_VALUE)
-//                .put("issue", new JSONObject().put("accountKey", ACCOUNT_KEY_VALUE))
-//                .put("timeSpentSeconds", TIME_SPENT_SECONDS_VALUE)
-//                .put("tempoWorklogId", TEMPO_WORKLOG_ID_VALUE);
-//
-//        String jsonString = new JSONArray().put(jsonObject).toString();
-//
-//        UserSyncDTO userSyncDTO = new UserSyncDTO().setOriginWorker(WORKER_VALUE).setDestinationWorker("JIRAUSER20");
-//
-//        when(mockedUserDAO.getSyncUser(1)).thenReturn(userSyncDTO);
-//        when(mockedRequest.post(any(), any())).thenReturn(mockedResponse);
-//        when(mockedResponse.getBody()).thenReturn(new JsonNode(jsonString));
-//        when(mockedResponse.getStatus()).thenReturn(200);
-//
-//        //Act
-//        sut.manualSynchronisation(worklogRequestDTO, 1);
-//
-//        //Assert
-//        verify(mockedWorklogDAO).addWorklogId(TEMPO_WORKLOG_ID_VALUE);
-//    }
-//}
+package nl.avisi.model;
+
+import nl.avisi.datasource.contracts.IUserDAO;
+import nl.avisi.datasource.contracts.IWorklogDAO;
+import nl.avisi.dto.DestinationWorklogDTO;
+import nl.avisi.dto.ManualSyncDTO;
+import nl.avisi.dto.UserSyncDTO;
+import nl.avisi.dto.WorklogRequestDTO;
+import nl.avisi.model.worklog_crud.JiraWorklogCreator;
+import nl.avisi.model.worklog_crud.JiraWorklogReader;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.mockito.Matchers.anyInt;
+import static org.mockito.Mockito.*;
+
+class JiraWorklogTest {
+
+    private JiraWorklog sut;
+    private IUserDAO mockedUserDao;
+    private IWorklogDAO mockedWorklogDao;
+    private JiraWorklogReader mockedWorklogReader;
+    private JiraWorklogCreator mockedWorklogCreator;
+
+    private final String originWorker = "USER10000";
+    private final String destinationWorker = "USER10100";
+
+    private final String syncFromDate = "30-12-2020";
+    private final String syncUntilDate = "31-12-2020";
+
+    private final int timeSpentSeconds = 3600;
+    private final String originTaskId = "task_1";
+
+    private final Map<Integer, DestinationWorklogDTO> destinationWorklogs = new HashMap<>();
+
+    @BeforeEach
+    void setUp() {
+        sut = new JiraWorklog();
+
+        mockedUserDao = mock(IUserDAO.class);
+        mockedWorklogDao = mock(IWorklogDAO.class);
+        mockedWorklogReader = mock(JiraWorklogReader.class);
+        mockedWorklogCreator = mock(JiraWorklogCreator.class);
+
+        sut.setWorklogDAO(mockedWorklogDao);
+        sut.setJiraWorklogCreator(mockedWorklogCreator);
+        sut.setUserDAO(mockedUserDao);
+        sut.setJiraWorklogReader(mockedWorklogReader);
+
+        destinationWorklogs.put(1, new DestinationWorklogDTO(originWorker, "started", timeSpentSeconds, originTaskId));
+        destinationWorklogs.put(2, new DestinationWorklogDTO(originWorker, "started", timeSpentSeconds, originTaskId));
+        destinationWorklogs.put(3, new DestinationWorklogDTO(originWorker, "started", timeSpentSeconds, originTaskId));
+    }
+
+    @Test
+    void testManualSynchronisationSavesSuccessfullySyncedWorklogs() {
+        // Arrange
+        final UserSyncDTO syncUser = new UserSyncDTO(originWorker, destinationWorker);
+        final ManualSyncDTO manualSyncDTO = new ManualSyncDTO(syncFromDate, syncUntilDate);
+
+        when(mockedUserDao.getSyncUser(anyInt())).thenReturn(syncUser);
+        when(mockedWorklogReader.retrieveWorklogsFromOriginServer(anyObject())).thenReturn(destinationWorklogs);
+
+        final Map<Integer, Integer> worklogsWithResponseCodes = new HashMap<>();
+        worklogsWithResponseCodes.put(1, 200);
+        worklogsWithResponseCodes.put(2, 200);
+        worklogsWithResponseCodes.put(3, 200);
+
+        when(mockedWorklogCreator.createWorklogsOnDestinationServer(anyMap())).thenReturn(worklogsWithResponseCodes);
+
+        // Act
+        sut.manualSynchronisation(manualSyncDTO, 0);
+
+        // Assert
+        verify(mockedWorklogDao, times(destinationWorklogs.size())).addWorklogId(anyInt());
+    }
+
+    @Test
+    void testManualSynchronisationDoesntSaveUnsuccessfulSyncedWorklogs() {
+        // Arrange
+        final UserSyncDTO syncUser = new UserSyncDTO(originWorker, destinationWorker);
+        final ManualSyncDTO manualSyncDTO = new ManualSyncDTO(syncFromDate, syncUntilDate);
+
+        when(mockedUserDao.getSyncUser(anyInt())).thenReturn(syncUser);
+        when(mockedWorklogReader.retrieveWorklogsFromOriginServer(anyObject())).thenReturn(destinationWorklogs);
+
+        final Map<Integer, Integer> worklogsWithResponseCodes = new HashMap<>();
+        worklogsWithResponseCodes.put(1, 500);
+        worklogsWithResponseCodes.put(2, 401);
+        worklogsWithResponseCodes.put(3, 401);
+
+        when(mockedWorklogCreator.createWorklogsOnDestinationServer(anyMap())).thenReturn(worklogsWithResponseCodes);
+
+        // Act
+        sut.manualSynchronisation(manualSyncDTO, 0);
+
+        // Assert
+        verify(mockedWorklogDao, never()).addWorklogId(anyInt());
+    }
+
+    @Test
+    void testAutoSynchronisationSavesSuccessfullySyncedWorklogs() {
+        // Arrange
+        final List<UserSyncDTO> syncUsers = new ArrayList<>();
+        syncUsers.add(new UserSyncDTO(originWorker, destinationWorker));
+
+        when(mockedUserDao.getAllAutoSyncUsers()).thenReturn(syncUsers);
+        when(mockedWorklogReader.retrieveWorklogsFromOriginServer(anyObject())).thenReturn(destinationWorklogs);
+
+        final Map<Integer, Integer> worklogsWithResponseCodes = new HashMap<>();
+        worklogsWithResponseCodes.put(1, 200);
+        worklogsWithResponseCodes.put(2, 200);
+        worklogsWithResponseCodes.put(3, 200);
+
+        when(mockedWorklogCreator.createWorklogsOnDestinationServer(anyMap())).thenReturn(worklogsWithResponseCodes);
+
+        // Act
+        sut.autoSynchronisation(syncFromDate, syncUntilDate);
+
+        // Assert
+        verify(mockedWorklogDao, times(destinationWorklogs.size())).addWorklogId(anyInt());
+    }
+
+    @Test
+    void testAutoSynchronisationDoesntSaveUnsuccessfulSyncedWorklogs() {
+        // Arrange
+        final List<UserSyncDTO> syncUsers = new ArrayList<>();
+        syncUsers.add(new UserSyncDTO(originWorker, destinationWorker));
+
+        when(mockedUserDao.getAllAutoSyncUsers()).thenReturn(syncUsers);
+        when(mockedWorklogReader.retrieveWorklogsFromOriginServer(anyObject())).thenReturn(destinationWorklogs);
+
+        final Map<Integer, Integer> worklogsWithResponseCodes = new HashMap<>();
+        worklogsWithResponseCodes.put(1, 500);
+        worklogsWithResponseCodes.put(2, 401);
+        worklogsWithResponseCodes.put(3, 401);
+
+        when(mockedWorklogCreator.createWorklogsOnDestinationServer(anyMap())).thenReturn(worklogsWithResponseCodes);
+
+        // Act
+        sut.autoSynchronisation(syncFromDate, syncUntilDate);
+
+        // Assert
+        verify(mockedWorklogDao, never()).addWorklogId(anyInt());
+    }
+
+    @Test
+    void testAutoSynchronisationThrowsIllegalStateExceptionWhenMultipleDestinationUserKeysAreFound() {
+        // Arrange
+        final List<UserSyncDTO> syncUsers = new ArrayList<>();
+        syncUsers.add(new UserSyncDTO(originWorker, destinationWorker));
+        syncUsers.add(new UserSyncDTO(originWorker, destinationWorker));
+
+        when(mockedUserDao.getAllAutoSyncUsers()).thenReturn(syncUsers);
+        when(mockedWorklogReader.retrieveWorklogsFromOriginServer(anyObject())).thenReturn(destinationWorklogs);
+
+        final Map<Integer, Integer> worklogsWithResponseCodes = new HashMap<>();
+        worklogsWithResponseCodes.put(1, 500);
+        worklogsWithResponseCodes.put(2, 401);
+        worklogsWithResponseCodes.put(3, 401);
+
+        when(mockedWorklogCreator.createWorklogsOnDestinationServer(anyMap())).thenReturn(worklogsWithResponseCodes);
+
+        // Act & Assert
+        Assertions.assertThrows(IllegalStateException.class, () -> {
+            sut.autoSynchronisation(syncFromDate, syncUntilDate);
+        });
+    }
+
+    @Test
+    void testAutomaticSynchronisationIgnoresAlreadySyncedWorklogs() {
+        // Arrange
+        final List<UserSyncDTO> syncUsers = new ArrayList<>();
+        syncUsers.add(new UserSyncDTO(originWorker, destinationWorker));
+
+        when(mockedUserDao.getAllAutoSyncUsers()).thenReturn(syncUsers);
+        when(mockedWorklogReader.retrieveWorklogsFromOriginServer(anyObject())).thenReturn(destinationWorklogs);
+
+        final List<Integer> alreadySyncedWorklogs = new ArrayList<>();
+        alreadySyncedWorklogs.add(1);
+        alreadySyncedWorklogs.add(2);
+
+        when(mockedWorklogDao.getAllWorklogIds()).thenReturn(alreadySyncedWorklogs);
+
+        final Map<Integer, Integer> successfullySyncedWorklogs = new HashMap<>();
+        successfullySyncedWorklogs.put(3, 200);
+
+        when(mockedWorklogCreator.createWorklogsOnDestinationServer(anyMap())).thenReturn(successfullySyncedWorklogs);
+
+        // Act
+        sut.autoSynchronisation(syncFromDate, syncUntilDate);
+
+        // Assert
+        final int expectedNumberOfSyncedWorklogs = destinationWorklogs.size() - alreadySyncedWorklogs.size();
+        verify(mockedWorklogDao, times(expectedNumberOfSyncedWorklogs)).addWorklogId(anyInt());
+    }
+}
