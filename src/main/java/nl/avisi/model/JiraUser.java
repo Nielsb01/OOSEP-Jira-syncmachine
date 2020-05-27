@@ -12,6 +12,7 @@ import nl.avisi.dto.JiraUsernameDTO;
 import nl.avisi.model.contracts.IJiraUser;
 
 import javax.inject.Inject;
+import javax.ws.rs.InternalServerErrorException;
 
 /**
  * Responsible for everything that has to do with the JiraUser
@@ -85,6 +86,10 @@ public class JiraUser implements IJiraUser {
 
         HttpResponse<JsonNode> jsonOriginJiraUser = jiraInterface.getOriginUserKey(jiraUsernameDTO.getOriginUsername());
         HttpResponse<JsonNode> jsonDestinationJiraUser = jiraInterface.getDestinationUserKey(jiraUsernameDTO.getDestinationUsername());
+
+        if (jsonOriginJiraUser.getStatus() != 200 || jsonDestinationJiraUser.getStatus() != 200) {
+            throw new InternalServerErrorException();
+        }
 
         JiraUserKeyDTO jiraUserKeyDTO = createJiraUserKeyDTO(jsonOriginJiraUser, jsonDestinationJiraUser);
 
