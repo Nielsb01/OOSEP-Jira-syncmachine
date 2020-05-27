@@ -51,7 +51,7 @@ public class JiraUser implements IJiraUser {
         HttpResponse<JsonNode> jsonOriginJiraUser = jiraInterface.getOriginUserKey(jiraUsernameDTO.getOriginUsername());
         HttpResponse<JsonNode> jsonDestinationJiraUser = jiraInterface.getDestinationUserKey(jiraUsernameDTO.getDestinationUsername());
 
-        if (jsonOriginJiraUser.getStatus()!= 200 || jsonDestinationJiraUser.getStatus()!= 200) {
+        if (jsonOriginJiraUser.getStatus() != 200 || jsonDestinationJiraUser.getStatus() != 200) {
             throw new InternalServerErrorException();
         }
 
