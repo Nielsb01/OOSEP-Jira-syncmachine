@@ -32,7 +32,7 @@ public class TempoInterfaceTest {
 
     @Test
     void testRequestOriginWorklogReturnsPostResult() {
-        // Assert
+        // Arrange
         String originUrl = "url";
         WorklogRequestDTO requestBody = new WorklogRequestDTO();
 
@@ -50,7 +50,7 @@ public class TempoInterfaceTest {
 
     @Test
     void testCreateWorklogOnDestinationServerReturnsPostResult() {
-        // Assert
+        // Arrange
         String destinationUrl = "url";
         DestinationWorklogDTO requestBody = new DestinationWorklogDTO();
 
