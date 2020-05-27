@@ -102,7 +102,7 @@ public class JiraWorklog implements IJiraWorklog {
 
         WorklogRequestDTO worklogRequestDTO = new WorklogRequestDTO(
                 fromDate,
-                toDate,
+                untilDate,
                 originWorkers);
 
         synchronise(worklogRequestDTO, syncUsers);
