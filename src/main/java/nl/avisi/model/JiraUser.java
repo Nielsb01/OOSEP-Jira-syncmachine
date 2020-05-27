@@ -5,6 +5,7 @@ import kong.unirest.*;
 import kong.unirest.json.JSONException;
 import nl.avisi.api.JiraInterface;
 import nl.avisi.datasource.contracts.IUserDAO;
+import nl.avisi.dto.UserPreferenceDTO;
 import nl.avisi.model.exceptions.InvalidUsernameException;
 import nl.avisi.dto.JiraUserKeyDTO;
 import nl.avisi.dto.JiraUsernameDTO;
@@ -56,6 +57,16 @@ public class JiraUser implements IJiraUser {
         }
 
         return jiraUserKeyDTO;
+    }
+
+    /**
+     * Get all preferences from a user
+     *
+     * @param userId the user for which to get the preferences
+     * @return the preferences for the user
+     */
+    public UserPreferenceDTO getAutoSyncPreference(int userId) {
+        return userDAO.getUserAutoSyncPreference(userId);
     }
 
     private JiraUserKeyDTO createJiraUserKeyDTO(HttpResponse<JsonNode> jsonOriginUserKey, HttpResponse<JsonNode> jsonDestinationUserKey) {

@@ -55,7 +55,6 @@ public class JiraWorklogReader {
     private Map<Integer, DestinationWorklogDTO> createWorklogDTOs(JSONArray jsonArray) {
         Map<Integer, DestinationWorklogDTO> worklogs = new HashMap<>();
 
-
         for (int i = 0; i < jsonArray.length(); i++) {
             JSONObject jsonObject = jsonArray.getJSONObject(i);
 
