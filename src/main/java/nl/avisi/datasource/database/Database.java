@@ -36,7 +36,9 @@ public class Database {
      */
     public Connection connect() throws SQLException {
         final String driverName = databaseProperties.getDriverName();
-        final String connectionString = databaseProperties.getConnectionString();
+        final String databaseUrl = databaseProperties.getDatabaseUrl();
+        final String username = databaseProperties.getUsername();
+        final String password = databaseProperties.getPassword();
 
         try {
             Class.forName(driverName);
@@ -44,6 +46,6 @@ public class Database {
             throw new DatabaseDriverNotFoundException(e.getMessage());
         }
 
-        return DriverManager.getConnection("jdbc:mysql://localhost:3306/jirasyncmachine?serverTimezone=UTC", "root", "12345");
+        return DriverManager.getConnection(databaseUrl, username, password);
     }
 }

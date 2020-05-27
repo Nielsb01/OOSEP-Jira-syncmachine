@@ -31,15 +31,15 @@ public class DatabasePropertiesTest {
     }
 
     @Test
-    void testGetConnectionStringReturnsPropertyReaderGetProperty() {
+    void testGetDatabaseUrlReturnsPropertyReaderGetProperty() {
         // Arrange
-        String connection_property_name = "connection";
-        String expected = "connection";
+        String url_property_name = "databaseUrl";
+        String expected = "databaseUrl";
 
-        Mockito.when(mockedPropertyReader.getProperty(connection_property_name)).thenReturn(expected);
+        Mockito.when(mockedPropertyReader.getProperty(url_property_name)).thenReturn(expected);
 
         // Act
-        String actual = sut.getConnectionString();
+        String actual = sut.getDatabaseUrl();
 
         // Assert
         assertEquals(expected, actual);
@@ -55,6 +55,36 @@ public class DatabasePropertiesTest {
 
         // Act
         String actual = sut.getDriverName();
+
+        // Assert
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void testGetUsernameReturnsPropertyReaderGetProperty() {
+        // Arrange
+        String driver_property_name = "username";
+        String expected = "username";
+
+        Mockito.when(mockedPropertyReader.getProperty(driver_property_name)).thenReturn(expected);
+
+        // Act
+        String actual = sut.getUsername();
+
+        // Assert
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void testGetPasswordReturnsPropertyReaderGetProperty() {
+        // Arrange
+        String driver_property_name = "password";
+        String expected = "password";
+
+        Mockito.when(mockedPropertyReader.getProperty(driver_property_name)).thenReturn(expected);
+
+        // Act
+        String actual = sut.getPassword();
 
         // Assert
         assertEquals(expected, actual);
