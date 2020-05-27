@@ -115,10 +115,7 @@ public class JiraWorklog implements IJiraWorklog {
 
         List<Integer> succesfullyPostedWorklogIds = filterOutFailedPostedWorklogs(postedWorklogsWithResponseCodes);
 
-        /*
-        TODO: onsuccesvol gesplaatste worklogs verwerken (met groep overleggen wat er moet gebeuren).
-        TODO: Synchronise refactoren zodat autoSync en manualSync deze beide kunnen aanspreken
-         */
+        // TODO: onsuccesvol gesplaatste worklogs verwerken (met groep overleggen wat er moet gebeuren).
 
         succesfullyPostedWorklogIds.forEach(worklogId -> worklogDAO.addWorklogId(worklogId));
     }
