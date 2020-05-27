@@ -37,7 +37,8 @@ public class TempoInterface {
      */
     public HttpResponse<JsonNode> requestOriginJiraWorklogs(WorklogRequestDTO requestBody) {
         setRequestAuthenticationMethod();
-        return request.post(jiraSynchronisationProperties.getOriginUrl(), requestBody);
+
+        return request.post(jiraSynchronisationProperties.getOriginUrl()+"rest/tempo-timesheets/4/worklogs/search", requestBody);
     }
 
     /**
@@ -47,7 +48,7 @@ public class TempoInterface {
      */
     public HttpResponse<JsonNode> createWorklogOnDestinationServer(DestinationWorklogDTO worklog) {
         setRequestAuthenticationMethod();
-        return request.post(jiraSynchronisationProperties.getDestinationUrl(), worklog);
+        return request.post(jiraSynchronisationProperties.getDestinationUrl()+"rest/tempo-timesheets/4/worklogs", worklog);
     }
 
     private void setRequestAuthenticationMethod() {
