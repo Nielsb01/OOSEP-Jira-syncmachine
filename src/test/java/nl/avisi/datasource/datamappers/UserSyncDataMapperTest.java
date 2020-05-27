@@ -1,6 +1,5 @@
 package nl.avisi.datasource.datamappers;
 
-import nl.avisi.dto.UserDTO;
 import nl.avisi.dto.UserSyncDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,7 +13,6 @@ import static org.junit.Assert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.times;
 
 class UserSyncDataMapperTest {
     public static final String JIRAUSER_1010 = "JIRAUSER1010";

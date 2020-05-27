@@ -11,7 +11,10 @@ import nl.avisi.model.worklog_crud.JiraWorklogCreator;
 import nl.avisi.model.worklog_crud.JiraWorklogReader;
 
 import javax.inject.Inject;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -112,10 +115,7 @@ public class JiraWorklog implements IJiraWorklog {
 
         List<Integer> succesfullyPostedWorklogIds = filterOutFailedPostedWorklogs(postedWorklogsWithResponseCodes);
 
-        /*
-        TODO: onsuccesvol gesplaatste worklogs verwerken (met groep overleggen wat er moet gebeuren).
-        TODO: Synchronise refactoren zodat autoSync en manualSync deze beide kunnen aanspreken
-         */
+        // TODO: onsuccesvol gesplaatste worklogs verwerken (met groep overleggen wat er moet gebeuren).
 
         succesfullyPostedWorklogIds.forEach(worklogId -> worklogDAO.addWorklogId(worklogId));
     }

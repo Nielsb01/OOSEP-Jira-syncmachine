@@ -6,13 +6,11 @@ import kong.unirest.json.JSONArray;
 import kong.unirest.json.JSONObject;
 import nl.avisi.api.TempoInterface;
 import nl.avisi.dto.DestinationWorklogDTO;
-import nl.avisi.dto.OriginWorklogDTO;
 import nl.avisi.dto.WorklogRequestDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;

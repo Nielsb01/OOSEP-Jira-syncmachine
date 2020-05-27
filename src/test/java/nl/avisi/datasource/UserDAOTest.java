@@ -2,15 +2,18 @@ package nl.avisi.datasource;
 
 import nl.avisi.datasource.database.Database;
 import nl.avisi.datasource.datamappers.IDataMapper;
-import nl.avisi.dto.JiraUserKeyDTO;
 import nl.avisi.datasource.exceptions.DatabaseDriverNotFoundException;
+import nl.avisi.dto.JiraUserKeyDTO;
 import nl.avisi.dto.UserPreferenceDTO;
 import nl.avisi.dto.UserSyncDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.InternalServerErrorException;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;

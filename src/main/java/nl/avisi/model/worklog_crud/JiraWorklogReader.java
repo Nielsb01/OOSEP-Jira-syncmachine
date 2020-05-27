@@ -7,13 +7,10 @@ import kong.unirest.json.JSONException;
 import kong.unirest.json.JSONObject;
 import nl.avisi.api.TempoInterface;
 import nl.avisi.dto.DestinationWorklogDTO;
-import nl.avisi.dto.OriginWorklogDTO;
 import nl.avisi.dto.WorklogRequestDTO;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class JiraWorklogReader {
