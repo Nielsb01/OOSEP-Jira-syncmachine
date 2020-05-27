@@ -6,6 +6,7 @@ import nl.avisi.network.IRequest;
 import nl.avisi.network.authentication.BasicAuth;
 import nl.avisi.propertyreaders.JiraSynchronisationProperties;
 
+import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 public class JiraInterface {
@@ -47,11 +48,11 @@ public class JiraInterface {
 
     private HttpResponse<JsonNode> getUserKey(String jiraUsername, String jiraUrl) {
         String jiraRetrieveUserKeyUrl = String.format("%srest/api/2/user/search?username=%s", jiraUrl, jiraUsername);
-        setRequestAuthenticationMethod();
 
         return request.get(jiraRetrieveUserKeyUrl);
     }
 
+    @PostConstruct
     private void setRequestAuthenticationMethod() {
         BasicAuth basicAuth = new BasicAuth()
                 .setUsername(jiraSynchronisationProperties.getAdminUsername())
