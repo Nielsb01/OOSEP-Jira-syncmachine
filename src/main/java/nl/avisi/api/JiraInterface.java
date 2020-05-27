@@ -33,7 +33,7 @@ public class JiraInterface {
      * @return The jira user key that corresponds to the given jiraUsername in json format
      */
     public HttpResponse<JsonNode> getOriginUserKey(String jiraUsername) {
-        return getUserKey(jiraUsername, jiraSynchronisationProperties.getDestinationUrl());
+        return getUserKey(jiraUsername, jiraSynchronisationProperties.getOriginUrl());
     }
 
     /**
@@ -42,7 +42,7 @@ public class JiraInterface {
      * @return The jira user key that corresponds to the given jiraUsername in json format
      */
     public HttpResponse<JsonNode> getDestinationUserKey(String jiraUsername) {
-        return getUserKey(jiraUsername, jiraSynchronisationProperties.getOriginUrl());
+        return getUserKey(jiraUsername, jiraSynchronisationProperties.getDestinationUrl());
     }
 
     private HttpResponse<JsonNode> getUserKey(String jiraUsername, String jiraUrl) {
