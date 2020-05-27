@@ -5,7 +5,6 @@ import nl.avisi.datasource.contracts.IWorklogDAO;
 import nl.avisi.dto.DestinationWorklogDTO;
 import nl.avisi.dto.ManualSyncDTO;
 import nl.avisi.dto.UserSyncDTO;
-import nl.avisi.dto.WorklogRequestDTO;
 import nl.avisi.model.worklog_crud.JiraWorklogCreator;
 import nl.avisi.model.worklog_crud.JiraWorklogReader;
 import org.junit.jupiter.api.Assertions;
@@ -21,6 +20,10 @@ import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.*;
 
 class JiraWorklogTest {
+
+    private static final int HTTP_STATUS_OK = 200;
+    private static final int HTTP_STATUS_UNAUTHORIZED = 401;
+    private static final int HTTP_STATUS_INTERNAL_SERVER_ERROR = 500;
 
     private JiraWorklog sut;
     private IUserDAO mockedUserDao;
@@ -68,9 +71,9 @@ class JiraWorklogTest {
         when(mockedWorklogReader.retrieveWorklogsFromOriginServer(anyObject())).thenReturn(destinationWorklogs);
 
         final Map<Integer, Integer> worklogsWithResponseCodes = new HashMap<>();
-        worklogsWithResponseCodes.put(1, 200);
-        worklogsWithResponseCodes.put(2, 200);
-        worklogsWithResponseCodes.put(3, 200);
+        worklogsWithResponseCodes.put(1, HTTP_STATUS_OK);
+        worklogsWithResponseCodes.put(2, HTTP_STATUS_OK);
+        worklogsWithResponseCodes.put(3, HTTP_STATUS_OK);
 
         when(mockedWorklogCreator.createWorklogsOnDestinationServer(anyMap())).thenReturn(worklogsWithResponseCodes);
 
@@ -91,9 +94,9 @@ class JiraWorklogTest {
         when(mockedWorklogReader.retrieveWorklogsFromOriginServer(anyObject())).thenReturn(destinationWorklogs);
 
         final Map<Integer, Integer> worklogsWithResponseCodes = new HashMap<>();
-        worklogsWithResponseCodes.put(1, 500);
-        worklogsWithResponseCodes.put(2, 401);
-        worklogsWithResponseCodes.put(3, 401);
+        worklogsWithResponseCodes.put(1, HTTP_STATUS_INTERNAL_SERVER_ERROR);
+        worklogsWithResponseCodes.put(2, HTTP_STATUS_UNAUTHORIZED);
+        worklogsWithResponseCodes.put(3, HTTP_STATUS_UNAUTHORIZED);
 
         when(mockedWorklogCreator.createWorklogsOnDestinationServer(anyMap())).thenReturn(worklogsWithResponseCodes);
 
@@ -114,9 +117,9 @@ class JiraWorklogTest {
         when(mockedWorklogReader.retrieveWorklogsFromOriginServer(anyObject())).thenReturn(destinationWorklogs);
 
         final Map<Integer, Integer> worklogsWithResponseCodes = new HashMap<>();
-        worklogsWithResponseCodes.put(1, 200);
-        worklogsWithResponseCodes.put(2, 200);
-        worklogsWithResponseCodes.put(3, 200);
+        worklogsWithResponseCodes.put(1, HTTP_STATUS_OK);
+        worklogsWithResponseCodes.put(2, HTTP_STATUS_OK);
+        worklogsWithResponseCodes.put(3, HTTP_STATUS_OK);
 
         when(mockedWorklogCreator.createWorklogsOnDestinationServer(anyMap())).thenReturn(worklogsWithResponseCodes);
 
@@ -137,9 +140,9 @@ class JiraWorklogTest {
         when(mockedWorklogReader.retrieveWorklogsFromOriginServer(anyObject())).thenReturn(destinationWorklogs);
 
         final Map<Integer, Integer> worklogsWithResponseCodes = new HashMap<>();
-        worklogsWithResponseCodes.put(1, 500);
-        worklogsWithResponseCodes.put(2, 401);
-        worklogsWithResponseCodes.put(3, 401);
+        worklogsWithResponseCodes.put(1, HTTP_STATUS_INTERNAL_SERVER_ERROR);
+        worklogsWithResponseCodes.put(2, HTTP_STATUS_UNAUTHORIZED);
+        worklogsWithResponseCodes.put(3, HTTP_STATUS_UNAUTHORIZED);
 
         when(mockedWorklogCreator.createWorklogsOnDestinationServer(anyMap())).thenReturn(worklogsWithResponseCodes);
 
@@ -161,9 +164,9 @@ class JiraWorklogTest {
         when(mockedWorklogReader.retrieveWorklogsFromOriginServer(anyObject())).thenReturn(destinationWorklogs);
 
         final Map<Integer, Integer> worklogsWithResponseCodes = new HashMap<>();
-        worklogsWithResponseCodes.put(1, 500);
-        worklogsWithResponseCodes.put(2, 401);
-        worklogsWithResponseCodes.put(3, 401);
+        worklogsWithResponseCodes.put(1, HTTP_STATUS_INTERNAL_SERVER_ERROR);
+        worklogsWithResponseCodes.put(2, HTTP_STATUS_UNAUTHORIZED);
+        worklogsWithResponseCodes.put(3, HTTP_STATUS_UNAUTHORIZED);
 
         when(mockedWorklogCreator.createWorklogsOnDestinationServer(anyMap())).thenReturn(worklogsWithResponseCodes);
 
@@ -189,7 +192,7 @@ class JiraWorklogTest {
         when(mockedWorklogDao.getAllWorklogIds()).thenReturn(alreadySyncedWorklogs);
 
         final Map<Integer, Integer> successfullySyncedWorklogs = new HashMap<>();
-        successfullySyncedWorklogs.put(3, 200);
+        successfullySyncedWorklogs.put(3, HTTP_STATUS_OK);
 
         when(mockedWorklogCreator.createWorklogsOnDestinationServer(anyMap())).thenReturn(successfullySyncedWorklogs);
 
