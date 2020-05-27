@@ -14,19 +14,24 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import javax.ws.rs.InternalServerErrorException;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Matchers.*;
 
 class JiraUserTest {
 
-    public static final String JIRAUSER_1000 = "JIRAUSER1000";
-    public static final String JIRAUSER_1010 = "JIRAUSER1010";
-    public static final String KEY = "key";
-    public static final String DESTINATION_USERNAME = "AvisiUsername";
-    public static final String ORIGIN_USERNAME = "ClientUsername";
-    public static final String EMPTY_JSON_ARRAY = "[]";
+    private static final String JIRAUSER_1000 = "JIRAUSER1000";
+    private static final String JIRAUSER_1010 = "JIRAUSER1010";
+    private static final String KEY = "key";
+    private static final String DESTINATION_USERNAME = "AvisiUsername";
+    private static final String ORIGIN_USERNAME = "ClientUsername";
+    private static final String EMPTY_JSON_ARRAY = "[]";
     private static final int USER_ID = 1;
+
+    private static final int HTTP_STATUS_OK = 200;
+    private static final int WRONG_HTTP_STATUS = 404;
 
     private JiraUser sut;
 
@@ -85,6 +90,9 @@ class JiraUserTest {
         HttpResponse<JsonNode> mockedOriginUserKey = Mockito.mock(HttpResponse.class);
         HttpResponse<JsonNode> mockedDestinationUserKey = Mockito.mock(HttpResponse.class);
 
+        Mockito.when(mockedOriginUserKey.getStatus()).thenReturn(HTTP_STATUS_OK);
+        Mockito.when(mockedDestinationUserKey.getStatus()).thenReturn(HTTP_STATUS_OK);
+
         Mockito.when(mockedJiraInterface.getOriginUserKey(ORIGIN_USERNAME)).thenReturn(mockedOriginUserKey);
         Mockito.when(mockedJiraInterface.getDestinationUserKey(DESTINATION_USERNAME)).thenReturn(mockedDestinationUserKey);
 
@@ -108,6 +116,9 @@ class JiraUserTest {
         HttpResponse<JsonNode> mockedOriginUserKey = Mockito.mock(HttpResponse.class);
         HttpResponse<JsonNode> mockedDestinationUserKey = Mockito.mock(HttpResponse.class);
 
+        Mockito.when(mockedOriginUserKey.getStatus()).thenReturn(HTTP_STATUS_OK);
+        Mockito.when(mockedDestinationUserKey.getStatus()).thenReturn(HTTP_STATUS_OK);
+
         Mockito.when(mockedJiraInterface.getOriginUserKey(ORIGIN_USERNAME)).thenReturn(mockedOriginUserKey);
         Mockito.when(mockedJiraInterface.getDestinationUserKey(DESTINATION_USERNAME)).thenReturn(mockedDestinationUserKey);
 
@@ -124,7 +135,7 @@ class JiraUserTest {
     void testRetrieveJiraUserKeyByUsernameThrowsInvalidUsernameExceptionWhenOriginKeyIsEmpty() {
         // Arrange
         JSONObject emptyKeyJsonObject = new JSONObject()
-                .put("", JIRAUSER_1000);
+                .put(KEY, "");
         String emptyKeyJsonString = new JSONArray().put(emptyKeyJsonObject).toString();
 
         JSONObject destinationJsonObject = new JSONObject()
@@ -133,6 +144,9 @@ class JiraUserTest {
 
         HttpResponse<JsonNode> mockedOriginUserKey = Mockito.mock(HttpResponse.class);
         HttpResponse<JsonNode> mockedDestinationUserKey = Mockito.mock(HttpResponse.class);
+
+        Mockito.when(mockedOriginUserKey.getStatus()).thenReturn(HTTP_STATUS_OK);
+        Mockito.when(mockedDestinationUserKey.getStatus()).thenReturn(HTTP_STATUS_OK);
 
         Mockito.when(mockedJiraInterface.getOriginUserKey(ORIGIN_USERNAME)).thenReturn(mockedOriginUserKey);
         Mockito.when(mockedJiraInterface.getDestinationUserKey(DESTINATION_USERNAME)).thenReturn(mockedDestinationUserKey);
@@ -149,6 +163,64 @@ class JiraUserTest {
     @Test
     void testRetrieveJiraUserKeyByUsernameThrowsInvalidUsernameExceptionWhenDestinationKeyIsEmpty() {
         // Arrange
+        JSONObject originJsonObject = new JSONObject()
+                .put(KEY, JIRAUSER_1010);
+        String originJsonString = new JSONArray().put(originJsonObject).toString();
+
+        JSONObject destinationJsonObject = new JSONObject()
+                .put(KEY, "");
+        String destinationJsonString = new JSONArray().put(destinationJsonObject).toString();
+
+        HttpResponse<JsonNode> mockedOriginUserKey = Mockito.mock(HttpResponse.class);
+        HttpResponse<JsonNode> mockedDestinationUserKey = Mockito.mock(HttpResponse.class);
+
+        Mockito.when(mockedOriginUserKey.getStatus()).thenReturn(HTTP_STATUS_OK);
+        Mockito.when(mockedDestinationUserKey.getStatus()).thenReturn(HTTP_STATUS_OK);
+
+        Mockito.when(mockedJiraInterface.getOriginUserKey(ORIGIN_USERNAME)).thenReturn(mockedOriginUserKey);
+        Mockito.when(mockedJiraInterface.getDestinationUserKey(DESTINATION_USERNAME)).thenReturn(mockedDestinationUserKey);
+
+        Mockito.when(mockedOriginUserKey.getBody()).thenReturn(new JsonNode(originJsonString));
+        Mockito.when(mockedDestinationUserKey.getBody()).thenReturn(new JsonNode(destinationJsonString));
+
+        // Assert
+        assertThrows(InvalidUsernameException.class, () ->
+                // Act
+                sut.setJiraUserKeys(jiraUsernameDTO, USER_ID));
+    }
+
+    @Test
+    void testRetrieveJiraUserKeyByUsernameThrowsInternalServerErrorWhenJiraReturnsErrorStatusForOriginUserKey() {
+        // Arrange
+        JSONObject originJsonObject = new JSONObject()
+                .put(KEY, JIRAUSER_1010);
+        String originJsonString = new JSONArray().put(originJsonObject).toString();
+
+        JSONObject destinationJsonObject = new JSONObject()
+                .put(KEY, JIRAUSER_1000);
+        String destinationJsonString = new JSONArray().put(destinationJsonObject).toString();
+
+        HttpResponse<JsonNode> mockedOriginUserKey = Mockito.mock(HttpResponse.class);
+        HttpResponse<JsonNode> mockedDestinationUserKey = Mockito.mock(HttpResponse.class);
+
+        Mockito.when(mockedOriginUserKey.getStatus()).thenReturn(WRONG_HTTP_STATUS);
+        Mockito.when(mockedDestinationUserKey.getStatus()).thenReturn(HTTP_STATUS_OK);
+
+        Mockito.when(mockedJiraInterface.getOriginUserKey(ORIGIN_USERNAME)).thenReturn(mockedOriginUserKey);
+        Mockito.when(mockedJiraInterface.getDestinationUserKey(DESTINATION_USERNAME)).thenReturn(mockedDestinationUserKey);
+
+        Mockito.when(mockedOriginUserKey.getBody()).thenReturn(new JsonNode(originJsonString));
+        Mockito.when(mockedDestinationUserKey.getBody()).thenReturn(new JsonNode(destinationJsonString));
+
+        // Assert
+        assertThrows(InternalServerErrorException.class, () ->
+                // Act
+                sut.setJiraUserKeys(jiraUsernameDTO, USER_ID));
+    }
+
+    @Test
+    void testRetrieveJiraUserKeyByUsernameThrowsInternalServerErrorWhenJiraReturnsErrorStatusForDestinationUserKey() {
+        // Arrange
         JSONObject emptyKeyJsonObject = new JSONObject()
                 .put("", JIRAUSER_1000);
         String emptyKeyJsonString = new JSONArray().put(emptyKeyJsonObject).toString();
@@ -160,6 +232,9 @@ class JiraUserTest {
         HttpResponse<JsonNode> mockedOriginUserKey = Mockito.mock(HttpResponse.class);
         HttpResponse<JsonNode> mockedDestinationUserKey = Mockito.mock(HttpResponse.class);
 
+        Mockito.when(mockedOriginUserKey.getStatus()).thenReturn(HTTP_STATUS_OK);
+        Mockito.when(mockedDestinationUserKey.getStatus()).thenReturn(WRONG_HTTP_STATUS);
+
         Mockito.when(mockedJiraInterface.getOriginUserKey(ORIGIN_USERNAME)).thenReturn(mockedOriginUserKey);
         Mockito.when(mockedJiraInterface.getDestinationUserKey(DESTINATION_USERNAME)).thenReturn(mockedDestinationUserKey);
 
@@ -167,7 +242,7 @@ class JiraUserTest {
         Mockito.when(mockedDestinationUserKey.getBody()).thenReturn(new JsonNode(emptyKeyJsonString));
 
         // Assert
-        assertThrows(InvalidUsernameException.class, () ->
+        assertThrows(InternalServerErrorException.class, () ->
                 // Act
                 sut.setJiraUserKeys(jiraUsernameDTO, USER_ID));
     }
