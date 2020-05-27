@@ -63,7 +63,7 @@ public class UserDAO implements IUserDAO {
      * SQL statement to update the
      * jira user keys for a user
      */
-    private final static String UPDATE_JIRA_USER_KEY_SQL = String.format("UPDATE jira_user SET %s = ?, %s = ? WHERE user_id = ?", JIRA_ORIGIN_WORKER_COLUMN_NAME, JIRA_DESTINATION_WORKER_COLUMN_NAME);
+    private static final String UPDATE_JIRA_USER_KEY_SQL = String.format("UPDATE jira_user SET %s = ?, %s = ? WHERE user_id = ?", JIRA_ORIGIN_WORKER_COLUMN_NAME, JIRA_DESTINATION_WORKER_COLUMN_NAME);
 
     /**
      * SQL statement to update the
