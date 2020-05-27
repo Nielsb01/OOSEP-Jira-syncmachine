@@ -137,8 +137,9 @@ public class JiraWorklog implements IJiraWorklog {
      */
     protected List<Integer> filterOutFailedPostedWorklogs(Map<Integer, Integer> postedWorklogsWithResponseCodes) {
         return postedWorklogsWithResponseCodes
-                .entrySet().stream()
-                .filter(worklog -> worklog.getValue() != 200)
+                .entrySet()
+                .stream()
+                .filter(worklog -> worklog.getValue() == 200)
                 .map(Map.Entry::getKey)
                 .collect(Collectors.toList());
     }

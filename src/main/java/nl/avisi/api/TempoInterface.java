@@ -12,6 +12,8 @@ import javax.inject.Inject;
 
 public class TempoInterface {
 
+    public static final String REST_TEMPO_WORKLOGS_CREATE = "rest/tempo-timesheets/4/worklogs";
+    public static final String REST_TEMPO_WORKLOGS_REQUEST = "rest/tempo-timesheets/4/worklogs/search";
     /**
      * Method by which HTTP requests are sent
      */
@@ -37,7 +39,8 @@ public class TempoInterface {
      */
     public HttpResponse<JsonNode> requestOriginJiraWorklogs(WorklogRequestDTO requestBody) {
         setRequestAuthenticationMethod();
-        return request.post(jiraSynchronisationProperties.getOriginUrl(), requestBody);
+
+        return request.post(jiraSynchronisationProperties.getOriginUrl() + REST_TEMPO_WORKLOGS_REQUEST, requestBody);
     }
 
     /**
@@ -47,7 +50,7 @@ public class TempoInterface {
      */
     public HttpResponse<JsonNode> createWorklogOnDestinationServer(DestinationWorklogDTO worklog) {
         setRequestAuthenticationMethod();
-        return request.post(jiraSynchronisationProperties.getDestinationUrl(), worklog);
+        return request.post(jiraSynchronisationProperties.getDestinationUrl() + REST_TEMPO_WORKLOGS_CREATE, worklog);
     }
 
     private void setRequestAuthenticationMethod() {

@@ -16,18 +16,13 @@ public class ManualSyncDTO {
      */
     private String untilDate;
 
-    /**
-     * Id of the user to sync for 
-     */
-    private int userId;
 
     public ManualSyncDTO() {
     }
 
-    public ManualSyncDTO(String fromDate, String untilDate, int userId) {
+    public ManualSyncDTO(String fromDate, String untilDate) {
         this.fromDate = fromDate;
         this.untilDate = untilDate;
-        this.userId = userId;
     }
 
     public String getFromDate() {
@@ -46,11 +41,4 @@ public class ManualSyncDTO {
         this.untilDate = untilDate;
     }
 
-    public int getUserId() {
-        return userId;
-    }
-
-    public void setUserId(int userId) {
-        this.userId = userId;
-    }
 }
