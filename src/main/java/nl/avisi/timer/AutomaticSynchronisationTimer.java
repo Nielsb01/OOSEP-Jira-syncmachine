@@ -65,8 +65,8 @@ public class AutomaticSynchronisationTimer {
     private String getCurrentDate() {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
-        Date lastSynchronisationDate = new Date();
+        Date currentDate = new Date();
 
-        return dateFormat.format(lastSynchronisationDate);
+        return dateFormat.format(currentDate);
     }
 }
