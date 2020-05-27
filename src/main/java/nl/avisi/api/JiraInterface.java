@@ -20,7 +20,6 @@ public class JiraInterface {
     @Inject
     public void setRequest(IRequest<BasicAuth> request) {
         this.request = request;
-        setRequestAuthenticationMethod();
     }
 
     @Inject
@@ -48,6 +47,7 @@ public class JiraInterface {
 
     private HttpResponse<JsonNode> getUserKey(String jiraUsername, String jiraUrl) {
         String jiraRetrieveUserKeyUrl = String.format("%srest/api/2/user/search?username=%s", jiraUrl, jiraUsername);
+        setRequestAuthenticationMethod();
 
         return request.get(jiraRetrieveUserKeyUrl);
     }
