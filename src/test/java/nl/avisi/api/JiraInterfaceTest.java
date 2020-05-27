@@ -29,7 +29,7 @@ public class JiraInterfaceTest {
     }
 
     @Test
-    void testGetOriginUserKeySendsRightGetRequest() {
+    void testGetOriginUserKeyReturnsGetResult() {
         // Arrange
         final String apiUrl = "rest/api/2/user/search?username=";
         String originJiraUrl = "originUrl";
@@ -51,7 +51,7 @@ public class JiraInterfaceTest {
 
 
     @Test
-    void testGetDestinationUserKeySendsRightGetRequest() {
+    void testGetDestinationUserKeyReturnsGetResult() {
         // Arrange
         final String apiUrl = "rest/api/2/user/search?username=";
         String destinationJiraUrl = "destinationUrl";
