@@ -38,7 +38,7 @@ public class TempoInterfaceTest {
 
         HttpResponse<JsonNode> expected = Mockito.mock(HttpResponse.class);
 
-        Mockito.when(mockedJirasynchronisationProperties.getDestinationUrl()).thenReturn(originUrl);
+        Mockito.when(mockedJirasynchronisationProperties.getOriginUrl()).thenReturn(originUrl);
         Mockito.when(mockedIRequest.post(originUrl, requestBody)).thenReturn(expected);
 
         // Act
