@@ -34,12 +34,14 @@ public class TempoInterfaceTest {
     void testRequestOriginWorklogReturnsPostResult() {
         // Arrange
         String originUrl = "url";
+        String tempo_request_url = "rest/tempo-timesheets/4/worklogs/search";
+
         WorklogRequestDTO requestBody = new WorklogRequestDTO();
 
         HttpResponse<JsonNode> expected = Mockito.mock(HttpResponse.class);
 
         Mockito.when(mockedJirasynchronisationProperties.getOriginUrl()).thenReturn(originUrl);
-        Mockito.when(mockedIRequest.post(originUrl, requestBody)).thenReturn(expected);
+        Mockito.when(mockedIRequest.post(originUrl + tempo_request_url, requestBody)).thenReturn(expected);
 
         // Act
         HttpResponse<JsonNode> actual = sut.requestOriginJiraWorklogs(requestBody);
@@ -52,12 +54,14 @@ public class TempoInterfaceTest {
     void testCreateWorklogOnDestinationServerReturnsPostResult() {
         // Arrange
         String destinationUrl = "url";
+        String tempo_create_url = "rest/tempo-timesheets/4/worklogs";
+
         DestinationWorklogDTO requestBody = new DestinationWorklogDTO();
 
         HttpResponse<JsonNode> expected = Mockito.mock(HttpResponse.class);
 
         Mockito.when(mockedJirasynchronisationProperties.getDestinationUrl()).thenReturn(destinationUrl);
-        Mockito.when(mockedIRequest.post(destinationUrl, requestBody)).thenReturn(expected);
+        Mockito.when(mockedIRequest.post(destinationUrl + tempo_create_url, requestBody)).thenReturn(expected);
 
         // Act
         HttpResponse<JsonNode> actual = sut.createWorklogOnDestinationServer(requestBody);
