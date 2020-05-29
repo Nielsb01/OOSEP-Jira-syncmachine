@@ -203,4 +203,26 @@ class JiraWorklogTest {
         final int expectedNumberOfSyncedWorklogs = destinationWorklogs.size() - alreadySyncedWorklogs.size();
         verify(mockedWorklogDao, times(expectedNumberOfSyncedWorklogs)).addWorklogId(anyInt());
     }
+
+    @Test
+    void testAutoSynchronisationRemovesWorklogWithoutMatchingDestinationKey() {
+        // Arrange
+        final List<UserSyncDTO> syncUsers = new ArrayList<>();
+        syncUsers.add(new UserSyncDTO(originWorker, destinationWorker));
+        syncUsers.add(new UserSyncDTO(originWorker, destinationWorker));
+
+        Map<Integer, DestinationWorklogDTO> destinationWorklogDTOMap = new HashMap<>();
+        destinationWorklogDTOMap.put(1, new DestinationWorklogDTO("JIRAUSER50", "started", timeSpentSeconds, originTaskId));
+
+        Map<Integer, DestinationWorklogDTO> emptyWorklogMap = new HashMap<>();
+
+        when(mockedUserDao.getAllAutoSyncUsers()).thenReturn(syncUsers);
+        when(mockedWorklogReader.retrieveWorklogsFromOriginServer(anyObject())).thenReturn(destinationWorklogDTOMap);
+
+        //Act
+        sut.autoSynchronisation(syncFromDate, syncUntilDate);
+
+        // Assert
+        verify(mockedWorklogCreator, times(1)).createWorklogsOnDestinationServer(emptyWorklogMap);
+    }
 }
