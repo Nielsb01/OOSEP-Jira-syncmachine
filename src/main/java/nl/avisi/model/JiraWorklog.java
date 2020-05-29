@@ -127,7 +127,7 @@ public class JiraWorklog implements IJiraWorklog {
      * @param postedWorklogsWithResponseCodes Map of worklogsIds with their status codes
      * @return List of all the worklogIds that have a status code of 200
      */
-    protected List<Integer> filterOutFailedPostedWorklogs(Map<Integer, Integer> postedWorklogsWithResponseCodes) {
+    private List<Integer> filterOutFailedPostedWorklogs(Map<Integer, Integer> postedWorklogsWithResponseCodes) {
         return postedWorklogsWithResponseCodes
                 .entrySet()
                 .stream()
@@ -146,7 +146,7 @@ public class JiraWorklog implements IJiraWorklog {
      *                          This data is retrieved from the database
      * @return Map of DestinationWorklogDTOs that only contain not yet synced worklogs
      */
-    protected Map<Integer, DestinationWorklogDTO> filterOutAlreadySyncedWorklogs(Map<Integer, DestinationWorklogDTO> retrievedWorklogs, List<Integer> allWorklogIds) {
+    private Map<Integer, DestinationWorklogDTO> filterOutAlreadySyncedWorklogs(Map<Integer, DestinationWorklogDTO> retrievedWorklogs, List<Integer> allWorklogIds) {
         return retrievedWorklogs.entrySet()
                 .stream()
                 .filter(worklog -> allWorklogIds.stream()
@@ -164,7 +164,7 @@ public class JiraWorklog implements IJiraWorklog {
      * @param autoSyncUsers      List of all the users that needed to be synchronised
      * @return A map of worklogIds with worklogs that have the correct user key mapped to the worker field
      */
-    protected Map<Integer, DestinationWorklogDTO> replaceOriginUserKeyWithCorrectDestinationUserKey(Map<Integer, DestinationWorklogDTO> worklogsToBeSynced, List<UserSyncDTO> autoSyncUsers) {
+    private Map<Integer, DestinationWorklogDTO> replaceOriginUserKeyWithCorrectDestinationUserKey(Map<Integer, DestinationWorklogDTO> worklogsToBeSynced, List<UserSyncDTO> autoSyncUsers) {
 
         List<Integer> worklogsWithoutMatchingKey = new ArrayList<>();
 
