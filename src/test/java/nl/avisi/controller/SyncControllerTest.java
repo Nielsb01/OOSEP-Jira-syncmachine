@@ -1,7 +1,7 @@
 package nl.avisi.controller;
 
 
-import nl.avisi.dto.WorklogRequestDTO;
+import nl.avisi.dto.ManualSyncDTO;
 import nl.avisi.model.JiraWorklog;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -9,7 +9,8 @@ import org.junit.jupiter.api.Test;
 import javax.ws.rs.core.Response;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 class SyncControllerTest {
 
@@ -28,10 +29,10 @@ class SyncControllerTest {
     @Test
     void testManualSynchronisationChecksResponseStatus() {
         //Arrange
-        WorklogRequestDTO worklogRequestDTO = new WorklogRequestDTO();
+        ManualSyncDTO manualSyncDTO = new ManualSyncDTO();
 
         //Act
-        Response actualValue = sut.manualSynchronisation(worklogRequestDTO, USER_ID);
+        Response actualValue = sut.manualSynchronisation(manualSyncDTO, USER_ID);
 
         //Assert
         assertEquals(HTTP_STATUS_OK, actualValue.getStatus());
@@ -40,12 +41,11 @@ class SyncControllerTest {
     @Test
     void testManualSynchronisationCallsManualSynchronisation() {
         //Arrange
-        WorklogRequestDTO worklogRequestDTO = new WorklogRequestDTO();
-
+        ManualSyncDTO manualSyncDTO = new ManualSyncDTO();
         //Act
-        Response actualValue = sut.manualSynchronisation(worklogRequestDTO, USER_ID);
+        Response actualValue = sut.manualSynchronisation(manualSyncDTO, USER_ID);
 
         //Assert
-        verify(mockedJiraWorklog).manualSynchronisation(worklogRequestDTO, USER_ID);
+        verify(mockedJiraWorklog).manualSynchronisation(manualSyncDTO, USER_ID);
     }
 }

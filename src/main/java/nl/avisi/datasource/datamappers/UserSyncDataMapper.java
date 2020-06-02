@@ -4,8 +4,6 @@ import nl.avisi.dto.UserSyncDTO;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Responsible for converting data
@@ -28,8 +26,10 @@ public class UserSyncDataMapper implements IDataMapper<UserSyncDTO> {
      */
     @Override
     public UserSyncDTO toDTO(ResultSet resultSet) throws SQLException {
-       return new UserSyncDTO()
-                .setOriginWorker(resultSet.getString(ORIGIN_INSTANCE_USER_KEY))
-                .setDestinationWorker(resultSet.getString(DESTINATION_INSTANCE_USER_KEY));
+        resultSet.next();
+       return new UserSyncDTO(
+               resultSet.getString(ORIGIN_INSTANCE_USER_KEY),
+               resultSet.getString(DESTINATION_INSTANCE_USER_KEY)
+       );
     }
 }

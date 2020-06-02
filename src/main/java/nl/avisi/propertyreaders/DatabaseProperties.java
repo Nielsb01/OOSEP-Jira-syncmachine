@@ -12,15 +12,27 @@ public class DatabaseProperties {
 
     /**
      * Configuration property which contains the
-     * connection string
+     * database url
      */
-    private static final String CONNECTION_PROPERTY_NAME = "connection";
+    private static final String DATABASE_URL_PROPERTY_NAME = "databaseUrl";
 
     /**
      * Configuration property which contains the
      * driver class name
      */
     private static final String DRIVER_PROPERTY_NAME = "driver";
+
+    /**
+     * Configuration property which contains the
+     * database username
+     */
+    private static final String USERNAME_PROPERTY_NAME = "username";
+
+    /**
+     * Configuration property which contains the
+     * database password
+     */
+    private static final String PASSWORD_PROPERTY_NAME = "password";
 
     /**
      * Class to read the actual properties from
@@ -48,12 +60,12 @@ public class DatabaseProperties {
     }
 
     /**
-     * Get the connection string
+     * Get the databaseUrl
      *
-     * @return the connection string for the database
+     * @return the databaseUrl
      */
-    public String getConnectionString() {
-        return propertyReader.getProperty(CONNECTION_PROPERTY_NAME);
+    public String getDatabaseUrl() {
+        return propertyReader.getProperty(DATABASE_URL_PROPERTY_NAME);
     }
 
     /**
@@ -63,5 +75,23 @@ public class DatabaseProperties {
      */
     public String getDriverName() {
         return propertyReader.getProperty(DRIVER_PROPERTY_NAME);
+    }
+
+    /**
+     * Get the database username
+     *
+     * @return the database username
+     */
+    public String getUsername() {
+        return propertyReader.getProperty(USERNAME_PROPERTY_NAME);
+    }
+
+    /**
+     * Get the database password
+     *
+     * @return the database password
+     */
+    public String getPassword() {
+        return propertyReader.getProperty(PASSWORD_PROPERTY_NAME);
     }
 }

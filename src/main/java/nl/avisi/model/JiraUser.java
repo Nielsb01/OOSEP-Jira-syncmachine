@@ -1,37 +1,30 @@
 package nl.avisi.model;
 
-import kong.unirest.*;
-
+import kong.unirest.HttpResponse;
+import kong.unirest.JsonNode;
 import kong.unirest.json.JSONException;
+import nl.avisi.api.JiraInterface;
 import nl.avisi.datasource.contracts.IUserDAO;
-import nl.avisi.exceptions.InvalidUsernameException;
 import nl.avisi.dto.JiraUserKeyDTO;
 import nl.avisi.dto.JiraUsernameDTO;
-import nl.avisi.network.IRequest;
-import nl.avisi.network.authentication.BasicAuth;
-import nl.avisi.propertyreaders.JiraSynchronisationProperties;
+import nl.avisi.dto.UserPreferenceDTO;
+import nl.avisi.model.contracts.IJiraUser;
+import nl.avisi.model.exceptions.InvalidUsernameException;
 
 import javax.inject.Inject;
+import javax.ws.rs.InternalServerErrorException;
 
 /**
  * Responsible for everything that has to do with the JiraUser
  */
-public class JiraUser {
-
-    /**
-     * Method by which HTTP requests are sent
-     */
-    private IRequest<BasicAuth> request;
+public class JiraUser implements IJiraUser {
 
     /**
      * Used for interacting with the database
      */
     private IUserDAO userDAO;
 
-    /**
-     * Is used to read the necessary property information
-     */
-    private JiraSynchronisationProperties jiraSynchronisationProperties;
+    private JiraInterface jiraInterface;
 
     @Inject
     public void setUserDAO(IUserDAO userDAO) {
@@ -39,80 +32,18 @@ public class JiraUser {
     }
 
     @Inject
-    public void setJiraSynchronisationProperties(JiraSynchronisationProperties jiraSynchronisationProperties) {
-        this.jiraSynchronisationProperties = jiraSynchronisationProperties;
-    }
-
-    @Inject
-    public void setRequest(IRequest<BasicAuth> request) {
-        this.request = request;
+    public void setJiraInterface(JiraInterface jiraInterface) {
+        this.jiraInterface = jiraInterface;
     }
 
     /**
-     * Retrieves the Jira user keys corresponding to
-     * the given usernames, by doing a request
-     * to the Jira API.
+     * Get all preferences from a user
      *
-     * @param jiraUsernameDTO Contains usernames for both jira servers.
-     *                        Both the username as well as the email address can
-     *                        be used.
-     * @return JiraUserKeyDTO Contains the matching user keys to the given usernames.
+     * @param userId the user for which to get the preferences
+     * @return the preferences for the user
      */
-    public JiraUserKeyDTO retrieveJiraUserKeyByUsername(JiraUsernameDTO jiraUsernameDTO) {
-
-        String originUrl = jiraSynchronisationProperties.getOriginUrl();
-        String destinationUrl = jiraSynchronisationProperties.getDestinationUrl();
-
-        setRequestAuthenticationMethod();
-
-        HttpResponse<JsonNode> jsonOriginJiraUser = request.get(originUrl + jiraUsernameDTO.getOriginUsername());
-        HttpResponse<JsonNode> jsonDestinationJiraUser = request.get(destinationUrl + jiraUsernameDTO.getDestinationUsername());
-
-        JiraUserKeyDTO jiraUserKeyDTO = createJiraUserKeyDTO(jsonOriginJiraUser, jsonDestinationJiraUser);
-
-        if (jiraUserKeyDTO.getDestinationUserKey().isEmpty() || jiraUserKeyDTO.getOriginUserKey().isEmpty()) {
-            throw new InvalidUsernameException();
-        }
-
-        return jiraUserKeyDTO;
-    }
-
-    private void setRequestAuthenticationMethod() {
-        BasicAuth basicAuth = new BasicAuth()
-                .setUsername(jiraSynchronisationProperties.getAdminUsername())
-                .setPassword(jiraSynchronisationProperties.getAdminPassword());
-        request.setAuthentication(basicAuth);
-    }
-
-    private JiraUserKeyDTO createJiraUserKeyDTO(HttpResponse<JsonNode> jsonOriginUserKey, HttpResponse<JsonNode> jsonDestinationUserKey) {
-        JiraUserKeyDTO jiraUserKeyDTO = new JiraUserKeyDTO();
-
-        String originUserKey = getJiraUserKeyFromJson(jsonOriginUserKey);
-        String destinationUserKey = getJiraUserKeyFromJson(jsonDestinationUserKey);
-
-        jiraUserKeyDTO.setOriginUserKey(originUserKey);
-        jiraUserKeyDTO.setDestinationUserKey(destinationUserKey);
-
-        return jiraUserKeyDTO;
-    }
-
-    /**
-     * Retrieves the Jira user key from the passed in response object
-     *
-     * @param jsonJiraUser All data that was retrieved from the HTTP request relating to the
-     *                     specified email address
-     * @return A string containing the Jira user key
-     */
-    private String getJiraUserKeyFromJson(HttpResponse<JsonNode> jsonJiraUser) {
-        String jiraUserKey;
-
-        try {
-            jiraUserKey = jsonJiraUser.getBody().getArray().getJSONObject(0).getString("key");
-        } catch (JSONException e) {
-            throw new InvalidUsernameException();
-        }
-
-        return jiraUserKey;
+    public UserPreferenceDTO getAutoSyncPreference(int userId) {
+        return userDAO.getUserAutoSyncPreference(userId);
     }
 
     /**
@@ -138,6 +69,60 @@ public class JiraUser {
      * @param userId Id of the user that made the request
      */
     public void setJiraUserKeys(JiraUsernameDTO jiraUsernameDTO, int userId) {
-        userDAO.updateJiraUserKeys(retrieveJiraUserKeyByUsername(jiraUsernameDTO), userId);
+        userDAO.updateJiraUserKeys(mapJiraUsernameDTOToJiraUserKeyDTO(jiraUsernameDTO), userId);
+    }
+
+    /**
+     * Retrieves the Jira user keys corresponding to
+     * the given usernames, by doing a request
+     * to the Jira API.
+     *
+     * @param jiraUsernameDTO Contains usernames for both jira servers.
+     *                        Both the username as well as the email address can
+     *                        be used.
+     * @return JiraUserKeyDTO Contains the matching user keys to the given usernames.
+     */
+    private JiraUserKeyDTO mapJiraUsernameDTOToJiraUserKeyDTO(JiraUsernameDTO jiraUsernameDTO) {
+
+        HttpResponse<JsonNode> jsonOriginJiraUser = jiraInterface.getOriginUserKey(jiraUsernameDTO.getOriginUsername());
+        HttpResponse<JsonNode> jsonDestinationJiraUser = jiraInterface.getDestinationUserKey(jiraUsernameDTO.getDestinationUsername());
+
+        if (jsonOriginJiraUser.getStatus() != 200 || jsonDestinationJiraUser.getStatus() != 200) {
+            throw new InternalServerErrorException();
+        }
+
+        JiraUserKeyDTO jiraUserKeyDTO = createJiraUserKeyDTO(jsonOriginJiraUser, jsonDestinationJiraUser);
+
+        if (jiraUserKeyDTO.getDestinationUserKey().isEmpty() || jiraUserKeyDTO.getOriginUserKey().isEmpty()) {
+            throw new InvalidUsernameException();
+        }
+
+        return jiraUserKeyDTO;
+    }
+
+    private JiraUserKeyDTO createJiraUserKeyDTO(HttpResponse<JsonNode> jsonOriginUserKey, HttpResponse<JsonNode> jsonDestinationUserKey) {
+        String originUserKey = getJiraUserKeyFromJson(jsonOriginUserKey);
+        String destinationUserKey = getJiraUserKeyFromJson(jsonDestinationUserKey);
+
+        return new JiraUserKeyDTO(originUserKey, destinationUserKey);
+    }
+
+    /**
+     * Retrieves the Jira user key from the passed in response object
+     *
+     * @param jsonJiraUser All data that was retrieved from the HTTP request relating to the
+     *                     specified email address
+     * @return A string containing the Jira user key
+     */
+    private String getJiraUserKeyFromJson(HttpResponse<JsonNode> jsonJiraUser) {
+        String jiraUserKey;
+
+        try {
+            jiraUserKey = jsonJiraUser.getBody().getArray().getJSONObject(0).getString("key");
+        } catch (JSONException e) {
+            throw new InvalidUsernameException();
+        }
+
+        return jiraUserKey;
     }
 }

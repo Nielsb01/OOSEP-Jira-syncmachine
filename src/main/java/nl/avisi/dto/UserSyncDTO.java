@@ -20,21 +20,27 @@ public class UserSyncDTO {
      */
     private String destinationWorker;
 
+    public UserSyncDTO() {
+    }
+
+    public UserSyncDTO(String originWorker, String destinationWorker) {
+        this.originWorker = originWorker;
+        this.destinationWorker = destinationWorker;
+    }
+
     public String getOriginWorker() {
         return originWorker;
     }
 
-    public UserSyncDTO setOriginWorker(String originWorker) {
+    public void setOriginWorker(String originWorker) {
         this.originWorker = originWorker;
-        return this;
     }
 
     public String getDestinationWorker() {
         return destinationWorker;
     }
 
-    public UserSyncDTO setDestinationWorker(String destinationWorker) {
+    public void setDestinationWorker(String destinationWorker) {
         this.destinationWorker = destinationWorker;
-        return this;
     }
 }

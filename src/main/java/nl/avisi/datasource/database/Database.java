@@ -1,6 +1,6 @@
-package nl.avisi.datasource;
+package nl.avisi.datasource.database;
 
-import nl.avisi.propertyreaders.exceptions.DatabaseDriverNotFoundException;
+import nl.avisi.datasource.exceptions.DatabaseDriverNotFoundException;
 import nl.avisi.propertyreaders.DatabaseProperties;
 
 import javax.inject.Inject;
@@ -36,7 +36,9 @@ public class Database {
      */
     public Connection connect() throws SQLException {
         final String driverName = databaseProperties.getDriverName();
-        final String connectionString = databaseProperties.getConnectionString();
+        final String databaseUrl = databaseProperties.getDatabaseUrl();
+        final String username = databaseProperties.getUsername();
+        final String password = databaseProperties.getPassword();
 
         try {
             Class.forName(driverName);
@@ -44,6 +46,6 @@ public class Database {
             throw new DatabaseDriverNotFoundException(e.getMessage());
         }
 
-        return DriverManager.getConnection(connectionString);
+        return DriverManager.getConnection(databaseUrl, username, password);
     }
 }

@@ -3,7 +3,7 @@ package nl.avisi.controller;
 
 
 import nl.avisi.dto.LoginDTO;
-import nl.avisi.model.Login;
+import nl.avisi.model.contracts.ILogin;
 
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
@@ -21,10 +21,10 @@ import javax.ws.rs.core.Response;
 
 @Path("/login")
 public class LoginController {
-    private Login login;
+    private ILogin login;
 
     @Inject
-    public void setLogin(Login login) {
+    public void setLogin(ILogin login) {
         this.login = login;
     }
 

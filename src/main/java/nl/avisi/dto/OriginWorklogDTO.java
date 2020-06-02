@@ -13,12 +13,19 @@ public class OriginWorklogDTO extends DestinationWorklogDTO {
      */
     private int worklogId;
 
+    public OriginWorklogDTO() {
+    }
+
+    public OriginWorklogDTO(String worker, String started, int timeSpentSeconds, String originTaskId, int worklogId) {
+        super(worker, started, timeSpentSeconds, originTaskId);
+        this.worklogId = worklogId;
+    }
+
     public int getWorklogId() {
         return worklogId;
     }
 
-    public OriginWorklogDTO setWorklogId(int worklogId) {
+    public void setWorklogId(int worklogId) {
         this.worklogId = worklogId;
-        return this;
     }
 }

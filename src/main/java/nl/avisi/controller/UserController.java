@@ -2,7 +2,7 @@
 package nl.avisi.controller;
 
 import nl.avisi.dto.JiraUsernameDTO;
-import nl.avisi.model.JiraUser;
+import nl.avisi.model.contracts.IJiraUser;
 
 import javax.inject.Inject;
 import javax.ws.rs.*;
@@ -16,10 +16,10 @@ import javax.ws.rs.core.Response;
 
 @Path("user")
 public class UserController {
-    private JiraUser jiraUser;
+    private IJiraUser jiraUser;
 
     @Inject
-    public void setJiraUser(JiraUser jiraUser) {
+    public void setJiraUser(IJiraUser jiraUser) {
         this.jiraUser = jiraUser;
     }
 
@@ -60,5 +60,19 @@ public class UserController {
     public Response setAutoSyncPreference(@PathParam("userId") int userId, @QueryParam("autoSync") boolean autoSyncOn) {
         jiraUser.setAutoSyncPreference(userId, autoSyncOn);
         return Response.status(Response.Status.OK).build();
+    }
+
+    /**
+     * Responsible for retrieving the preferences for
+     * the user
+     *
+     * @param userId Id of the user that is requesting it's preferences
+     * @return A HTTP response with the preferences JSON object
+     */
+    @Path("/autoSync/{userId}")
+    @GET
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response getAutoSyncPreference(@PathParam("userId") int userId) {
+        return Response.status(Response.Status.OK).entity(jiraUser.getAutoSyncPreference(userId)).build();
     }
 }

@@ -1,12 +1,13 @@
-package nl.avisi.datasource;
+package nl.avisi.datasource.database;
 
-import nl.avisi.propertyreaders.exceptions.DatabaseDriverNotFoundException;
+import nl.avisi.datasource.exceptions.DatabaseDriverNotFoundException;
 import nl.avisi.propertyreaders.DatabaseProperties;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class DatabaseTest {
     private Database sut;

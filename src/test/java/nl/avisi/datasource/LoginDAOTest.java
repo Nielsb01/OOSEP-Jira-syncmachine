@@ -1,9 +1,8 @@
 package nl.avisi.datasource;
 
-import nl.avisi.propertyreaders.exceptions.DatabaseDriverNotFoundException;
+import nl.avisi.datasource.database.Database;
 import nl.avisi.datasource.datamappers.IDataMapper;
 import nl.avisi.dto.UserDTO;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -13,7 +12,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.*;
 
@@ -80,10 +80,7 @@ class LoginDAOTest {
         when(mockedConnection.prepareStatement(anyString())).thenReturn(mockedStatement);
         when(mockedStatement.executeQuery()).thenReturn(mockedResultSet);
         when(mockedIDataMapper.toDTO(mockedResultSet)).thenReturn(
-                new UserDTO()
-                        .setUserID(1)
-                        .setPassword("password")
-                        .setUsername("username"));
+                new UserDTO(1,"username","password"));
 
         // Act
         UserDTO actualValue = sut.getLoginInfo("username");
