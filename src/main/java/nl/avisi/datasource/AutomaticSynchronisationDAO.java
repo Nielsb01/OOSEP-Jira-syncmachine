@@ -21,6 +21,10 @@ public class AutomaticSynchronisationDAO {
     private static final String GET_LAST_SYNCHRONISATION_DATE_SQL = "SELECT synchronisation_date FROM automatic_synchronisation ORDER BY synchronisation_date DESC LIMIT 1";
     private static final String SET_LAST_SYNCHRONISATION_DAT_SQL = "INSERT INTO automatic_synchronisation (synchronisation_date) VALUES (?)";
 
+    /**
+     * fetches the last datetime on which an automatic synchronisation occurred
+     * @return The last datetime on which an automatic synchronisation occurred in YYYY-MM-DD HH-MM-SS
+     */
     public String getLastSynchronisationDate() {
 
         String lastSynchronisationDate;
@@ -41,6 +45,10 @@ public class AutomaticSynchronisationDAO {
 
     }
 
+    /**
+     * adds a datetime to the database on which an automatic synchronisation occurred
+     * @param newLastSynchronisationDate the datetime on which the automatic synchronisation occurred in YYYY-MM-DD HH-MM-SS
+     */
     public void setLastSynchronisationDate(String newLastSynchronisationDate) {
 
         try (Connection connection = database.connect();
