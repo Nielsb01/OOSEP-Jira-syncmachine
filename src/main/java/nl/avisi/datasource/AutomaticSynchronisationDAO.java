@@ -18,8 +18,8 @@ public class AutomaticSynchronisationDAO {
         this.database = database;
     }
 
-    private static final String GET_LAST_SYNCHRONISATION_DATE_SQL = "SELECT synchronisation_date FROM automatic_synchronisation ORDER BY synchronisation_date DESC LIMIT 1";
-    private static final String SET_LAST_SYNCHRONISATION_DAT_SQL = "INSERT INTO automatic_synchronisation (synchronisation_date) VALUES (?)";
+    private static final String GET_LAST_SYNCHRONISATION_DATE_SQL = "SELECT synchronisation_moment FROM automatic_synchronisation ORDER BY synchronisation_moment DESC LIMIT 1";
+    private static final String SET_LAST_SYNCHRONISATION_DAT_SQL = "INSERT INTO automatic_synchronisation (synchronisation_moment) VALUES (?)";
 
     /**
      * fetches the last datetime on which an automatic synchronisation occurred
@@ -33,7 +33,11 @@ public class AutomaticSynchronisationDAO {
              PreparedStatement stmt = connection.prepareStatement(GET_LAST_SYNCHRONISATION_DATE_SQL)) {
 
             ResultSet resultSet = stmt.executeQuery();
-            resultSet.next();
+            boolean resultStatus = resultSet.next();
+
+            if (!resultStatus) {
+                return null;
+            }
 
             lastSynchronisationDate = resultSet.getString("synchronisation_moment");
 

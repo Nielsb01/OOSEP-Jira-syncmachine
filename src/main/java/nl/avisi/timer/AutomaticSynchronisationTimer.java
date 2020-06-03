@@ -64,6 +64,10 @@ public class AutomaticSynchronisationTimer {
         String currentMoment = getCurrentMoment();
         String lastSynchronisationMoment = automaticSynchronisationDAO.getLastSynchronisationMoment();
 
+        if (lastSynchronisationMoment == null) {
+            lastSynchronisationMoment = currentMoment;
+        }
+
         jiraWorklog.autoSynchronisation(
                 castMomentToDate(lastSynchronisationMoment),
                 castMomentToDate(currentMoment)
