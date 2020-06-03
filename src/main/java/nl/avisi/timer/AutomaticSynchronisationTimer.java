@@ -85,8 +85,6 @@ public class AutomaticSynchronisationTimer {
     }
 
     private String castMomentToDate(String moment) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-
-        return dateFormat.format(moment);
+        return moment.substring(0, 10);
     }
 }
