@@ -25,7 +25,7 @@ public class AutomaticSynchronisationDAO {
      * fetches the last datetime on which an automatic synchronisation occurred
      * @return The last datetime on which an automatic synchronisation occurred in YYYY-MM-DD HH-MM-SS
      */
-    public String getLastSynchronisationDate() {
+    public String getLastSynchronisationMoment() {
 
         String lastSynchronisationDate;
 
@@ -35,7 +35,7 @@ public class AutomaticSynchronisationDAO {
             ResultSet resultSet = stmt.executeQuery();
             resultSet.next();
 
-            lastSynchronisationDate = resultSet.getString("synchronisation_date");
+            lastSynchronisationDate = resultSet.getString("synchronisation_moment");
 
         } catch (SQLException e) {
             throw new InternalServerErrorException(e.getMessage());
@@ -49,7 +49,7 @@ public class AutomaticSynchronisationDAO {
      * adds a datetime to the database on which an automatic synchronisation occurred
      * @param newLastSynchronisationDate the datetime on which the automatic synchronisation occurred in YYYY-MM-DD HH-MM-SS
      */
-    public void setLastSynchronisationDate(String newLastSynchronisationDate) {
+    public void setLastSynchronisationMoment(String newLastSynchronisationDate) {
 
         try (Connection connection = database.connect();
              PreparedStatement stmt = connection.prepareStatement(SET_LAST_SYNCHRONISATION_DAT_SQL)) {
