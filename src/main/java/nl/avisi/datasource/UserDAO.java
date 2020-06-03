@@ -51,7 +51,7 @@ public class UserDAO implements IUserDAO {
      * SQL Query to retrieve all users who
      * have chosen to use the auto sync feature
      */
-    private static final String GET_ALL_AUTO_SYNC_USERS_SQL = String.format("SELECT %s, %s FROM Jirausers WHERE syncStatus = ?", JIRA_ORIGIN_WORKER_COLUMN_NAME, JIRA_DESTINATION_WORKER_COLUMN_NAME);
+    private static final String GET_ALL_AUTO_SYNC_USERS_SQL = String.format("SELECT %s, %s FROM jira_user WHERE auto_sync = ?", JIRA_ORIGIN_WORKER_COLUMN_NAME, JIRA_DESTINATION_WORKER_COLUMN_NAME);
 
     /**
      * SQL Query to retrieve the auto sync preference
