@@ -1,5 +1,6 @@
 package nl.avisi.timer;
 
+import nl.avisi.datasource.AutomaticSynchronisationDAO;
 import nl.avisi.model.JiraWorklog;
 import nl.avisi.propertyreaders.JiraSynchronisationProperties;
 
@@ -18,9 +19,9 @@ public class AutomaticSynchronisationTimer {
 
     private JiraSynchronisationProperties jiraSynchronisationProperties;
 
-    private JiraWorklog jiraWorklog;
+    private AutomaticSynchronisationDAO automaticSynchronisationDAO;
 
-    private String lastSynchronisationDate;
+    private JiraWorklog jiraWorklog;
 
     @Resource
     public void setTimerService(TimerService timerService) {
@@ -30,6 +31,11 @@ public class AutomaticSynchronisationTimer {
     @Inject
     public void setJiraSynchronisationProperties(JiraSynchronisationProperties jiraSynchronisationProperties) {
         this.jiraSynchronisationProperties = jiraSynchronisationProperties;
+    }
+
+    @Inject
+    public void setAutomaticSynchronisationDAO(AutomaticSynchronisationDAO automaticSynchronisationDAO) {
+        this.automaticSynchronisationDAO = automaticSynchronisationDAO;
     }
 
     @Inject
@@ -55,18 +61,34 @@ public class AutomaticSynchronisationTimer {
 
     @Timeout
     public void autoSynchronise(Timer timer) {
-        String currentDate = getCurrentDate();
+        String currentMoment = getCurrentMoment();
+        String lastSynchronisationMoment = automaticSynchronisationDAO.getLastSynchronisationMoment();
 
-        jiraWorklog.autoSynchronisation(lastSynchronisationDate, currentDate);
-        lastSynchronisationDate = currentDate;
+        if (lastSynchronisationMoment == null) {
+            lastSynchronisationMoment = currentMoment;
+        }
 
+        jiraWorklog.autoSynchronisation(
+                castMomentToDate(lastSynchronisationMoment),
+                castMomentToDate(currentMoment)
+        );
+
+        updateLastSynchronisationMoment(currentMoment);
     }
 
-    private String getCurrentDate() {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    private void updateLastSynchronisationMoment(String newLastSynchronisationMoment) {
+        automaticSynchronisationDAO.setLastSynchronisationMoment(newLastSynchronisationMoment);
+    }
 
-        Date currentDate = new Date();
+    private String getCurrentMoment() {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 
-        return dateFormat.format(currentDate);
+        Date currentMoment = new Date();
+
+        return dateFormat.format(currentMoment);
+    }
+
+    private String castMomentToDate(String moment) {
+        return moment.substring(0, 10);
     }
 }
