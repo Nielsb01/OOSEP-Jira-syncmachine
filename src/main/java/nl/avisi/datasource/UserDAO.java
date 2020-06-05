@@ -140,7 +140,7 @@ public class UserDAO implements IUserDAO {
             }
 
         } catch (SQLException e) {
-            logger.logToDatabase(getClass().getName(), e);
+            logger.logToDatabase(getClass().getName(), getClass().getEnclosingMethod().getName(), e);
         }
 
         return autoSyncUsers;
@@ -161,7 +161,7 @@ public class UserDAO implements IUserDAO {
 
             return userPreferenceDataMapper.toDTO(result);
         } catch (SQLException e) {
-            logger.logToDatabase(getClass().getName(), e);
+            logger.logToDatabase(getClass().getName(), getClass().getEnclosingMethod().getName(), e);
             throw new InternalServerErrorException(String.format("Error occurred fetching the preference for the user: %d error: %s", userId, e.getMessage()));
         }
     }
@@ -183,7 +183,7 @@ public class UserDAO implements IUserDAO {
 
             stmt.executeUpdate();
         } catch (SQLException e) {
-            logger.logToDatabase(getClass().getName(), e);
+            logger.logToDatabase(getClass().getName(), getClass().getEnclosingMethod().getName(), e);
             throw new InternalServerErrorException(String.format("Error occurred while updating the auto synchronisation status: %s", e.getMessage()));
         }
 
@@ -207,7 +207,7 @@ public class UserDAO implements IUserDAO {
             userSyncDTO = userSyncDataMapper.toDTO(stmt.executeQuery());
 
         } catch (SQLException e) {
-            logger.logToDatabase(getClass().getName(), e);
+            logger.logToDatabase(getClass().getName(), getClass().getEnclosingMethod().getName(), e);
             throw new InternalServerErrorException(String.format("Error occurred while retrieving a synchronisation user: %s", e.getMessage()));
         }
         return userSyncDTO;
@@ -231,7 +231,7 @@ public class UserDAO implements IUserDAO {
             stmt.executeUpdate();
 
         } catch (SQLException e) {
-            logger.logToDatabase(getClass().getName(), e);
+            logger.logToDatabase(getClass().getName(), getClass().getEnclosingMethod().getName(), e);
             throw new InternalServerErrorException(String.format("Error occurred while retrieving a synchronisation user: %s", e.getMessage()));
         }
     }

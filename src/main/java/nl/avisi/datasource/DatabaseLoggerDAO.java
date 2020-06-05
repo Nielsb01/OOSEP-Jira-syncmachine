@@ -50,11 +50,11 @@ public class DatabaseLoggerDAO {
      *
      * @param errorToLog the message of this exception will be logged in the database
      */
-    public void insertLogIntoDatabase(String className, Exception errorToLog) {
+    public void insertLogIntoDatabase(String className, String methodName, Exception errorToLog) {
         try (Connection connection = database.connect();
              PreparedStatement stmt = connection.prepareStatement(LOG_ERROR_SQL)) {
             stmt.setString(1, className);
-            stmt.setString(2, errorToLog.getStackTrace()[0].getMethodName());
+            stmt.setString(2, methodName);
             stmt.setString(3, errorToLog.getMessage());
 
             stmt.executeUpdate();

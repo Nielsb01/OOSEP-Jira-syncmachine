@@ -77,7 +77,7 @@ public class LoginDAO implements ILoginDAO {
 
             userDTO = userDataMapper.toDTO(stmt.executeQuery());
         } catch (SQLException e) {
-            logger.logToDatabase(getClass().getName(), e);
+            logger.logToDatabase(getClass().getName(), getClass().getEnclosingMethod().getName(), e);
             throw new InternalServerErrorException(e.getMessage());
         }
 

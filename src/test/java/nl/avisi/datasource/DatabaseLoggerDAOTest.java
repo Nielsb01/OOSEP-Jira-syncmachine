@@ -1,10 +1,12 @@
 package nl.avisi.datasource;
 
 import nl.avisi.datasource.database.Database;
+import nl.avisi.logger.DatabaseLogger;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.InternalServerErrorException;
+import java.awt.*;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -15,7 +17,8 @@ import static org.mockito.Mockito.*;
 
 class DatabaseLoggerDAOTest {
 
-    public static final String CLASS_NAME = "class_name";
+    private static final String CLASS_NAME = "className";
+    private static final String METHOD_NAME = "methodName";
     private DatabaseLoggerDAO sut;
     private Database mockedDatabase;
     private PreparedStatement mockedStatement;
@@ -28,22 +31,25 @@ class DatabaseLoggerDAOTest {
         mockedStatement = mock(PreparedStatement.class);
         mockedException = mock(Exception.class);
 
+
         sut.setDatabase(mockedDatabase);
     }
 
     @Test
     void testInsertLogIntoDatabaseClosesConnection() throws Exception {
         //Arrange
-
+        SQLException exception = new SQLException();
         final Connection mockConnection = mock(Connection.class);
         when(mockedDatabase.connect()).thenReturn(mockConnection);
         when(mockConnection.prepareStatement(anyString())).thenReturn(mockedStatement);
 
-
         //Act
-        sut.insertLogIntoDatabase(CLASS_NAME, mockedException);
+        sut.insertLogIntoDatabase(CLASS_NAME, METHOD_NAME, exception);
 
         //Assert
+        verify(mockedStatement).setString(1, CLASS_NAME);
+        verify(mockedStatement).setString(2, METHOD_NAME);
+        verify(mockedStatement).setString(3, exception.getMessage());
         verify(mockConnection).close();
     }
 
@@ -53,6 +59,6 @@ class DatabaseLoggerDAOTest {
         when(mockedDatabase.connect()).thenThrow(SQLException.class);
 
         //Act & Assert
-        assertThrows(InternalServerErrorException.class, () -> sut.insertLogIntoDatabase(CLASS_NAME, mockedException));
+        assertThrows(InternalServerErrorException.class, () -> sut.insertLogIntoDatabase(CLASS_NAME, METHOD_NAME, mockedException));
     }
 }

@@ -22,7 +22,7 @@ public class DatabaseLogger implements ILogger {
      * @param e the message of this exception will be logged in the database
      */
     @Override
-    public void logToDatabase(String className, Exception e) {
-        databaseLoggerDAO.insertLogIntoDatabase(className, e);
+    public void logToDatabase(String originClass, String originMethod, Exception e) {
+        databaseLoggerDAO.insertLogIntoDatabase(originClass, originMethod, e);
     }
 }
