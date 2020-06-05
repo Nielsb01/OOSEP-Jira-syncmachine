@@ -6,6 +6,7 @@ import nl.avisi.datasource.datamappers.IDataMapper;
 import nl.avisi.dto.JiraUserKeyDTO;
 import nl.avisi.dto.UserPreferenceDTO;
 import nl.avisi.dto.UserSyncDTO;
+import nl.avisi.logger.ILogger;
 
 import javax.inject.Inject;
 import javax.ws.rs.InternalServerErrorException;
@@ -94,6 +95,12 @@ public class UserDAO implements IUserDAO {
      */
     private IDataMapper<UserPreferenceDTO> userPreferenceDataMapper;
 
+    /**
+     * responsible for logging errors
+     */
+    private ILogger logger;
+
+
     @Inject
     public void setUserSyncDataMapper(IDataMapper<UserSyncDTO> userSyncDataMapper) {
         this.userSyncDataMapper = userSyncDataMapper;
@@ -107,6 +114,11 @@ public class UserDAO implements IUserDAO {
     @Inject
     public void setDatabase(Database database) {
         this.database = database;
+    }
+
+    @Inject
+    public void setLogger(ILogger logger) {
+        this.logger = logger;
     }
 
     /**
@@ -128,7 +140,7 @@ public class UserDAO implements IUserDAO {
             }
 
         } catch (SQLException e) {
-            System.err.printf("Error occurred fetching all users which have enabled auto sync: %s\n", e.getMessage());
+            logger.logToDatabase(getClass().getName(), e);
         }
 
         return autoSyncUsers;
@@ -149,6 +161,7 @@ public class UserDAO implements IUserDAO {
 
             return userPreferenceDataMapper.toDTO(result);
         } catch (SQLException e) {
+            logger.logToDatabase(getClass().getName(), e);
             throw new InternalServerErrorException(String.format("Error occurred fetching the preference for the user: %d error: %s", userId, e.getMessage()));
         }
     }
@@ -170,6 +183,7 @@ public class UserDAO implements IUserDAO {
 
             stmt.executeUpdate();
         } catch (SQLException e) {
+            logger.logToDatabase(getClass().getName(), e);
             throw new InternalServerErrorException(String.format("Error occurred while updating the auto synchronisation status: %s", e.getMessage()));
         }
 
@@ -193,6 +207,7 @@ public class UserDAO implements IUserDAO {
             userSyncDTO = userSyncDataMapper.toDTO(stmt.executeQuery());
 
         } catch (SQLException e) {
+            logger.logToDatabase(getClass().getName(), e);
             throw new InternalServerErrorException(String.format("Error occurred while retrieving a synchronisation user: %s", e.getMessage()));
         }
         return userSyncDTO;
@@ -203,20 +218,21 @@ public class UserDAO implements IUserDAO {
      * given user id
      *
      * @param jiraUserKeyDTO Contain the origin and destination user keys
-     * @param userId Id of the user that made the request
+     * @param userId         Id of the user that made the request
      */
     @Override
     public void updateJiraUserKeys(JiraUserKeyDTO jiraUserKeyDTO, int userId) {
-            try (Connection connection = database.connect();
-                 PreparedStatement stmt = connection.prepareStatement(UPDATE_JIRA_USER_KEY_SQL)) {
-                stmt.setString(1, jiraUserKeyDTO.getOriginUserKey());
-                stmt.setString(2, jiraUserKeyDTO.getDestinationUserKey());
-                stmt.setInt(3, userId);
+        try (Connection connection = database.connect();
+             PreparedStatement stmt = connection.prepareStatement(UPDATE_JIRA_USER_KEY_SQL)) {
+            stmt.setString(1, jiraUserKeyDTO.getOriginUserKey());
+            stmt.setString(2, jiraUserKeyDTO.getDestinationUserKey());
+            stmt.setInt(3, userId);
 
-                stmt.executeUpdate();
+            stmt.executeUpdate();
 
-            } catch (SQLException e) {
-                throw new InternalServerErrorException(String.format("Error occurred while retrieving a synchronisation user: %s", e.getMessage()));
-            }
+        } catch (SQLException e) {
+            logger.logToDatabase(getClass().getName(), e);
+            throw new InternalServerErrorException(String.format("Error occurred while retrieving a synchronisation user: %s", e.getMessage()));
         }
+    }
 }

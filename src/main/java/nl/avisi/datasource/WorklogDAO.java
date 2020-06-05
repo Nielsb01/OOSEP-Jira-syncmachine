@@ -3,6 +3,7 @@ package nl.avisi.datasource;
 import nl.avisi.datasource.contracts.IWorklogDAO;
 import nl.avisi.datasource.database.Database;
 import nl.avisi.datasource.datamappers.IDataMapper;
+import nl.avisi.logger.ILogger;
 
 import javax.inject.Inject;
 import javax.ws.rs.InternalServerErrorException;
@@ -15,6 +16,11 @@ import java.util.List;
  * interacts with the database for anything that has to do with worklogs
  */
 public class WorklogDAO implements IWorklogDAO {
+
+    /**
+     * responsible for logging errors
+     */
+    private ILogger logger;
 
     /**
      * Class to manage the database connection
@@ -44,6 +50,11 @@ public class WorklogDAO implements IWorklogDAO {
     @Inject
     public void setWorklogIdDataMapper(IDataMapper<List<Integer>> worklogIdDataMapper) {
         this.worklogIdDataMapper = worklogIdDataMapper;
+    }
+
+    @Inject
+    public void setLogger(ILogger logger) {
+        this.logger = logger;
     }
 
     /**
