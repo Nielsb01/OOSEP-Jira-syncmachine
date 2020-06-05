@@ -131,7 +131,7 @@ public class JiraUser implements IJiraUser {
         try {
             jiraUserKey = jsonJiraUser.getBody().getArray().getJSONObject(0).getString("key");
         } catch (JSONException e) {
-            logger.logToDatabase(getClass().getName(), getClass().getEnclosingMethod().getName(), e);
+            logger.logToDatabase(getClass().getName(), "getJiraUserKeyFromJson", e);
             throw new InvalidUsernameException();
         }
 

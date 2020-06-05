@@ -70,7 +70,7 @@ public class WorklogDAO implements IWorklogDAO {
             stmt.setInt(1, worklogId);
             stmt.executeUpdate();
         } catch (SQLException e) {
-            logger.logToDatabase(getClass().getName(), getClass().getEnclosingMethod().getName(), e);
+            logger.logToDatabase(getClass().getName(), "addWorklogId", e);
             throw new InternalServerErrorException(e.getMessage());
         }
     }
@@ -88,7 +88,7 @@ public class WorklogDAO implements IWorklogDAO {
              PreparedStatement stmt = connection.prepareStatement(GET_ALL_WORKLOG_IDS_SQL)) {
             worklogIds = worklogIdDataMapper.toDTO(stmt.executeQuery());
         } catch (SQLException e) {
-            logger.logToDatabase(getClass().getName(), getClass().getEnclosingMethod().getName(), e);
+            logger.logToDatabase(getClass().getName(), "getAllWorklogIds", e);
             throw new InternalServerErrorException(e.getMessage());
         }
 

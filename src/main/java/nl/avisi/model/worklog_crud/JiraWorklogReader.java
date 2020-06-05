@@ -76,7 +76,7 @@ public class JiraWorklogReader {
                 worklogs.put(worklogId, new DestinationWorklogDTO(worker, started, timeSpentSeconds, originTaskId));
 
             } catch (JSONException e) {
-                logger.logToDatabase(getClass().getName(), getClass().getEnclosingMethod().getName(), e);
+                logger.logToDatabase(getClass().getName(), "createWorklogDTOs", e);
                 return new HashMap<>();
             }
         }
