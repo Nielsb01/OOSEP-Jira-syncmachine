@@ -19,14 +19,8 @@ public class PropertyReader {
     /**
      * responsible for logging errors
      */
-    private ILogger logger;
 
     private Properties properties;
-
-    @Inject
-    public void setLogger(ILogger logger) {
-        this.logger = logger;
-    }
 
     /**
      * Loads the given property file so it can be read using the class' other methods. Run this before using any other methods in this class.
@@ -42,7 +36,6 @@ public class PropertyReader {
                             .getClassLoader()
                             .getResourceAsStream(propertiesFileName)));
         } catch (IOException | NullPointerException e) {
-            logger.logToDatabase(getClass().getName(), e);
             throw new PropertyFileNotFoundException();
         }
     }
