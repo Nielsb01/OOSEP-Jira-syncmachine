@@ -8,6 +8,7 @@ import nl.avisi.datasource.contracts.IUserDAO;
 import nl.avisi.dto.JiraUserKeyDTO;
 import nl.avisi.dto.JiraUsernameDTO;
 import nl.avisi.dto.UserPreferenceDTO;
+import nl.avisi.logger.ILogger;
 import nl.avisi.model.contracts.IJiraUser;
 import nl.avisi.model.exceptions.InvalidUsernameException;
 
@@ -24,6 +25,11 @@ public class JiraUser implements IJiraUser {
      */
     private IUserDAO userDAO;
 
+    /**
+     * responsible for logging errors
+     */
+    private ILogger logger;
+
     private JiraInterface jiraInterface;
 
     @Inject
@@ -34,6 +40,11 @@ public class JiraUser implements IJiraUser {
     @Inject
     public void setJiraInterface(JiraInterface jiraInterface) {
         this.jiraInterface = jiraInterface;
+    }
+
+    @Inject
+    public void setLogger(ILogger logger) {
+        this.logger = logger;
     }
 
     /**
@@ -120,6 +131,7 @@ public class JiraUser implements IJiraUser {
         try {
             jiraUserKey = jsonJiraUser.getBody().getArray().getJSONObject(0).getString("key");
         } catch (JSONException e) {
+            logger.logToDatabase(getClass().getName(), e);
             throw new InvalidUsernameException();
         }
 

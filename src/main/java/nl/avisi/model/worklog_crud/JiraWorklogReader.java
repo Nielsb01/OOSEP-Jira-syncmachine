@@ -8,6 +8,7 @@ import kong.unirest.json.JSONObject;
 import nl.avisi.api.TempoInterface;
 import nl.avisi.dto.DestinationWorklogDTO;
 import nl.avisi.dto.WorklogRequestDTO;
+import nl.avisi.logger.ILogger;
 
 import javax.inject.Inject;
 import java.util.HashMap;
@@ -15,11 +16,21 @@ import java.util.Map;
 
 public class JiraWorklogReader {
 
+    /**
+     * responsible for logging errors
+     */
+    private ILogger logger;
+
     private TempoInterface tempoInterface;
 
     @Inject
     public void setTempoInterface(TempoInterface tempoInterface) {
         this.tempoInterface = tempoInterface;
+    }
+
+    @Inject
+    public void setLogger(ILogger logger) {
+        this.logger = logger;
     }
 
     /**
@@ -65,6 +76,7 @@ public class JiraWorklogReader {
                 worklogs.put(worklogId, new DestinationWorklogDTO(worker, started, timeSpentSeconds, originTaskId));
 
             } catch (JSONException e) {
+                logger.logToDatabase(getClass().getName(), e);
                 return new HashMap<>();
             }
         }
