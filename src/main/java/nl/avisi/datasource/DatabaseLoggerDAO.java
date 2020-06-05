@@ -17,7 +17,12 @@ public class DatabaseLoggerDAO {
     /**
      * Table name for logging errors
      */
-    private static final String DATABASE_LOGGING_TABLE_NAME = "error";
+    private static final String DATABASE_LOGGING_TABLE_NAME = "error_logs";
+
+    /**
+     * Column name for method where the error originated from
+     */
+    private static final String ERROR_ORIGIN_METHOD_COLUMN_NAME = "method_name";
 
     /**
      * Column name for className where the error originated from
@@ -27,13 +32,13 @@ public class DatabaseLoggerDAO {
     /**
      * Column name for logging errors
      */
-    private static final String ERROR_MESSAGE_COLUMN_NAME = "message";
+    private static final String ERROR_MESSAGE_COLUMN_NAME = "error_message";
 
     /**
      * SQL statement to log the
      * errors to the database
      */
-    private static final String LOG_ERROR_SQL = String.format("INSERT INTO %s (%s, %s) VALUES (?, ?)", DATABASE_LOGGING_TABLE_NAME, ERROR_ORIGIN_CLASS_COLUMN_NAME, ERROR_MESSAGE_COLUMN_NAME);
+    private static final String LOG_ERROR_SQL = String.format("INSERT INTO %s (%s, %s, %s) VALUES (?, ?, ?)", DATABASE_LOGGING_TABLE_NAME, ERROR_ORIGIN_CLASS_COLUMN_NAME, ERROR_ORIGIN_METHOD_COLUMN_NAME, ERROR_MESSAGE_COLUMN_NAME);
 
     @Inject
     public void setDatabase(Database database) {
@@ -49,7 +54,8 @@ public class DatabaseLoggerDAO {
         try (Connection connection = database.connect();
              PreparedStatement stmt = connection.prepareStatement(LOG_ERROR_SQL)) {
             stmt.setString(1, className);
-            stmt.setString(2, errorToLog.getMessage());
+            stmt.setString(2, errorToLog.getStackTrace()[0].getMethodName());
+            stmt.setString(3, errorToLog.getMessage());
 
             stmt.executeUpdate();
         } catch (SQLException e) {
