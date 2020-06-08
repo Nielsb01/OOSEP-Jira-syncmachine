@@ -33,5 +33,4 @@ class DatabaseLoggerTest {
         //Assert
         verify(mockedDAO).insertLogIntoDatabase(CLASS_NAME, METHOD_NAME, ERROR_MESS);
     }
-
 }
