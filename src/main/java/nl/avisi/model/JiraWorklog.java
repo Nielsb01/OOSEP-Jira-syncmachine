@@ -101,7 +101,7 @@ public class JiraWorklog implements IJiraWorklog {
     }
 
 
-    private void synchronise(WorklogRequestDTO worklogRequestDTO, List<UserSyncDTO> syncUsers) {
+    private SynchronisedDataDTO synchronise(WorklogRequestDTO worklogRequestDTO, List<UserSyncDTO> syncUsers) {
         Map<Integer, DestinationWorklogDTO> allWorklogsFromOriginServer = jiraWorklogReader.retrieveWorklogsFromOriginServer(worklogRequestDTO);
 
         Map<Integer, DestinationWorklogDTO> filteredOutWorklogs = filterOutAlreadySyncedWorklogs(allWorklogsFromOriginServer, worklogDAO.getAllWorklogIds());
@@ -115,6 +115,31 @@ public class JiraWorklog implements IJiraWorklog {
         // TODO: onsuccesvol gesplaatste worklogs verwerken (met groep overleggen wat er moet gebeuren).
 
         succesfullyPostedWorklogIds.forEach(worklogId -> worklogDAO.addWorklogId(worklogId));
+
+        return calculateSynchronisedData(worklogsToBeSynced, succesfullyPostedWorklogIds);
+    }
+
+    private SynchronisedDataDTO calculateSynchronisedData(Map<Integer, DestinationWorklogDTO> worklogstoBeSynced, List<Integer> succesfullyPostedWorklogIds) {
+        int totalTimeToBeSynced = worklogstoBeSynced
+                .values()
+                .stream()
+                .mapToInt(DestinationWorklogDTO::getTimeSpentSeconds)
+                .sum();
+
+        int totalSynchronisedSeconds = worklogstoBeSynced
+                .entrySet()
+                .stream()
+                .filter(i -> succesfullyPostedWorklogIds.contains(i.getKey()))
+                .mapToInt(i -> i.getValue().getTimeSpentSeconds())
+                .sum();
+
+        int totalFailedSynchronisedSeconds = totalTimeToBeSynced - totalSynchronisedSeconds;
+        int totalWorklogsToBeSynced = worklogstoBeSynced.size();
+        int totalSynchronisedWorklogs = succesfullyPostedWorklogIds.size();
+        int totalFailedSynchronisedWorklogs = totalWorklogsToBeSynced - totalSynchronisedWorklogs;
+
+        return new SynchronisedDataDTO(totalSynchronisedSeconds, totalFailedSynchronisedSeconds, totalSynchronisedWorklogs, totalFailedSynchronisedWorklogs);
+
     }
 
     /**
