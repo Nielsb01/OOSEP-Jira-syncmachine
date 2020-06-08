@@ -2,6 +2,7 @@ package nl.avisi.timer;
 
 import nl.avisi.datasource.AutomaticSynchronisationDAO;
 import nl.avisi.datasource.contracts.IAutomaticSynchronisationDAO;
+import nl.avisi.datasource.exceptions.LastSynchronisationDateNotFoundException;
 import nl.avisi.model.JiraWorklog;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,6 +21,7 @@ public class AutomaticSynchronisationTimerTest {
 
     private JiraWorklog mockedJiraWorklog;
     private IAutomaticSynchronisationDAO mockedAutomaticSynchronisationDAO;
+    Timer mockedTimer;
 
     private static final String MOMENT = "2020-03-06 12:00:00";
     private static final String DATE = "2020-03-06";
@@ -34,13 +36,13 @@ public class AutomaticSynchronisationTimerTest {
 
         mockedAutomaticSynchronisationDAO = Mockito.mock(AutomaticSynchronisationDAO.class);
         sut.setAutomaticSynchronisationDAO(mockedAutomaticSynchronisationDAO);
+
+        mockedTimer = Mockito.mock(Timer.class);
     }
 
     @Test
     void testAutoSynchroniseCallsJiraWorklogAutoSynchroniseWithRightParameters() {
         // Arrange
-        Timer mockedTimer = Mockito.mock(Timer.class);
-
         Mockito.when(mockedAutomaticSynchronisationDAO.getLastSynchronisationMoment()).thenReturn(MOMENT);
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -57,8 +59,6 @@ public class AutomaticSynchronisationTimerTest {
     @Test
     void testAutoSynchroniseCallsAutomaticSynchronisationDAOSetLastSynchronisationMoment() {
         // Arrange
-        Timer mockedTimer = Mockito.mock(Timer.class);
-
         Mockito.when(mockedAutomaticSynchronisationDAO.getLastSynchronisationMoment()).thenReturn(MOMENT);
 
         // Act
@@ -66,5 +66,22 @@ public class AutomaticSynchronisationTimerTest {
 
         // Assert
         Mockito.verify(mockedAutomaticSynchronisationDAO).setLastSynchronisationMoment(anyString());
+    }
+
+    @Test
+    void testAutoSynchroniseSetsLastSyncDateAsCurrentDateIfLastSynchronisationDateNotFoundExceptionIsThrown() {
+        // Arrange
+        Mockito.when(mockedAutomaticSynchronisationDAO.getLastSynchronisationMoment()).thenThrow(new LastSynchronisationDateNotFoundException());
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Date currentMoment = new Date();
+        String expectedCurrentDate = dateFormat.format(currentMoment);
+
+        // Act
+        sut.autoSynchronise(mockedTimer);
+
+        // Assert
+        Mockito.verify(mockedJiraWorklog).autoSynchronisation(expectedCurrentDate, expectedCurrentDate);
+
     }
 }
