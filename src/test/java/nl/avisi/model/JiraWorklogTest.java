@@ -241,7 +241,7 @@ class JiraWorklogTest {
 
         final Map<Integer, Integer> worklogsWithResponseCodes = new HashMap<>();
         worklogsWithResponseCodes.put(1, HTTP_STATUS_OK);
-        worklogsWithResponseCodes.put(2, HTTP_STATUS_OK);
+        worklogsWithResponseCodes.put(2, HTTP_STATUS_INTERNAL_SERVER_ERROR);
         worklogsWithResponseCodes.put(3, HTTP_STATUS_OK);
 
         when(mockedWorklogCreator.createWorklogsOnDestinationServer(anyMap())).thenReturn(worklogsWithResponseCodes);
@@ -250,6 +250,9 @@ class JiraWorklogTest {
         SynchronisedDataDTO result = sut.manualSynchronisation(manualSyncDTO, USER_ID);
 
         // Assert
-        assertEquals(result.getTotalSynchronisedSeconds(), 10800);
+        assertEquals(result.getTotalSynchronisedSeconds(), 7200);
+        assertEquals(result.getTotalFailedSynchronisedSeconds(), 3600);
+        assertEquals(result.getTotalFailedSynchronisedWorklogs(), 1);
+        assertEquals(result.getTotalSynchronisedWorklogs(), 2);
     }
 }
