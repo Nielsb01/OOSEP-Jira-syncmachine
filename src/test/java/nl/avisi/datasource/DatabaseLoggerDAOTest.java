@@ -19,19 +19,16 @@ class DatabaseLoggerDAOTest {
 
     private static final String CLASS_NAME = "className";
     private static final String METHOD_NAME = "methodName";
+    private static final String ERROR_MESS = "errorMess";
     private DatabaseLoggerDAO sut;
     private Database mockedDatabase;
     private PreparedStatement mockedStatement;
-    private Exception mockedException;
 
     @BeforeEach
     void setUp() {
         sut = new DatabaseLoggerDAO();
         mockedDatabase = mock(Database.class);
         mockedStatement = mock(PreparedStatement.class);
-        mockedException = mock(Exception.class);
-
-
         sut.setDatabase(mockedDatabase);
     }
 
@@ -44,12 +41,12 @@ class DatabaseLoggerDAOTest {
         when(mockConnection.prepareStatement(anyString())).thenReturn(mockedStatement);
 
         //Act
-        sut.insertLogIntoDatabase(CLASS_NAME, METHOD_NAME, exception);
+        sut.insertLogIntoDatabase(CLASS_NAME, METHOD_NAME, ERROR_MESS);
 
         //Assert
         verify(mockedStatement).setString(1, CLASS_NAME);
         verify(mockedStatement).setString(2, METHOD_NAME);
-        verify(mockedStatement).setString(3, exception.getMessage());
+        verify(mockedStatement).setString(3, ERROR_MESS);
         verify(mockConnection).close();
     }
 
@@ -59,6 +56,6 @@ class DatabaseLoggerDAOTest {
         when(mockedDatabase.connect()).thenThrow(SQLException.class);
 
         //Act & Assert
-        assertThrows(InternalServerErrorException.class, () -> sut.insertLogIntoDatabase(CLASS_NAME, METHOD_NAME, mockedException));
+        assertThrows(InternalServerErrorException.class, () -> sut.insertLogIntoDatabase(CLASS_NAME, METHOD_NAME, ERROR_MESS));
     }
 }
