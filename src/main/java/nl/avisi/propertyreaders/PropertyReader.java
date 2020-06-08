@@ -1,10 +1,12 @@
 package nl.avisi.propertyreaders;
 
+import nl.avisi.logger.ILogger;
 import nl.avisi.propertyreaders.exceptions.EmptyPropertyException;
 import nl.avisi.propertyreaders.exceptions.PropertyFileNotFoundException;
 import nl.avisi.propertyreaders.exceptions.PropertyFileNotLoadedException;
 import nl.avisi.propertyreaders.exceptions.PropertyNotFoundException;
 
+import javax.inject.Inject;
 import java.io.IOException;
 import java.util.Objects;
 import java.util.Properties;

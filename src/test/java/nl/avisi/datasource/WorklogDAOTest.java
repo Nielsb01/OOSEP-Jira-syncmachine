@@ -38,17 +38,17 @@ class WorklogDAOTest {
 
     @Test
     void testAddWorklogIdClosesConnection() throws Exception {
-        // Setup
+        //Arrange
 
         final Connection mockConnection = mock(Connection.class);
         when(mockedDatabase.connect()).thenReturn(mockConnection);
         when(mockConnection.prepareStatement(anyString())).thenReturn(mockedStatement);
 
 
-        // Run the test
+        //Act
         sut.addWorklogId(0);
 
-        // Verify the results
+        //Assert
         verify(mockConnection).close();
     }
 

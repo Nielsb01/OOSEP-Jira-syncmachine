@@ -3,6 +3,7 @@ package nl.avisi.datasource;
 import nl.avisi.datasource.contracts.IWorklogDAO;
 import nl.avisi.datasource.database.Database;
 import nl.avisi.datasource.datamappers.IDataMapper;
+import nl.avisi.logger.ILogger;
 
 import javax.inject.Inject;
 import javax.ws.rs.InternalServerErrorException;
@@ -15,6 +16,11 @@ import java.util.List;
  * interacts with the database for anything that has to do with worklogs
  */
 public class WorklogDAO implements IWorklogDAO {
+
+    /**
+     * responsible for logging errors
+     */
+    private ILogger logger;
 
     /**
      * Class to manage the database connection
@@ -46,6 +52,11 @@ public class WorklogDAO implements IWorklogDAO {
         this.worklogIdDataMapper = worklogIdDataMapper;
     }
 
+    @Inject
+    public void setLogger(ILogger logger) {
+        this.logger = logger;
+    }
+
     /**
      * Adds a worklogId to the database
      *
@@ -59,6 +70,7 @@ public class WorklogDAO implements IWorklogDAO {
             stmt.setInt(1, worklogId);
             stmt.executeUpdate();
         } catch (SQLException e) {
+            logger.logToDatabase(getClass().getName(), "addWorklogId", e);
             throw new InternalServerErrorException(e.getMessage());
         }
     }
@@ -76,6 +88,7 @@ public class WorklogDAO implements IWorklogDAO {
              PreparedStatement stmt = connection.prepareStatement(GET_ALL_WORKLOG_IDS_SQL)) {
             worklogIds = worklogIdDataMapper.toDTO(stmt.executeQuery());
         } catch (SQLException e) {
+            logger.logToDatabase(getClass().getName(), "getAllWorklogIds", e);
             throw new InternalServerErrorException(e.getMessage());
         }
 
