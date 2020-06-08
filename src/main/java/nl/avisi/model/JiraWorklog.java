@@ -113,11 +113,15 @@ public class JiraWorklog implements IJiraWorklog {
 
         List<Integer> successfullyPostedWorklogIds = filterOutFailedPostedWorklogs(postedWorklogsWithResponseCodes);
 
-        // TODO: onsuccesvol gesplaatste worklogs verwerken (met groep overleggen wat er moet gebeuren).
+      getUnsuccessfullyPostedWorklogs(worklogsToBeSynced, successfullyPostedWorklogIds);
 
         successfullyPostedWorklogIds.forEach(worklogId -> worklogDAO.addWorklogId(worklogId));
 
         return calculateSynchronisedData(worklogsToBeSynced, successfullyPostedWorklogIds);
+    }
+
+    private Map<Integer, DestinationWorklogDTO> getUnsuccessfullyPostedWorklogs(Map<Integer, DestinationWorklogDTO> worklogsToBeSynced, List<Integer> successfullyPostedWorklogIds) {
+        return null;
     }
 
     private SynchronisedDataDTO calculateSynchronisedData(Map<Integer, DestinationWorklogDTO> worklogstoBeSynced, List<Integer> successfullyPostedWorklogIds) {
