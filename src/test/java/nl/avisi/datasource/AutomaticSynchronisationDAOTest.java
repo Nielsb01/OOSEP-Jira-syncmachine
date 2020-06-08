@@ -1,7 +1,6 @@
 package nl.avisi.datasource;
 
 import nl.avisi.datasource.database.Database;
-import nl.avisi.logger.ILogger;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -17,7 +16,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.verify;
 
 public class AutomaticSynchronisationDAOTest {
     private AutomaticSynchronisationDAO sut;

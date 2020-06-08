@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import javax.ejb.Timer;
-
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
