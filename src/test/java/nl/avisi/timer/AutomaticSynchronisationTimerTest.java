@@ -3,6 +3,7 @@ package nl.avisi.timer;
 import nl.avisi.datasource.AutomaticSynchronisationDAO;
 import nl.avisi.datasource.contracts.IAutomaticSynchronisationDAO;
 import nl.avisi.datasource.exceptions.LastSynchronisationDateNotFoundException;
+import nl.avisi.logger.ILogger;
 import nl.avisi.model.JiraWorklog;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,6 +14,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.mock;
 
 public class AutomaticSynchronisationTimerTest {
 
@@ -21,6 +23,7 @@ public class AutomaticSynchronisationTimerTest {
     private JiraWorklog mockedJiraWorklog;
     private IAutomaticSynchronisationDAO mockedAutomaticSynchronisationDAO;
     private Timer mockedTimer;
+    private ILogger mockedLogger;
 
     private static final String MOMENT = "2020-03-06 12:00:00";
     private static final String DATE = "2020-03-06";
@@ -30,13 +33,16 @@ public class AutomaticSynchronisationTimerTest {
     void setUp() {
         sut = new AutomaticSynchronisationTimer();
 
-        mockedJiraWorklog = Mockito.mock(JiraWorklog.class);
+        mockedJiraWorklog = mock(JiraWorklog.class);
         sut.setJiraWorklog(mockedJiraWorklog);
 
-        mockedAutomaticSynchronisationDAO = Mockito.mock(AutomaticSynchronisationDAO.class);
+        mockedAutomaticSynchronisationDAO = mock(AutomaticSynchronisationDAO.class);
         sut.setAutomaticSynchronisationDAO(mockedAutomaticSynchronisationDAO);
 
-        mockedTimer = Mockito.mock(Timer.class);
+        mockedLogger = mock(ILogger.class);
+        sut.setLogger(mockedLogger);
+
+        mockedTimer = mock(Timer.class);
     }
 
     @Test
