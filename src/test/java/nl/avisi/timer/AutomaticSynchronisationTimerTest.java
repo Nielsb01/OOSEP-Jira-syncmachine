@@ -20,7 +20,7 @@ public class AutomaticSynchronisationTimerTest {
 
     private JiraWorklog mockedJiraWorklog;
     private IAutomaticSynchronisationDAO mockedAutomaticSynchronisationDAO;
-    Timer mockedTimer;
+    private Timer mockedTimer;
 
     private static final String MOMENT = "2020-03-06 12:00:00";
     private static final String DATE = "2020-03-06";
