@@ -4,7 +4,6 @@ import nl.avisi.datasource.contracts.ILoginDAO;
 import nl.avisi.datasource.database.Database;
 import nl.avisi.datasource.datamappers.IDataMapper;
 import nl.avisi.dto.UserDTO;
-import nl.avisi.logger.DatabaseLogger;
 import nl.avisi.logger.ILogger;
 
 import javax.inject.Inject;

@@ -1,6 +1,7 @@
 package nl.avisi.logger;
 
 import nl.avisi.datasource.DatabaseLoggerDAO;
+import nl.avisi.datasource.contracts.IDatabaseLoggerDAO;
 
 import javax.inject.Inject;
 
@@ -9,10 +10,10 @@ public class DatabaseLogger implements ILogger {
     /**
      * Used for interacting with the database
      */
-    private DatabaseLoggerDAO databaseLoggerDAO;
+    private IDatabaseLoggerDAO databaseLoggerDAO;
 
     @Inject
-    public void setDatabaseLoggerDAO(DatabaseLoggerDAO databaseLoggerDAO) {
+    public void setDatabaseLoggerDAO(IDatabaseLoggerDAO databaseLoggerDAO) {
         this.databaseLoggerDAO = databaseLoggerDAO;
     }
 

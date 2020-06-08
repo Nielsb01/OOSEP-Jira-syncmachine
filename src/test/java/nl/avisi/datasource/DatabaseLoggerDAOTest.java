@@ -1,12 +1,10 @@
 package nl.avisi.datasource;
 
 import nl.avisi.datasource.database.Database;
-import nl.avisi.logger.DatabaseLogger;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.InternalServerErrorException;
-import java.awt.*;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;

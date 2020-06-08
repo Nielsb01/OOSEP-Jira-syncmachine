@@ -1,6 +1,8 @@
 package nl.avisi.datasource;
 
 import nl.avisi.datasource.database.Database;
+import nl.avisi.logger.ILogger;
+import nl.avisi.datasource.exceptions.LastSynchronisationDateNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -16,11 +18,11 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.verify;
 
 public class AutomaticSynchronisationDAOTest {
     private AutomaticSynchronisationDAO sut;
     private Database mockedDatabase;
+    private ILogger mockedlogger;
 
     private static final String MOMENT = "2020-06-02 12:00:00";
 
@@ -30,7 +32,9 @@ public class AutomaticSynchronisationDAOTest {
         sut = new AutomaticSynchronisationDAO();
 
         mockedDatabase = mock(Database.class);
+        mockedlogger = mock(ILogger.class);
         sut.setDatabase(mockedDatabase);
+        sut.setLogger(mockedlogger);
     }
 
     @Test
@@ -43,6 +47,7 @@ public class AutomaticSynchronisationDAOTest {
         when(mockedDatabase.connect()).thenReturn(mockedConnection);
         when(mockedConnection.prepareStatement(anyString())).thenReturn(mockedStatement);
         when(mockedStatement.executeQuery()).thenReturn(mockedResultSet);
+        when(mockedResultSet.next()).thenReturn(true);
         when(mockedResultSet.getString(anyString())).thenThrow(SQLException.class);
 
         // Act & Assert
@@ -59,6 +64,7 @@ public class AutomaticSynchronisationDAOTest {
         when(mockedDatabase.connect()).thenReturn(mockedConnection);
         when(mockedConnection.prepareStatement(anyString())).thenReturn(mockedStatement);
         when(mockedStatement.executeQuery()).thenReturn(mockedResultSet);
+        when(mockedResultSet.next()).thenReturn(true);
         when(mockedResultSet.getString(anyString())).thenReturn(MOMENT);
 
         // Act
@@ -78,6 +84,7 @@ public class AutomaticSynchronisationDAOTest {
         when(mockedDatabase.connect()).thenReturn(mockedConnection);
         when(mockedConnection.prepareStatement(anyString())).thenReturn(mockedStatement);
         when(mockedStatement.executeQuery()).thenReturn(mockedResultSet);
+        when(mockedResultSet.next()).thenReturn(true);
 
         // Act
         sut.getLastSynchronisationMoment();
@@ -88,64 +95,81 @@ public class AutomaticSynchronisationDAOTest {
 
     @Test
     void testSetLastSynchronisationMomentCallsConnect() throws SQLException {
-        //Arrange
+        // Arrange
         PreparedStatement mockedStatement = mock(PreparedStatement.class);
         Connection mockedConnection = mock(Connection.class);
 
         when(mockedDatabase.connect()).thenReturn(mockedConnection);
         when(mockedConnection.prepareStatement(any())).thenReturn(mockedStatement);
 
-        //Act
+        // Act
         sut.setLastSynchronisationMoment(MOMENT);
 
-        //Assert
+        // Assert
         verify(mockedDatabase).connect();
     }
 
     @Test
     void testSetLastSynchronisationMomentClosesConnectionAndStatement() throws SQLException {
-        //Arrange
+        // Arrange
         PreparedStatement mockedStatement = mock(PreparedStatement.class);
         Connection mockedConnection = mock(Connection.class);
 
         when(mockedDatabase.connect()).thenReturn(mockedConnection);
         when(mockedConnection.prepareStatement(any())).thenReturn(mockedStatement);
 
-        //Act
+        // Act
         sut.setLastSynchronisationMoment(MOMENT);
 
-        //Assert
+        // Assert
         verify(mockedConnection).close();
         verify(mockedStatement).close();
     }
 
     @Test
     void testSetLastSynchronisationMomentSetsPreparedStatementCorrectly() throws SQLException {
-        //Arrange
+        // Arrange
         PreparedStatement mockedStatement = mock(PreparedStatement.class);
         Connection mockedConnection = mock(Connection.class);
 
         when(mockedDatabase.connect()).thenReturn(mockedConnection);
         when(mockedConnection.prepareStatement(any())).thenReturn(mockedStatement);
 
-        //Act
+        // Act
         sut.setLastSynchronisationMoment(MOMENT);
 
-        //Assert
+        // Assert
         verify(mockedStatement).setString(1, MOMENT);
 
     }
 
     @Test
-    void testSetAutoSyncPreferenceThrowsInternalServerErrorWhenSQLExceptionIsThrown() throws SQLException {
-        //Arrange
+    void testSetLastSynchronisationMomentThrowsInternalServerErrorWhenSQLExceptionIsThrown() throws SQLException {
+        // Arrange
         PreparedStatement mockedStatement = mock(PreparedStatement.class);
         Connection mockedConnection = mock(Connection.class);
 
         when(mockedDatabase.connect()).thenThrow(SQLException.class);
         when(mockedConnection.prepareStatement(any())).thenReturn(mockedStatement);
 
-        //Act & Assert
+        // Act & Assert
         assertThrows(InternalServerErrorException.class, () -> sut.setLastSynchronisationMoment(MOMENT));
+    }
+
+    @Test
+    void testGetLastSynchronisationDateThrowsLastSynchronisationDateNotFoundException() throws SQLException {
+        // Arrange
+        ResultSet mockedResultSet = mock(ResultSet.class);
+        PreparedStatement mockedStatement = mock(PreparedStatement.class);
+        Connection mockedConnection = mock(Connection.class);
+
+        when(mockedDatabase.connect()).thenReturn(mockedConnection);;
+        when(mockedConnection.prepareStatement(any())).thenReturn(mockedStatement);
+        when(mockedStatement.executeQuery()).thenReturn(mockedResultSet);
+        when(mockedResultSet.next()).thenReturn(false);
+
+        // Act & Assert
+        assertThrows(LastSynchronisationDateNotFoundException.class, () -> sut.getLastSynchronisationMoment());
+
     }
 }
