@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 /**
@@ -121,7 +122,11 @@ public class JiraWorklog implements IJiraWorklog {
     }
 
     private Map<Integer, DestinationWorklogDTO> getUnsuccessfullyPostedWorklogs(Map<Integer, DestinationWorklogDTO> worklogsToBeSynced, List<Integer> successfullyPostedWorklogIds) {
-        return null;
+        return worklogsToBeSynced
+                .entrySet()
+                .stream()
+                .filter(i -> !successfullyPostedWorklogIds.contains(i.getKey()))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
     private SynchronisedDataDTO calculateSynchronisedData(Map<Integer, DestinationWorklogDTO> worklogstoBeSynced, List<Integer> successfullyPostedWorklogIds) {
