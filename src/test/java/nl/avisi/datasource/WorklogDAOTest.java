@@ -2,6 +2,7 @@ package nl.avisi.datasource;
 
 import nl.avisi.datasource.database.Database;
 import nl.avisi.datasource.datamappers.IDataMapper;
+import nl.avisi.dto.DestinationWorklogDTO;
 import nl.avisi.logger.ILogger;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -27,6 +28,9 @@ class WorklogDAOTest {
     private IDataMapper mockedDataMapper;
     private PreparedStatement mockedStatement;
 
+    private DestinationWorklogDTO destinationWorklogDTO;
+    private static final int WORKLOG_ID = 1;
+
     @BeforeEach
     void setUp() {
         sut = new WorklogDAO();
@@ -38,6 +42,8 @@ class WorklogDAOTest {
         sut.setDatabase(mockedDatabase);
         sut.setLogger(mockedLogger);
         sut.setWorklogIdDataMapper(mockedDataMapper);
+
+        destinationWorklogDTO = new DestinationWorklogDTO("worker", "started", 3600, "originTaskId");
     }
 
     @Test
@@ -91,4 +97,40 @@ class WorklogDAOTest {
         //Act & Assert
         assertThrows(InternalServerErrorException.class, () -> sut.getAllWorklogIds());
     }
+
+    @Test
+    void testAddFailedWorklogThrowsInternalServerErrorExceptionWhenSQLExceptionIsThrown() throws Exception {
+        //Arrange
+        when(mockedDatabase.connect()).thenThrow(SQLException.class);
+
+        //Act & Assert
+        assertThrows(InternalServerErrorException.class, () -> sut.addFailedworklog(destinationWorklogDTO, WORKLOG_ID));
+    }
+
+    @Test
+    void testAddFailedWorklogSetsCorrectStatement() throws Exception {
+        //Arrange
+        final String worker = "worker";
+        final String started = "started";
+        final int timeSpentSeconds = 3600;
+        final String originTaskId = "originTaskId";
+
+
+        final Connection mockConnection = mock(Connection.class);
+        when(mockedDatabase.connect()).thenReturn(mockConnection);
+        when(mockConnection.prepareStatement(anyString())).thenReturn(mockedStatement);
+
+        //Act
+        sut.addFailedworklog(destinationWorklogDTO, WORKLOG_ID);
+
+        //Assert
+        verify(mockedStatement).setInt(1, WORKLOG_ID);
+        verify(mockedStatement).setString(2, worker);
+        verify(mockedStatement).setString(3, started);
+        verify(mockedStatement).setInt(4, timeSpentSeconds);
+        verify(mockedStatement).setString(5, originTaskId);
+        verify(mockedStatement).executeUpdate();
+    }
+
+
 }
