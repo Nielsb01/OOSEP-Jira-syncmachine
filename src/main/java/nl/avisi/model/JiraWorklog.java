@@ -15,7 +15,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
- * Responsible for retrieving and creating worklogs on the specified Jira server through the Tempo API with HTTP requests
+ * Responsible for retrieving, creating and synchronising worklogs
+ * on the specified Jira server through the Tempo API with HTTP requests
  */
 public class JiraWorklog implements IJiraWorklog {
 
@@ -53,14 +54,15 @@ public class JiraWorklog implements IJiraWorklog {
      * a request to manually synchronise their worklogs.
      *
      * @param manualSyncDTO Contains the neccesary information to
-     *                          make a HTTP request to the Tempo API
-     *                          to retrieve worklogs from the
-     *                          origin server
+     *                      make a HTTP request to the Tempo API
+     *                      to retrieve worklogs from the
+     *                      origin server
      * @param userId Id of the user that wants to manually synchronise their
-     *               worklogs
+     * @return {@link SynchronisedDataDTO} Containing successfully and non successfully
+     * synchronised time and worklogs.
      */
     @Override
-    public void manualSynchronisation(ManualSyncDTO manualSyncDTO, int userId) {
+    public SynchronisedDataDTO manualSynchronisation(ManualSyncDTO manualSyncDTO, int userId) {
         List<UserSyncDTO> syncUsers = new ArrayList<>();
         syncUsers.add(userDAO.getSyncUser(userId));
         List<String> originWorkers = syncUsers.stream().map(UserSyncDTO::getOriginWorker).collect(Collectors.toList());
@@ -70,7 +72,7 @@ public class JiraWorklog implements IJiraWorklog {
                 manualSyncDTO.getUntilDate(),
                 originWorkers);
 
-        synchronise(worklogRequestDTO, syncUsers);
+        return synchronise(worklogRequestDTO, syncUsers);
     }
 
     /**
@@ -80,11 +82,10 @@ public class JiraWorklog implements IJiraWorklog {
      * The ids of successfully posted worklogs will be added to the database to prevent
      * wrongfully synchronising worklogs in the future
      *
-     * @param fromDate Date from which to retrieve worklogs. This is the last date
-     *                 that auto synchronisation was completed
+     * @param fromDate  Date from which to retrieve worklogs. This is the last date
+     *                  that auto synchronisation was completed
      * @param untilDate Outer date to retrieve worklog up until this data. This is
-     *               the current date
-     *
+     *                  the current date
      */
     @Override
     public void autoSynchronisation(String fromDate, String untilDate) {
@@ -139,7 +140,6 @@ public class JiraWorklog implements IJiraWorklog {
         int totalFailedSynchronisedWorklogs = totalWorklogsToBeSynced - totalSynchronisedWorklogs;
 
         return new SynchronisedDataDTO(totalSynchronisedSeconds, totalFailedSynchronisedSeconds, totalSynchronisedWorklogs, totalFailedSynchronisedWorklogs);
-
     }
 
     /**
