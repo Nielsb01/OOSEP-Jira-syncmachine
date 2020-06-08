@@ -7,6 +7,7 @@ import kong.unirest.json.JSONObject;
 import nl.avisi.api.TempoInterface;
 import nl.avisi.dto.DestinationWorklogDTO;
 import nl.avisi.dto.WorklogRequestDTO;
+import nl.avisi.logger.ILogger;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -22,6 +23,7 @@ public class JiraWorklogReaderTest {
 
     private TempoInterface mockedTempoInterface;
     private HttpResponse mockedHttpResponse;
+    private ILogger mockedLogger;
 
     private static final String WORKER_VALUE = "ttt";
     private static final String STARTED_VALUE = "fff";
@@ -46,8 +48,11 @@ public class JiraWorklogReaderTest {
         sut.setTempoInterface(mockedTempoInterface);
 
         mockedHttpResponse = Mockito.mock(HttpResponse.class);
+        mockedLogger = Mockito.mock(ILogger.class);
 
         worklogRequestDTO = new WorklogRequestDTO();
+
+        sut.setLogger(mockedLogger);
     }
 
     @Test

@@ -3,6 +3,7 @@ package nl.avisi.datasource;
 import nl.avisi.datasource.database.Database;
 import nl.avisi.datasource.datamappers.IDataMapper;
 import nl.avisi.dto.UserDTO;
+import nl.avisi.logger.ILogger;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -21,6 +22,7 @@ class LoginDAOTest {
     private LoginDAO sut;
     private IDataMapper mockedIDataMapper;
     private Database mockedDatabase;
+    private ILogger mockedLogger;
 
 
     @BeforeEach
@@ -28,9 +30,11 @@ class LoginDAOTest {
         sut = new LoginDAO();
         mockedIDataMapper = mock(IDataMapper.class);
         mockedDatabase = mock(Database.class);
+        mockedLogger = mock(ILogger.class);
 
         sut.setUserDataMapper(mockedIDataMapper);
         sut.setDatabase(mockedDatabase);
+        sut.setLogger(mockedLogger);
 
     }
 
