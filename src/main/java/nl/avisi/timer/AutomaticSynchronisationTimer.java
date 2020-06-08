@@ -1,6 +1,8 @@
 package nl.avisi.timer;
 
 import nl.avisi.datasource.AutomaticSynchronisationDAO;
+import nl.avisi.datasource.contracts.IAutomaticSynchronisationDAO;
+import nl.avisi.datasource.exceptions.LastSynchronisationDateNotFoundException;
 import nl.avisi.model.JiraWorklog;
 import nl.avisi.propertyreaders.JiraSynchronisationProperties;
 
@@ -19,7 +21,7 @@ public class AutomaticSynchronisationTimer {
 
     private JiraSynchronisationProperties jiraSynchronisationProperties;
 
-    private AutomaticSynchronisationDAO automaticSynchronisationDAO;
+    private IAutomaticSynchronisationDAO automaticSynchronisationDAO;
 
     private JiraWorklog jiraWorklog;
 
@@ -34,7 +36,7 @@ public class AutomaticSynchronisationTimer {
     }
 
     @Inject
-    public void setAutomaticSynchronisationDAO(AutomaticSynchronisationDAO automaticSynchronisationDAO) {
+    public void setAutomaticSynchronisationDAO(IAutomaticSynchronisationDAO automaticSynchronisationDAO) {
         this.automaticSynchronisationDAO = automaticSynchronisationDAO;
     }
 
@@ -62,9 +64,11 @@ public class AutomaticSynchronisationTimer {
     @Timeout
     public void autoSynchronise(Timer timer) {
         String currentMoment = getCurrentMoment();
-        String lastSynchronisationMoment = automaticSynchronisationDAO.getLastSynchronisationMoment();
+        String lastSynchronisationMoment;
 
-        if (lastSynchronisationMoment == null) {
+        try {
+            lastSynchronisationMoment = automaticSynchronisationDAO.getLastSynchronisationMoment();
+        } catch (LastSynchronisationDateNotFoundException e) {
             lastSynchronisationMoment = currentMoment;
         }
 
