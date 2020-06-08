@@ -1,6 +1,7 @@
 package nl.avisi.datasource;
 
 import nl.avisi.datasource.database.Database;
+import nl.avisi.datasource.exceptions.LastSynchronisationDateNotFoundException;
 
 import javax.inject.Inject;
 import javax.ws.rs.InternalServerErrorException;
@@ -36,7 +37,7 @@ public class AutomaticSynchronisationDAO {
             boolean resultStatus = resultSet.next();
 
             if (!resultStatus) {
-                return null;
+                throw new LastSynchronisationDateNotFoundException();
             }
 
             lastSynchronisationDate = resultSet.getString("synchronisation_moment");
