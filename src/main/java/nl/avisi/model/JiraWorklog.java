@@ -2,10 +2,7 @@ package nl.avisi.model;
 
 import nl.avisi.datasource.contracts.IUserDAO;
 import nl.avisi.datasource.contracts.IWorklogDAO;
-import nl.avisi.dto.DestinationWorklogDTO;
-import nl.avisi.dto.ManualSyncDTO;
-import nl.avisi.dto.UserSyncDTO;
-import nl.avisi.dto.WorklogRequestDTO;
+import nl.avisi.dto.*;
 import nl.avisi.model.contracts.IJiraWorklog;
 import nl.avisi.model.worklog_crud.JiraWorklogCreator;
 import nl.avisi.model.worklog_crud.JiraWorklogReader;
