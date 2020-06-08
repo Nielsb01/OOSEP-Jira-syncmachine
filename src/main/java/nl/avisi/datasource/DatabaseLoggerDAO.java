@@ -1,5 +1,6 @@
 package nl.avisi.datasource;
 
+import nl.avisi.datasource.contracts.IDatabaseLoggerDAO;
 import nl.avisi.datasource.database.Database;
 
 import javax.inject.Inject;
@@ -8,7 +9,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-public class DatabaseLoggerDAO {
+public class DatabaseLoggerDAO implements IDatabaseLoggerDAO {
     /**
      * Class to manage the database connection
      */

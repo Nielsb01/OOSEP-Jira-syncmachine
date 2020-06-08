@@ -1,5 +1,6 @@
 package nl.avisi.datasource;
 
+import nl.avisi.datasource.contracts.IAutomaticSynchronisationDAO;
 import nl.avisi.datasource.database.Database;
 import nl.avisi.datasource.exceptions.LastSynchronisationDateNotFoundException;
 
@@ -10,7 +11,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class AutomaticSynchronisationDAO {
+public class AutomaticSynchronisationDAO implements IAutomaticSynchronisationDAO {
 
     private Database database;
 
