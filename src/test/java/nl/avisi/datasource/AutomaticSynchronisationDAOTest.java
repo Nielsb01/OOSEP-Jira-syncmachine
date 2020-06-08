@@ -1,6 +1,7 @@
 package nl.avisi.datasource;
 
 import nl.avisi.datasource.database.Database;
+import nl.avisi.logger.ILogger;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -21,6 +22,7 @@ import static org.mockito.Mockito.verify;
 public class AutomaticSynchronisationDAOTest {
     private AutomaticSynchronisationDAO sut;
     private Database mockedDatabase;
+    private ILogger mockedlogger;
 
     private static final String MOMENT = "2020-06-02 12:00:00";
 
@@ -29,8 +31,10 @@ public class AutomaticSynchronisationDAOTest {
     void setUp() {
         sut = new AutomaticSynchronisationDAO();
 
+        mockedlogger = mock(ILogger.class);
         mockedDatabase = mock(Database.class);
         sut.setDatabase(mockedDatabase);
+        sut.setLogger(mockedlogger);
     }
 
     @Test

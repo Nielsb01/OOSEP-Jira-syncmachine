@@ -1,6 +1,7 @@
 package nl.avisi.datasource;
 
 import nl.avisi.datasource.database.Database;
+import nl.avisi.logger.ILogger;
 
 import javax.inject.Inject;
 import javax.ws.rs.InternalServerErrorException;
@@ -13,10 +14,21 @@ public class AutomaticSynchronisationDAO {
 
     private Database database;
 
+    /**
+     * responsible for logging errors
+     */
+    private ILogger logger;
+
     @Inject
     public void setDatabase(Database database) {
         this.database = database;
     }
+
+    @Inject
+    public void setLogger(ILogger logger) {
+        this.logger = logger;
+    }
+
 
     private static final String GET_LAST_SYNCHRONISATION_DATE_SQL = "SELECT synchronisation_moment FROM automatic_synchronisation ORDER BY synchronisation_moment DESC LIMIT 1";
     private static final String SET_LAST_SYNCHRONISATION_DAT_SQL = "INSERT INTO automatic_synchronisation (synchronisation_moment) VALUES (?)";
@@ -42,6 +54,7 @@ public class AutomaticSynchronisationDAO {
             lastSynchronisationDate = resultSet.getString("synchronisation_moment");
 
         } catch (SQLException e) {
+            logger.logToDatabase(getClass().getName(), "getLastSynchronisationMoment", e);
             throw new InternalServerErrorException(e.getMessage());
         }
 
@@ -61,6 +74,7 @@ public class AutomaticSynchronisationDAO {
 
             stmt.executeUpdate();
         } catch (SQLException e) {
+            logger.logToDatabase(getClass().getName(), "setLastSynchronisationMoment", e);
             throw new InternalServerErrorException(String.format("Error occurred while updating the auto synchronisation status: %s", e.getMessage()));
         }
 
