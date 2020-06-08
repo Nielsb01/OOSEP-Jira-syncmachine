@@ -15,11 +15,7 @@ import java.util.Properties;
  * Responsible for querying property files
  */
 public class PropertyReader {
-
-    /**
-     * responsible for logging errors
-     */
-
+    
     private Properties properties;
 
     /**
