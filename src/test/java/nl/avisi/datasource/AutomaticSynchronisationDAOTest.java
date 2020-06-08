@@ -30,8 +30,8 @@ public class AutomaticSynchronisationDAOTest {
     void setUp() {
         sut = new AutomaticSynchronisationDAO();
 
-        mockedlogger = mock(ILogger.class);
         mockedDatabase = mock(Database.class);
+        mockedlogger = mock(ILogger.class);
         sut.setDatabase(mockedDatabase);
         sut.setLogger(mockedlogger);
     }
