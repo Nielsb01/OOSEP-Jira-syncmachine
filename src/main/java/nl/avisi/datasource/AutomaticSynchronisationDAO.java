@@ -2,6 +2,7 @@ package nl.avisi.datasource;
 
 import nl.avisi.datasource.contracts.IAutomaticSynchronisationDAO;
 import nl.avisi.datasource.database.Database;
+import nl.avisi.logger.ILogger;
 import nl.avisi.datasource.exceptions.LastSynchronisationDateNotFoundException;
 
 import javax.inject.Inject;
@@ -13,15 +14,25 @@ import java.sql.SQLException;
 
 public class AutomaticSynchronisationDAO implements IAutomaticSynchronisationDAO {
 
+    private static final String GET_LAST_SYNCHRONISATION_DATE_SQL = "SELECT synchronisation_moment FROM automatic_synchronisation ORDER BY synchronisation_moment DESC LIMIT 1";
+    private static final String SET_LAST_SYNCHRONISATION_DAT_SQL = "INSERT INTO automatic_synchronisation (synchronisation_moment) VALUES (?)";
+
     private Database database;
+
+    /**
+     * responsible for logging errors
+     */
+    private ILogger logger;
 
     @Inject
     public void setDatabase(Database database) {
         this.database = database;
     }
 
-    private static final String GET_LAST_SYNCHRONISATION_DATE_SQL = "SELECT synchronisation_moment FROM automatic_synchronisation ORDER BY synchronisation_moment DESC LIMIT 1";
-    private static final String SET_LAST_SYNCHRONISATION_DAT_SQL = "INSERT INTO automatic_synchronisation (synchronisation_moment) VALUES (?)";
+    @Inject
+    public void setLogger(ILogger logger) {
+        this.logger = logger;
+    }
 
     /**
      * fetches the last datetime on which an automatic synchronisation occurred
@@ -44,6 +55,7 @@ public class AutomaticSynchronisationDAO implements IAutomaticSynchronisationDAO
             lastSynchronisationDate = resultSet.getString("synchronisation_moment");
 
         } catch (SQLException e) {
+            logger.logToDatabase(getClass().getName(), "getLastSynchronisationMoment", e);
             throw new InternalServerErrorException(e.getMessage());
         }
 
@@ -63,6 +75,7 @@ public class AutomaticSynchronisationDAO implements IAutomaticSynchronisationDAO
 
             stmt.executeUpdate();
         } catch (SQLException e) {
+            logger.logToDatabase(getClass().getName(), "setLastSynchronisationMoment", e);
             throw new InternalServerErrorException(String.format("Error occurred while updating the last synchronisation date: %s", e.getMessage()));
         }
 

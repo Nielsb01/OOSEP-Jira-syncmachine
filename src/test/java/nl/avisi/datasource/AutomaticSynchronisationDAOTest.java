@@ -1,6 +1,7 @@
 package nl.avisi.datasource;
 
 import nl.avisi.datasource.database.Database;
+import nl.avisi.logger.ILogger;
 import nl.avisi.datasource.exceptions.LastSynchronisationDateNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,6 +22,7 @@ import static org.mockito.Mockito.*;
 public class AutomaticSynchronisationDAOTest {
     private AutomaticSynchronisationDAO sut;
     private Database mockedDatabase;
+    private ILogger mockedlogger;
 
     private static final String MOMENT = "2020-06-02 12:00:00";
 
@@ -30,7 +32,9 @@ public class AutomaticSynchronisationDAOTest {
         sut = new AutomaticSynchronisationDAO();
 
         mockedDatabase = mock(Database.class);
+        mockedlogger = mock(ILogger.class);
         sut.setDatabase(mockedDatabase);
+        sut.setLogger(mockedlogger);
     }
 
     @Test
@@ -127,7 +131,6 @@ public class AutomaticSynchronisationDAOTest {
         // Arrange
         PreparedStatement mockedStatement = mock(PreparedStatement.class);
         Connection mockedConnection = mock(Connection.class);
-
 
         when(mockedDatabase.connect()).thenReturn(mockedConnection);
         when(mockedConnection.prepareStatement(any())).thenReturn(mockedStatement);
