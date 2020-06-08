@@ -14,6 +14,9 @@ import java.sql.SQLException;
 
 public class AutomaticSynchronisationDAO implements IAutomaticSynchronisationDAO {
 
+    private static final String GET_LAST_SYNCHRONISATION_DATE_SQL = "SELECT synchronisation_moment FROM automatic_synchronisation ORDER BY synchronisation_moment DESC LIMIT 1";
+    private static final String SET_LAST_SYNCHRONISATION_DAT_SQL = "INSERT INTO automatic_synchronisation (synchronisation_moment) VALUES (?)";
+
     private Database database;
 
     /**
@@ -30,9 +33,6 @@ public class AutomaticSynchronisationDAO implements IAutomaticSynchronisationDAO
     public void setLogger(ILogger logger) {
         this.logger = logger;
     }
-    
-    private static final String GET_LAST_SYNCHRONISATION_DATE_SQL = "SELECT synchronisation_moment FROM automatic_synchronisation ORDER BY synchronisation_moment DESC LIMIT 1";
-    private static final String SET_LAST_SYNCHRONISATION_DAT_SQL = "INSERT INTO automatic_synchronisation (synchronisation_moment) VALUES (?)";
 
     /**
      * fetches the last datetime on which an automatic synchronisation occurred
