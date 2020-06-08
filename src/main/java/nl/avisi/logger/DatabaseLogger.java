@@ -23,6 +23,6 @@ public class DatabaseLogger implements ILogger {
      */
     @Override
     public void logToDatabase(String originClass, String originMethod, Exception e) {
-        databaseLoggerDAO.insertLogIntoDatabase(originClass, originMethod, e);
+        databaseLoggerDAO.insertLogIntoDatabase(originClass, originMethod, e.getMessage());
     }
 }
