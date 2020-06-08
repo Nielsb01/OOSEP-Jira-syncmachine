@@ -1,6 +1,8 @@
 package nl.avisi.datasource;
 
+import nl.avisi.datasource.contracts.IAutomaticSynchronisationDAO;
 import nl.avisi.datasource.database.Database;
+import nl.avisi.datasource.exceptions.LastSynchronisationDateNotFoundException;
 
 import javax.inject.Inject;
 import javax.ws.rs.InternalServerErrorException;
@@ -9,7 +11,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class AutomaticSynchronisationDAO {
+public class AutomaticSynchronisationDAO implements IAutomaticSynchronisationDAO {
 
     private Database database;
 
@@ -36,7 +38,7 @@ public class AutomaticSynchronisationDAO {
             boolean resultStatus = resultSet.next();
 
             if (!resultStatus) {
-                return null;
+                throw new LastSynchronisationDateNotFoundException();
             }
 
             lastSynchronisationDate = resultSet.getString("synchronisation_moment");
@@ -61,7 +63,7 @@ public class AutomaticSynchronisationDAO {
 
             stmt.executeUpdate();
         } catch (SQLException e) {
-            throw new InternalServerErrorException(String.format("Error occurred while updating the auto synchronisation status: %s", e.getMessage()));
+            throw new InternalServerErrorException(String.format("Error occurred while updating the last synchronisation date: %s", e.getMessage()));
         }
 
     }
