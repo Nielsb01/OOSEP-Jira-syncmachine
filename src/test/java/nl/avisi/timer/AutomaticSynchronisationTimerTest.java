@@ -1,6 +1,7 @@
 package nl.avisi.timer;
 
 import nl.avisi.datasource.AutomaticSynchronisationDAO;
+import nl.avisi.datasource.contracts.IAutomaticSynchronisationDAO;
 import nl.avisi.model.JiraWorklog;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,7 +19,7 @@ public class AutomaticSynchronisationTimerTest {
     private AutomaticSynchronisationTimer sut;
 
     private JiraWorklog mockedJiraWorklog;
-    private AutomaticSynchronisationDAO mockedAutomaticSynchronisationDAO;
+    private IAutomaticSynchronisationDAO mockedAutomaticSynchronisationDAO;
 
     private static final String MOMENT = "2020-03-06 12:00:00";
     private static final String DATE = "2020-03-06";
