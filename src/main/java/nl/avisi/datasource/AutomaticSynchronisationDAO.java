@@ -63,7 +63,7 @@ public class AutomaticSynchronisationDAO implements IAutomaticSynchronisationDAO
 
             stmt.executeUpdate();
         } catch (SQLException e) {
-            throw new InternalServerErrorException(String.format("Error occurred while updating the auto synchronisation status: %s", e.getMessage()));
+            throw new InternalServerErrorException(String.format("Error occurred while updating the last synchronisation date: %s", e.getMessage()));
         }
 
     }
