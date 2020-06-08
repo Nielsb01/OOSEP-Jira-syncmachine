@@ -58,7 +58,7 @@ public class JiraWorklog implements IJiraWorklog {
      *                      make a HTTP request to the Tempo API
      *                      to retrieve worklogs from the
      *                      origin server
-     * @param userId Id of the user that wants to manually synchronise their
+     * @param userId        Id of the user that wants to manually synchronise their
      * @return {@link SynchronisedDataDTO} Containing successfully and non successfully
      * synchronised time and worklogs.
      */
@@ -114,7 +114,7 @@ public class JiraWorklog implements IJiraWorklog {
 
         List<Integer> successfullyPostedWorklogIds = filterOutFailedPostedWorklogs(postedWorklogsWithResponseCodes);
 
-      getUnsuccessfullyPostedWorklogs(worklogsToBeSynced, successfullyPostedWorklogIds);
+        getUnsuccessfullyPostedWorklogs(worklogsToBeSynced, successfullyPostedWorklogIds).forEach((key, value) -> worklogDAO.addFailedworklog(value, key));
 
         successfullyPostedWorklogIds.forEach(worklogId -> worklogDAO.addWorklogId(worklogId));
 
