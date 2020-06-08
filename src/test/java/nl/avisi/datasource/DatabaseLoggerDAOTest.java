@@ -2,6 +2,7 @@ package nl.avisi.datasource;
 
 import nl.avisi.datasource.database.Database;
 import nl.avisi.logger.DatabaseLogger;
+import nl.avisi.logger.ILogger;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

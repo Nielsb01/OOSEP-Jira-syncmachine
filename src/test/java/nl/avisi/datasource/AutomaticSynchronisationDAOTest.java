@@ -1,6 +1,7 @@
 package nl.avisi.datasource;
 
 import nl.avisi.datasource.database.Database;
+import nl.avisi.logger.ILogger;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -43,6 +44,7 @@ public class AutomaticSynchronisationDAOTest {
         when(mockedDatabase.connect()).thenReturn(mockedConnection);
         when(mockedConnection.prepareStatement(anyString())).thenReturn(mockedStatement);
         when(mockedStatement.executeQuery()).thenReturn(mockedResultSet);
+        when(mockedResultSet.next()).thenReturn(true);
         when(mockedResultSet.getString(anyString())).thenThrow(SQLException.class);
 
         // Act & Assert
@@ -59,6 +61,7 @@ public class AutomaticSynchronisationDAOTest {
         when(mockedDatabase.connect()).thenReturn(mockedConnection);
         when(mockedConnection.prepareStatement(anyString())).thenReturn(mockedStatement);
         when(mockedStatement.executeQuery()).thenReturn(mockedResultSet);
+        when(mockedResultSet.next()).thenReturn(true);
         when(mockedResultSet.getString(anyString())).thenReturn(MOMENT);
 
         // Act
@@ -78,6 +81,7 @@ public class AutomaticSynchronisationDAOTest {
         when(mockedDatabase.connect()).thenReturn(mockedConnection);
         when(mockedConnection.prepareStatement(anyString())).thenReturn(mockedStatement);
         when(mockedStatement.executeQuery()).thenReturn(mockedResultSet);
+        when(mockedResultSet.next()).thenReturn(true);
 
         // Act
         sut.getLastSynchronisationMoment();
