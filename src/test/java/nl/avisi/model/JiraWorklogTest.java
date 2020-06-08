@@ -26,7 +26,7 @@ class JiraWorklogTest {
     private static final int HTTP_STATUS_OK = 200;
     private static final int HTTP_STATUS_UNAUTHORIZED = 401;
     private static final int HTTP_STATUS_INTERNAL_SERVER_ERROR = 500;
-    public static final int USER_ID = 1;
+    private static final int USER_ID = 1;
 
     private JiraWorklog sut;
     private IUserDAO mockedUserDao;
@@ -232,6 +232,11 @@ class JiraWorklogTest {
     @Test
     void testManualSynchronisationReturnsCorrectSynchronisationData() {
         // Arrange
+        int totalSynchronisedWorklogs = 2;
+        int totalFailedSynchronisedWorklogs = 1;
+        int totalFailedSynchronisedSeconds = 3600;
+        int totalSynchronisedSeconds = 7200;
+
         ManualSyncDTO manualSyncDTO = new ManualSyncDTO(syncFromDate, syncUntilDate);
         final List<UserSyncDTO> syncUsers = new ArrayList<>();
         UserSyncDTO userSyncDTO = new UserSyncDTO(originWorker, destinationWorker);
@@ -250,9 +255,9 @@ class JiraWorklogTest {
         SynchronisedDataDTO result = sut.manualSynchronisation(manualSyncDTO, USER_ID);
 
         // Assert
-        assertEquals(result.getTotalSynchronisedSeconds(), 7200);
-        assertEquals(result.getTotalFailedSynchronisedSeconds(), 3600);
-        assertEquals(result.getTotalFailedSynchronisedWorklogs(), 1);
-        assertEquals(result.getTotalSynchronisedWorklogs(), 2);
+        assertEquals(result.getTotalSynchronisedSeconds(), totalSynchronisedSeconds);
+        assertEquals(result.getTotalFailedSynchronisedSeconds(), totalFailedSynchronisedSeconds);
+        assertEquals(result.getTotalFailedSynchronisedWorklogs(), totalFailedSynchronisedWorklogs);
+        assertEquals(result.getTotalSynchronisedWorklogs(), totalSynchronisedWorklogs);
     }
 }

@@ -111,16 +111,16 @@ public class JiraWorklog implements IJiraWorklog {
 
         Map<Integer, Integer> postedWorklogsWithResponseCodes = jiraWorklogCreator.createWorklogsOnDestinationServer(worklogsToBeSynced);
 
-        List<Integer> succesfullyPostedWorklogIds = filterOutFailedPostedWorklogs(postedWorklogsWithResponseCodes);
+        List<Integer> successfullyPostedWorklogIds = filterOutFailedPostedWorklogs(postedWorklogsWithResponseCodes);
 
         // TODO: onsuccesvol gesplaatste worklogs verwerken (met groep overleggen wat er moet gebeuren).
 
-        succesfullyPostedWorklogIds.forEach(worklogId -> worklogDAO.addWorklogId(worklogId));
+        successfullyPostedWorklogIds.forEach(worklogId -> worklogDAO.addWorklogId(worklogId));
 
-        return calculateSynchronisedData(worklogsToBeSynced, succesfullyPostedWorklogIds);
+        return calculateSynchronisedData(worklogsToBeSynced, successfullyPostedWorklogIds);
     }
 
-    private SynchronisedDataDTO calculateSynchronisedData(Map<Integer, DestinationWorklogDTO> worklogstoBeSynced, List<Integer> succesfullyPostedWorklogIds) {
+    private SynchronisedDataDTO calculateSynchronisedData(Map<Integer, DestinationWorklogDTO> worklogstoBeSynced, List<Integer> successfullyPostedWorklogIds) {
         int totalTimeToBeSynced = worklogstoBeSynced
                 .values()
                 .stream()
@@ -130,13 +130,13 @@ public class JiraWorklog implements IJiraWorklog {
         int totalSynchronisedSeconds = worklogstoBeSynced
                 .entrySet()
                 .stream()
-                .filter(i -> succesfullyPostedWorklogIds.contains(i.getKey()))
+                .filter(i -> successfullyPostedWorklogIds.contains(i.getKey()))
                 .mapToInt(i -> i.getValue().getTimeSpentSeconds())
                 .sum();
 
         int totalFailedSynchronisedSeconds = totalTimeToBeSynced - totalSynchronisedSeconds;
         int totalWorklogsToBeSynced = worklogstoBeSynced.size();
-        int totalSynchronisedWorklogs = succesfullyPostedWorklogIds.size();
+        int totalSynchronisedWorklogs = successfullyPostedWorklogIds.size();
         int totalFailedSynchronisedWorklogs = totalWorklogsToBeSynced - totalSynchronisedWorklogs;
 
         return new SynchronisedDataDTO(totalSynchronisedSeconds, totalFailedSynchronisedSeconds, totalSynchronisedWorklogs, totalFailedSynchronisedWorklogs);
