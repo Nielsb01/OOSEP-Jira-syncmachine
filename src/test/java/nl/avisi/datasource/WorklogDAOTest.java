@@ -24,6 +24,11 @@ import static org.mockito.Mockito.*;
 
 class WorklogDAOTest {
 
+    private static final String WORKER = "worker";
+    private static final String STARTED = "started";
+    private static final int TIME_SPENT_SECONDS = 3600;
+    private static final String ORIGIN_TASK_ID = "originTaskId";
+
     private WorklogDAO sut;
     private Database mockedDatabase;
     private ILogger mockedLogger;
@@ -51,7 +56,7 @@ class WorklogDAOTest {
         sut.setWorklogIdDataMapper(mockedWorklogIdDataMapper);
         sut.setDestinationWorklogMapper(mockedWorklogMapper);
 
-        destinationWorklogDTO = new DestinationWorklogDTO("worker", "started", 3600, "originTaskId");
+        destinationWorklogDTO = new DestinationWorklogDTO(WORKER, STARTED, TIME_SPENT_SECONDS, ORIGIN_TASK_ID);
     }
 
     @Test
@@ -118,12 +123,6 @@ class WorklogDAOTest {
     @Test
     void testAddFailedWorklogSetsCorrectStatement() throws Exception {
         //Arrange
-        final String worker = "worker";
-        final String started = "started";
-        final int timeSpentSeconds = 3600;
-        final String originTaskId = "originTaskId";
-
-
         final Connection mockConnection = mock(Connection.class);
         when(mockedDatabase.connect()).thenReturn(mockConnection);
         when(mockConnection.prepareStatement(anyString())).thenReturn(mockedStatement);
@@ -133,10 +132,10 @@ class WorklogDAOTest {
 
         //Assert
         verify(mockedStatement).setInt(1, WORKLOG_ID);
-        verify(mockedStatement).setString(2, worker);
-        verify(mockedStatement).setString(3, started);
-        verify(mockedStatement).setInt(4, timeSpentSeconds);
-        verify(mockedStatement).setString(5, originTaskId);
+        verify(mockedStatement).setString(2, WORKER);
+        verify(mockedStatement).setString(3, STARTED);
+        verify(mockedStatement).setInt(4, TIME_SPENT_SECONDS);
+        verify(mockedStatement).setString(5, ORIGIN_TASK_ID);
         verify(mockedStatement).executeUpdate();
     }
 
