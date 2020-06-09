@@ -51,6 +51,12 @@ public class WorklogDAO implements IWorklogDAO {
     private static final String ADD_FAILED_WORKLOG_SQL = String.format("INSERT IGNORE INTO %s VALUES (?, ?, ?, ?, ?)", FAILED_WORKLOG_TABLE_NAME);
 
     /**
+     * SQL statement for deleting a worlog
+     * from the failed_worklog table
+     */
+    private static final String DELETE_FAILED_WORKLOG_SQL = String.format("DELETE FROM %s WHERE %s = ?", FAILED_WORKLOG_TABLE_NAME, WORKLOG_ID_COLUMN_NAME);
+
+    /**
      * SQL query for inserting a new worklogId
      */
     private static final String ADD_WORKLOG_ID_SQL = String.format("INSERT INTO %s (%s) VALUES (?)", SYNCHRONISED_WORKLOG_TABLE_NAME, WORKLOG_ID_COLUMN_NAME);
@@ -130,7 +136,15 @@ public class WorklogDAO implements IWorklogDAO {
 
     @Override
     public void deleteFailedWorklog(Integer worklogId) {
-        //todo
+
+        try (Connection connection = database.connect();
+             PreparedStatement stmt = connection.prepareStatement(DELETE_FAILED_WORKLOG_SQL)) {
+            stmt.setInt(1, worklogId);
+
+        } catch (SQLException e) {
+            logger.logToDatabase(getClass().getName(), "getAllWorklogIds", e);
+            throw new InternalServerErrorException(e.getMessage());
+        }
     }
 
     /**
