@@ -2,6 +2,7 @@ package nl.avisi.controller;
 
 
 import nl.avisi.dto.ManualSyncDTO;
+import nl.avisi.dto.SynchronisedDataDTO;
 import nl.avisi.model.contracts.IJiraWorklog;
 
 import javax.inject.Inject;
@@ -35,7 +36,7 @@ public class SyncController {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response manualSynchronisation(ManualSyncDTO manualSyncDTO, @PathParam("userId") int userId) {
-        jiraWorklog.manualSynchronisation(manualSyncDTO, userId);
-        return Response.status(Response.Status.OK).build();
+        SynchronisedDataDTO synchronisedData = jiraWorklog.manualSynchronisation(manualSyncDTO, userId);
+        return Response.status(Response.Status.OK).entity(synchronisedData).build();
     }
 }
