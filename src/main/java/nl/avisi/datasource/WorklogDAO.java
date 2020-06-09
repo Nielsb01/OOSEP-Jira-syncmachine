@@ -47,19 +47,19 @@ public class WorklogDAO implements IWorklogDAO {
     private static final String SYNCHRONISED_WORKLOG_TABLE_NAME = "synchronised_worklog";
 
     /**
-     * SQL statement for inserting a worlog
+     * SQL statement for inserting a worklog
      * into the failed_worklog table
      */
-    private static final String GET_ALL_FAILED_WORKLOG_SQL = String.format("SELECT * FROM %s", FAILED_WORKLOG_TABLE_NAME);
+    private static final String GET_ALL_FAILED_WORKLOGS_SQL = String.format("SELECT * FROM %s", FAILED_WORKLOG_TABLE_NAME);
 
     /**
-     * SQL statement for inserting a worlog
+     * SQL statement for inserting a worklog
      * into the failed_worklog table
      */
     private static final String ADD_FAILED_WORKLOG_SQL = String.format("INSERT IGNORE INTO %s VALUES (?, ?, ?, ?, ?)", FAILED_WORKLOG_TABLE_NAME);
 
     /**
-     * SQL statement for deleting a worlog
+     * SQL statement for deleting a worklog
      * from the failed_worklog table
      */
     private static final String DELETE_FAILED_WORKLOG_SQL = String.format("DELETE FROM %s WHERE %s = ?", FAILED_WORKLOG_TABLE_NAME, WORKLOG_ID_COLUMN_NAME);
@@ -80,7 +80,7 @@ public class WorklogDAO implements IWorklogDAO {
     private IDataMapper<List<Integer>> worklogIdDataMapper;
 
     /**
-     * Used for mapping a Resultsets to DestinationWorklogDTO
+     * Used for mapping a Resultset to DestinationWorklogDTO
      */
     private IDataMapper<DestinationWorklogDTO> destinationWorklogMapper;
 
@@ -158,7 +158,7 @@ public class WorklogDAO implements IWorklogDAO {
         Map<Integer, DestinationWorklogDTO> failedworklogs = new HashMap<>();
 
         try (Connection connection = database.connect();
-             PreparedStatement stmt = connection.prepareStatement(GET_ALL_FAILED_WORKLOG_SQL)) {
+             PreparedStatement stmt = connection.prepareStatement(GET_ALL_FAILED_WORKLOGS_SQL)) {
 
             ResultSet rs = stmt.executeQuery();
 
