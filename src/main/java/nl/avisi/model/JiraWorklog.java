@@ -111,7 +111,7 @@ public class JiraWorklog implements IJiraWorklog {
 
         List<Integer> successfullyPostedWorklogIds = filterOutFailedPostedWorklogs(jiraWorklogCreator.createWorklogsOnDestinationServer(failedWorklogs));
 
-        getUnsuccessfullyPostedWorklogs(failedWorklogs, successfullyPostedWorklogIds).forEach((worklogId, worklog) -> worklogDAO.addFailedworklog(worklog, worklogId));
+        getUnsuccessfullyPostedWorklogs(failedWorklogs, successfullyPostedWorklogIds).forEach((worklogId, worklog) -> worklogDAO.addFailedworklog(worklogId, worklog));
 
         successfullyPostedWorklogIds.forEach(worklogId -> worklogDAO.addWorklogId(worklogId));
         successfullyPostedWorklogIds.forEach(worklogId -> worklogDAO.deleteFailedWorklog(worklogId));
@@ -128,7 +128,7 @@ public class JiraWorklog implements IJiraWorklog {
 
         List<Integer> successfullyPostedWorklogIds = filterOutFailedPostedWorklogs(postedWorklogsWithResponseCodes);
 
-        getUnsuccessfullyPostedWorklogs(worklogsToBeSynced, successfullyPostedWorklogIds).forEach((worklogId, worklog) -> worklogDAO.addFailedworklog(worklog, worklogId));
+        getUnsuccessfullyPostedWorklogs(worklogsToBeSynced, successfullyPostedWorklogIds).forEach((worklogId, worklog) -> worklogDAO.addFailedworklog(worklogId, worklog));
 
         successfullyPostedWorklogIds.forEach(worklogId -> worklogDAO.addWorklogId(worklogId));
         successfullyPostedWorklogIds.forEach(worklogId -> worklogDAO.deleteFailedWorklog(worklogId));

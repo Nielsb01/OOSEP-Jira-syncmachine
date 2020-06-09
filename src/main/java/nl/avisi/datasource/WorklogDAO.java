@@ -162,7 +162,7 @@ public class WorklogDAO implements IWorklogDAO {
 
             ResultSet rs = stmt.executeQuery();
 
-            while(rs.next()) {
+            while (rs.next()) {
                 failedworklogs.put(rs.getInt("worklog_id"), destinationWorklogMapper.toDTO(rs));
             }
 
@@ -185,7 +185,7 @@ public class WorklogDAO implements IWorklogDAO {
         try (Connection connection = database.connect();
              PreparedStatement stmt = connection.prepareStatement(DELETE_FAILED_WORKLOG_SQL)) {
             stmt.setInt(1, worklogId);
-
+            stmt.executeUpdate();
         } catch (SQLException e) {
             logger.logToDatabase(getClass().getName(), "deleteFailedWorklog", e);
             throw new InternalServerErrorException(e.getMessage());
