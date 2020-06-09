@@ -28,9 +28,9 @@ class WorklogDAOTest {
     private Database mockedDatabase;
     private ILogger mockedLogger;
     private IDataMapper mockedWorklogIdDataMapper;
+    private IDataMapper mockedWorklogMapper;
     private PreparedStatement mockedStatement;
     private ResultSet mockedResultSet;
-    private IDataMapper mockedWorklogMapper;
 
     private DestinationWorklogDTO destinationWorklogDTO;
     private static final int WORKLOG_ID = 1;
@@ -49,6 +49,7 @@ class WorklogDAOTest {
         sut.setDatabase(mockedDatabase);
         sut.setLogger(mockedLogger);
         sut.setWorklogIdDataMapper(mockedWorklogIdDataMapper);
+        sut.setDestinationWorklogMapper(mockedWorklogMapper);
 
         destinationWorklogDTO = new DestinationWorklogDTO("worker", "started", 3600, "originTaskId");
     }
@@ -156,16 +157,39 @@ class WorklogDAOTest {
         when(mockConnection.prepareStatement(anyString())).thenReturn(mockedStatement);
         when(mockedStatement.executeQuery()).thenReturn(mockedResultSet);
         when(mockedResultSet.next()).thenReturn(true, false);
-        when(mockedResultSet.getInt(anyString())).thenReturn(1);
+        when(mockedResultSet.getInt(anyString())).thenReturn(WORKLOG_ID);
         when(mockedWorklogMapper.toDTO(mockedResultSet)).thenReturn(destinationWorklogDTO);
 
         //Act
         Map<Integer, DestinationWorklogDTO> result = sut.getAllFailedWorklogs();
 
         //Assert
-        assertEquals(result.get(1), destinationWorklogDTO);
+        assertEquals(result.get(WORKLOG_ID), destinationWorklogDTO);
         assertEquals(result.size(), 1);
     }
 
+    @Test
+    void testDeleteFailedworklogThrowsInternalServerErrorExceptionWhenSQLExceptionIsThrown() throws Exception {
+        //Arrange
+        when(mockedDatabase.connect()).thenThrow(SQLException.class);
+
+        //Act & Assert
+        assertThrows(InternalServerErrorException.class, () -> sut.deleteFailedWorklog(WORKLOG_ID));
+    }
+
+    @Test
+    void testDeleteFailedworklogSetsCorrectStatement() throws Exception {
+        //Arrange
+        final Connection mockConnection = mock(Connection.class);
+        when(mockedDatabase.connect()).thenReturn(mockConnection);
+        when(mockConnection.prepareStatement(anyString())).thenReturn(mockedStatement);
+
+        //Act
+        sut.deleteFailedWorklog(WORKLOG_ID);
+
+        //Assert
+        verify(mockedStatement).setInt(1, WORKLOG_ID);
+        verify(mockedStatement).executeUpdate();
+    }
 
 }
