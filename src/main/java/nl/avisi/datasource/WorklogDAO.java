@@ -163,7 +163,7 @@ public class WorklogDAO implements IWorklogDAO {
             ResultSet rs = stmt.executeQuery();
 
             while (rs.next()) {
-                failedworklogs.put(rs.getInt("worklog_id"), destinationWorklogMapper.toDTO(rs));
+                failedworklogs.put(rs.getInt(WORKLOG_ID_COLUMN_NAME), destinationWorklogMapper.toDTO(rs));
             }
 
         } catch (SQLException e) {
