@@ -260,4 +260,27 @@ class JiraWorklogTest {
         assertEquals(result.getTotalFailedSynchronisedWorklogs(), totalFailedSynchronisedWorklogs);
         assertEquals(result.getTotalSynchronisedWorklogs(), totalSynchronisedWorklogs);
     }
+
+    @Test
+    void testManualSynchronisationSavesfailedWorklogs() {
+        // Arrange
+        final UserSyncDTO syncUser = new UserSyncDTO(originWorker, destinationWorker);
+        final ManualSyncDTO manualSyncDTO = new ManualSyncDTO(syncFromDate, syncUntilDate);
+
+        when(mockedUserDao.getSyncUser(anyInt())).thenReturn(syncUser);
+        when(mockedWorklogReader.retrieveWorklogsFromOriginServer(anyObject())).thenReturn(destinationWorklogs);
+
+        final Map<Integer, Integer> worklogsWithResponseCodes = new HashMap<>();
+        worklogsWithResponseCodes.put(1, HTTP_STATUS_INTERNAL_SERVER_ERROR);
+        worklogsWithResponseCodes.put(2, HTTP_STATUS_INTERNAL_SERVER_ERROR);
+        worklogsWithResponseCodes.put(3, HTTP_STATUS_INTERNAL_SERVER_ERROR);
+
+        when(mockedWorklogCreator.createWorklogsOnDestinationServer(anyMap())).thenReturn(worklogsWithResponseCodes);
+
+        // Act
+        sut.manualSynchronisation(manualSyncDTO, 0);
+
+        // Assert
+        verify(mockedWorklogDao, times(destinationWorklogs.size())).addFailedworklog(anyObject(), anyInt());
+    }
 }

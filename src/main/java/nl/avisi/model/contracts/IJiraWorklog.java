@@ -7,4 +7,6 @@ public interface IJiraWorklog {
     SynchronisedDataDTO manualSynchronisation(ManualSyncDTO manualSyncDTO, int userId);
 
     void autoSynchronisation(String fromDate, String toDate);
+
+    void synchroniseFailedWorklogs();
 }

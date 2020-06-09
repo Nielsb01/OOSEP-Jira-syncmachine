@@ -92,7 +92,10 @@ public class JiraWorklog implements IJiraWorklog {
     public void autoSynchronisation(String fromDate, String untilDate) {
         List<UserSyncDTO> syncUsers = userDAO.getAllAutoSyncUsers();
 
-        List<String> originWorkers = syncUsers.stream().map(UserSyncDTO::getOriginWorker).collect(Collectors.toList());
+        List<String> originWorkers = syncUsers
+                .stream()
+                .map(UserSyncDTO::getOriginWorker)
+                .collect(Collectors.toList());
 
         WorklogRequestDTO worklogRequestDTO = new WorklogRequestDTO(
                 fromDate,
@@ -102,6 +105,16 @@ public class JiraWorklog implements IJiraWorklog {
         synchronise(worklogRequestDTO, syncUsers);
     }
 
+    @Override
+    public void synchroniseFailedWorklogs() {
+        Map<Integer, DestinationWorklogDTO> failedWorklogs = worklogDAO.getAllFailedWorklogs();
+
+        List<Integer> successfullyPostedWorklogIds = filterOutFailedPostedWorklogs(jiraWorklogCreator.createWorklogsOnDestinationServer(failedWorklogs));
+
+        getUnsuccessfullyPostedWorklogs(failedWorklogs, successfullyPostedWorklogIds).forEach((worklogId, worklog) -> worklogDAO.addFailedworklog(worklog, worklogId));
+
+        successfullyPostedWorklogIds.forEach(worklogId -> worklogDAO.addWorklogId(worklogId));
+    }
 
     private SynchronisedDataDTO synchronise(WorklogRequestDTO worklogRequestDTO, List<UserSyncDTO> syncUsers) {
         Map<Integer, DestinationWorklogDTO> allWorklogsFromOriginServer = jiraWorklogReader.retrieveWorklogsFromOriginServer(worklogRequestDTO);
@@ -114,7 +127,7 @@ public class JiraWorklog implements IJiraWorklog {
 
         List<Integer> successfullyPostedWorklogIds = filterOutFailedPostedWorklogs(postedWorklogsWithResponseCodes);
 
-        getUnsuccessfullyPostedWorklogs(worklogsToBeSynced, successfullyPostedWorklogIds).forEach((key, value) -> worklogDAO.addFailedworklog(value, key));
+        getUnsuccessfullyPostedWorklogs(worklogsToBeSynced, successfullyPostedWorklogIds).forEach((worklogId, worklog) -> worklogDAO.addFailedworklog(worklog, worklogId));
 
         successfullyPostedWorklogIds.forEach(worklogId -> worklogDAO.addWorklogId(worklogId));
 
