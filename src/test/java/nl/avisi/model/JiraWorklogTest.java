@@ -271,7 +271,7 @@ class JiraWorklogTest {
         when(mockedWorklogReader.retrieveWorklogsFromOriginServer(anyObject())).thenReturn(destinationWorklogs);
 
         // Act
-        sut.manualSynchronisation(manualSyncDTO, 0);
+        sut.manualSynchronisation(manualSyncDTO, USER_ID);
 
         // Assert
         verify(mockedWorklogDao, times(destinationWorklogs.size())).addFailedworklog(anyInt(), anyObject());
