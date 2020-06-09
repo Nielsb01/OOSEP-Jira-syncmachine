@@ -71,6 +71,10 @@ public class AutomaticSynchronisationTimer {
         return scheduleExpression;
     }
 
+    /**
+     * Bootstraps the automatic synchronisation process
+     * @param timer The JEE timer that starts this function
+     */
     @Timeout
     public void autoSynchronise(Timer timer) {
         String currentMoment = getCurrentMoment();
