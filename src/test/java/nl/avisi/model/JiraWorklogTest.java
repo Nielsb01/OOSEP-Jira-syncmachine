@@ -81,7 +81,7 @@ class JiraWorklogTest {
         when(mockedWorklogCreator.createWorklogsOnDestinationServer(anyMap())).thenReturn(worklogsWithResponseCodes);
 
         // Act
-        sut.manualSynchronisation(manualSyncDTO, 0);
+        sut.manualSynchronisation(manualSyncDTO, USER_ID);
 
         // Assert
         verify(mockedWorklogDao, times(destinationWorklogs.size())).addWorklogId(anyInt());
@@ -104,7 +104,7 @@ class JiraWorklogTest {
         when(mockedWorklogCreator.createWorklogsOnDestinationServer(anyMap())).thenReturn(worklogsWithResponseCodes);
 
         // Act
-        sut.manualSynchronisation(manualSyncDTO, 0);
+        sut.manualSynchronisation(manualSyncDTO, USER_ID);
 
         // Assert
         verify(mockedWorklogDao, never()).addWorklogId(anyInt());
