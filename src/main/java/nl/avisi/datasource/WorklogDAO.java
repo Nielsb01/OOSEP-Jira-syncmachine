@@ -30,25 +30,35 @@ public class WorklogDAO implements IWorklogDAO {
     private Database database;
 
     /**
+     * Column name for worklog id
+     */
+    private static final String WORKLOG_ID_COLUMN_NAME = "worklog_id";
+
+    /**
      * Table name for failed worklog
      */
     private static final String FAILED_WORKLOG_TABLE_NAME = "failed_worklog";
 
     /**
+     * Table name for synchronised worklog
+     */
+    private static final String SYNCHRONISED_WORKLOG_TABLE_NAME = "synchronised_worklog";
+
+    /**
      * SQL statement for inserting a worlog
      * into the failed_worklog table
      */
-    private static final String ADD_FAILED_WORKLOG_SQL = String.format("INSERT INTO %s VALUES (?, ?, ?, ?, ?)", FAILED_WORKLOG_TABLE_NAME);
+    private static final String ADD_FAILED_WORKLOG_SQL = String.format("INSERT IGNORE INTO %s VALUES (?, ?, ?, ?, ?)", FAILED_WORKLOG_TABLE_NAME);
 
     /**
      * SQL query for inserting a new worklogId
      */
-    private static final String ADD_WORKLOG_ID_SQL = "INSERT IGNORE INTO synchronised_worklog (worklog_id) VALUES (?)";
+    private static final String ADD_WORKLOG_ID_SQL = String.format("INSERT INTO %s (%s) VALUES (?)", SYNCHRONISED_WORKLOG_TABLE_NAME, WORKLOG_ID_COLUMN_NAME);
 
     /**
      * SQL query for retrieving all worklogIds
      */
-    private static final String GET_ALL_WORKLOG_IDS_SQL = "SELECT worklog_id FROM synchronised_worklog";
+    private static final String GET_ALL_WORKLOG_IDS_SQL = String.format("SELECT %s FROM %s", SYNCHRONISED_WORKLOG_TABLE_NAME, WORKLOG_ID_COLUMN_NAME);
 
     /**
      * Class to map Resultsets to in-application objects
@@ -120,7 +130,7 @@ public class WorklogDAO implements IWorklogDAO {
 
     @Override
     public void deleteFailedWorklog(Integer worklogId) {
-//todo
+        //todo
     }
 
     /**
