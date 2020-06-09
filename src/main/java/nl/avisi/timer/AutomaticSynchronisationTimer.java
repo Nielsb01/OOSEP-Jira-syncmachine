@@ -74,21 +74,12 @@ public class AutomaticSynchronisationTimer {
     @Timeout
     public void autoSynchronise(Timer timer) {
         String currentMoment = getCurrentMoment();
-        String lastSynchronisationMoment;
-
-        try {
-            lastSynchronisationMoment = automaticSynchronisationDAO.getLastSynchronisationMoment();
-        } catch (LastSynchronisationDateNotFoundException e) {
-            logger.logToDatabase(getClass().getName(), "autoSynchronise", e);
-            lastSynchronisationMoment = currentMoment;
-        }
+        String lastSynchronisationMoment = getLastSynchronisationMoment();
 
         jiraWorklog.autoSynchronisation(
                 castMomentToDate(lastSynchronisationMoment),
                 castMomentToDate(currentMoment)
         );
-
-        jiraWorklog.synchroniseFailedWorklogs();
 
         updateLastSynchronisationMoment(currentMoment);
     }
@@ -103,6 +94,19 @@ public class AutomaticSynchronisationTimer {
         Date currentMoment = new Date();
 
         return dateFormat.format(currentMoment);
+    }
+
+    private String getLastSynchronisationMoment() {
+        String lastSynchronisationMoment;
+
+        try {
+            lastSynchronisationMoment = automaticSynchronisationDAO.getLastSynchronisationMoment();
+        } catch (LastSynchronisationDateNotFoundException e) {
+            logger.logToDatabase(getClass().getName(), "autoSynchronise", e);
+            lastSynchronisationMoment = getCurrentMoment();
+        }
+
+        return lastSynchronisationMoment;
     }
 
     private String castMomentToDate(String moment) {
