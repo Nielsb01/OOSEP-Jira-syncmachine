@@ -12,6 +12,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 
 /**
  * interacts with the database for anything that has to do with worklogs
@@ -42,7 +43,7 @@ public class WorklogDAO implements IWorklogDAO {
     /**
      * SQL query for inserting a new worklogId
      */
-    private static final String ADD_WORKLOG_ID_SQL = "INSERT INTO synchronised_worklog (worklog_id) VALUES (?)";
+    private static final String ADD_WORKLOG_ID_SQL = "INSERT IGNORE INTO synchronised_worklog (worklog_id) VALUES (?)";
 
     /**
      * SQL query for retrieving all worklogIds
@@ -109,6 +110,17 @@ public class WorklogDAO implements IWorklogDAO {
             logger.logToDatabase(getClass().getName(), "addFailedworklog", e);
             throw new InternalServerErrorException(e.getMessage());
         }
+    }
+
+    @Override
+    public Map<Integer, DestinationWorklogDTO> getAllFailedWorklogs() {
+        return null;
+        //todo
+    }
+
+    @Override
+    public void deleteFailedWorklog(Integer worklogId) {
+//todo
     }
 
     /**

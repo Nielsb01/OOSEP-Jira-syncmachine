@@ -114,6 +114,7 @@ public class JiraWorklog implements IJiraWorklog {
         getUnsuccessfullyPostedWorklogs(failedWorklogs, successfullyPostedWorklogIds).forEach((worklogId, worklog) -> worklogDAO.addFailedworklog(worklog, worklogId));
 
         successfullyPostedWorklogIds.forEach(worklogId -> worklogDAO.addWorklogId(worklogId));
+        successfullyPostedWorklogIds.forEach(worklogId -> worklogDAO.deleteFailedWorklog(worklogId));
     }
 
     private SynchronisedDataDTO synchronise(WorklogRequestDTO worklogRequestDTO, List<UserSyncDTO> syncUsers) {
@@ -130,6 +131,7 @@ public class JiraWorklog implements IJiraWorklog {
         getUnsuccessfullyPostedWorklogs(worklogsToBeSynced, successfullyPostedWorklogIds).forEach((worklogId, worklog) -> worklogDAO.addFailedworklog(worklog, worklogId));
 
         successfullyPostedWorklogIds.forEach(worklogId -> worklogDAO.addWorklogId(worklogId));
+        successfullyPostedWorklogIds.forEach(worklogId -> worklogDAO.deleteFailedWorklog(worklogId));
 
         return calculateSynchronisedData(worklogsToBeSynced, successfullyPostedWorklogIds);
     }

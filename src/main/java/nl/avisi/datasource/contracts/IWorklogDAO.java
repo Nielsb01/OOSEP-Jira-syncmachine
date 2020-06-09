@@ -13,4 +13,6 @@ public interface IWorklogDAO {
     void addFailedworklog(DestinationWorklogDTO worklog, Integer worklogId);
 
     Map<Integer, DestinationWorklogDTO> getAllFailedWorklogs();
+
+    void deleteFailedWorklog(Integer worklogId);
 }
