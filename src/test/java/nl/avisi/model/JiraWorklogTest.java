@@ -270,12 +270,11 @@ class JiraWorklogTest {
         when(mockedUserDao.getSyncUser(anyInt())).thenReturn(syncUser);
         when(mockedWorklogReader.retrieveWorklogsFromOriginServer(anyObject())).thenReturn(destinationWorklogs);
 
-
         // Act
         sut.manualSynchronisation(manualSyncDTO, 0);
 
         // Assert
-        verify(mockedWorklogDao, times(destinationWorklogs.size())).addFailedworklog(anyObject(), anyInt());
+        verify(mockedWorklogDao, times(destinationWorklogs.size())).addFailedworklog(anyInt(), anyObject());
     }
 
     @Test
@@ -329,7 +328,7 @@ class JiraWorklogTest {
         sut.synchroniseFailedWorklogs();
 
         //Assert
-        verify(mockedWorklogDao, times(destinationWorklogs.size() - 1)).addFailedworklog(anyObject(), anyInt());
+        verify(mockedWorklogDao, times(destinationWorklogs.size() - 1)).addFailedworklog(anyInt(), anyObject());
     }
 
     @Test

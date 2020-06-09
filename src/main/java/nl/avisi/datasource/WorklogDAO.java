@@ -10,7 +10,9 @@ import javax.inject.Inject;
 import javax.ws.rs.InternalServerErrorException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -48,6 +50,12 @@ public class WorklogDAO implements IWorklogDAO {
      * SQL statement for inserting a worlog
      * into the failed_worklog table
      */
+    private static final String GET_ALL_FAILED_WORKLOG_SQL = String.format("SELECT * FROM %s", FAILED_WORKLOG_TABLE_NAME);
+
+    /**
+     * SQL statement for inserting a worlog
+     * into the failed_worklog table
+     */
     private static final String ADD_FAILED_WORKLOG_SQL = String.format("INSERT IGNORE INTO %s VALUES (?, ?, ?, ?, ?)", FAILED_WORKLOG_TABLE_NAME);
 
     /**
@@ -67,9 +75,19 @@ public class WorklogDAO implements IWorklogDAO {
     private static final String GET_ALL_WORKLOG_IDS_SQL = String.format("SELECT %s FROM %s", SYNCHRONISED_WORKLOG_TABLE_NAME, WORKLOG_ID_COLUMN_NAME);
 
     /**
-     * Class to map Resultsets to in-application objects
+     * Used for mapping a Resultset to a List of worklog ids
      */
     private IDataMapper<List<Integer>> worklogIdDataMapper;
+
+    /**
+     * Used for mapping a Resultsets to DestinationWorklogDTO
+     */
+    private IDataMapper<DestinationWorklogDTO> destinationWorklogMapper;
+
+    @Inject
+    public void setDestinationWorklogMapper(IDataMapper<DestinationWorklogDTO> destinationWorklogMapper) {
+        this.destinationWorklogMapper = destinationWorklogMapper;
+    }
 
     @Inject
     public void setDatabase(Database database) {
@@ -128,12 +146,39 @@ public class WorklogDAO implements IWorklogDAO {
         }
     }
 
+    /**
+     * Retrieves all failed worklogs from the database and maps it
+     * to a DestinationWorklogDTO coupled to the respective worklog_id
+     *
+     * @return Map containing the worklog_id together with the correct
+     * DestinationWorklogDTO
+     */
     @Override
     public Map<Integer, DestinationWorklogDTO> getAllFailedWorklogs() {
-        return null;
-        //todo
+        Map<Integer, DestinationWorklogDTO> failedworklogs = new HashMap<>();
+
+        try (Connection connection = database.connect();
+             PreparedStatement stmt = connection.prepareStatement(GET_ALL_FAILED_WORKLOG_SQL)) {
+
+            ResultSet rs = stmt.executeQuery();
+
+            while(rs.next()) {
+                failedworklogs.put(rs.getInt("worklog_id"), destinationWorklogMapper.toDTO(rs));
+            }
+
+        } catch (SQLException e) {
+            logger.logToDatabase(getClass().getName(), "getAllFailedWorklogs", e);
+            throw new InternalServerErrorException(e.getMessage());
+        }
+        return failedworklogs;
     }
 
+    /**
+     * Deletes the failed worklog that matches the given worklogId.
+     * This method is called when a worklog is successfully synchronised.
+     *
+     * @param worklogId Id of the worklog that needs to be deleted
+     */
     @Override
     public void deleteFailedWorklog(Integer worklogId) {
 
@@ -142,7 +187,7 @@ public class WorklogDAO implements IWorklogDAO {
             stmt.setInt(1, worklogId);
 
         } catch (SQLException e) {
-            logger.logToDatabase(getClass().getName(), "getAllWorklogIds", e);
+            logger.logToDatabase(getClass().getName(), "deleteFailedWorklog", e);
             throw new InternalServerErrorException(e.getMessage());
         }
     }

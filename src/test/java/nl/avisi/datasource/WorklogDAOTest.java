@@ -104,7 +104,7 @@ class WorklogDAOTest {
         when(mockedDatabase.connect()).thenThrow(SQLException.class);
 
         //Act & Assert
-        assertThrows(InternalServerErrorException.class, () -> sut.addFailedworklog(destinationWorklogDTO, WORKLOG_ID));
+        assertThrows(InternalServerErrorException.class, () -> sut.addFailedworklog(WORKLOG_ID, destinationWorklogDTO));
     }
 
     @Test
@@ -121,7 +121,7 @@ class WorklogDAOTest {
         when(mockConnection.prepareStatement(anyString())).thenReturn(mockedStatement);
 
         //Act
-        sut.addFailedworklog(destinationWorklogDTO, WORKLOG_ID);
+        sut.addFailedworklog(WORKLOG_ID, destinationWorklogDTO);
 
         //Assert
         verify(mockedStatement).setInt(1, WORKLOG_ID);
