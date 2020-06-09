@@ -146,7 +146,7 @@ class WorklogDAOTest {
         when(mockedDatabase.connect()).thenThrow(SQLException.class);
 
         //Act & Assert
-        assertThrows(InternalServerErrorException.class, () -> sut.getAllWorklogIds());
+        assertThrows(InternalServerErrorException.class, () -> sut.getAllFailedWorklogs());
     }
 
     @Test
