@@ -96,7 +96,7 @@ public class WorklogDAO implements IWorklogDAO {
      * @param worklogId The matching worklogId
      */
     @Override
-    public void addFailedworklog(DestinationWorklogDTO worklog, Integer worklogId) {
+    public void addFailedworklog(Integer worklogId, DestinationWorklogDTO worklog) {
         try (Connection connection = database.connect();
              PreparedStatement stmt = connection.prepareStatement(ADD_FAILED_WORKLOG_SQL)) {
             stmt.setInt(1, worklogId);

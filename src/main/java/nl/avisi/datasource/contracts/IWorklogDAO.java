@@ -10,7 +10,7 @@ public interface IWorklogDAO {
 
     void addWorklogId(int worklogId);
 
-    void addFailedworklog(DestinationWorklogDTO worklog, Integer worklogId);
+    void addFailedworklog(Integer worklogId, DestinationWorklogDTO worklog);
 
     Map<Integer, DestinationWorklogDTO> getAllFailedWorklogs();
 
