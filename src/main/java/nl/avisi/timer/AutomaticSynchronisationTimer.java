@@ -88,6 +88,8 @@ public class AutomaticSynchronisationTimer {
                 castMomentToDate(currentMoment)
         );
 
+        jiraWorklog.synchroniseFailedWorklogs();
+
         updateLastSynchronisationMoment(currentMoment);
     }
 

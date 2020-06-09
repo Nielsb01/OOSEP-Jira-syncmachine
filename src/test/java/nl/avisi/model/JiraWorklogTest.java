@@ -81,7 +81,7 @@ class JiraWorklogTest {
         when(mockedWorklogCreator.createWorklogsOnDestinationServer(anyMap())).thenReturn(worklogsWithResponseCodes);
 
         // Act
-        sut.manualSynchronisation(manualSyncDTO, 0);
+        sut.manualSynchronisation(manualSyncDTO, USER_ID);
 
         // Assert
         verify(mockedWorklogDao, times(destinationWorklogs.size())).addWorklogId(anyInt());
@@ -104,7 +104,7 @@ class JiraWorklogTest {
         when(mockedWorklogCreator.createWorklogsOnDestinationServer(anyMap())).thenReturn(worklogsWithResponseCodes);
 
         // Act
-        sut.manualSynchronisation(manualSyncDTO, 0);
+        sut.manualSynchronisation(manualSyncDTO, USER_ID);
 
         // Assert
         verify(mockedWorklogDao, never()).addWorklogId(anyInt());
@@ -259,5 +259,111 @@ class JiraWorklogTest {
         assertEquals(result.getTotalFailedSynchronisedSeconds(), totalFailedSynchronisedSeconds);
         assertEquals(result.getTotalFailedSynchronisedWorklogs(), totalFailedSynchronisedWorklogs);
         assertEquals(result.getTotalSynchronisedWorklogs(), totalSynchronisedWorklogs);
+    }
+
+    @Test
+    void testManualSynchronisationSavesfailedWorklogs() {
+        // Arrange
+        final UserSyncDTO syncUser = new UserSyncDTO(originWorker, destinationWorker);
+        final ManualSyncDTO manualSyncDTO = new ManualSyncDTO(syncFromDate, syncUntilDate);
+
+        when(mockedUserDao.getSyncUser(anyInt())).thenReturn(syncUser);
+        when(mockedWorklogReader.retrieveWorklogsFromOriginServer(anyObject())).thenReturn(destinationWorklogs);
+
+        // Act
+        sut.manualSynchronisation(manualSyncDTO, USER_ID);
+
+        // Assert
+        verify(mockedWorklogDao, times(destinationWorklogs.size())).addFailedworklog(anyInt(), anyObject());
+    }
+
+    @Test
+    void testSynchroniseFailedWorklogsCallsGetAllFailedWorklogs() {
+        //Arrange
+        final Map<Integer, Integer> worklogsWithResponseCodes = new HashMap<>();
+        worklogsWithResponseCodes.put(1, HTTP_STATUS_INTERNAL_SERVER_ERROR);
+        worklogsWithResponseCodes.put(2, HTTP_STATUS_INTERNAL_SERVER_ERROR);
+        worklogsWithResponseCodes.put(3, HTTP_STATUS_INTERNAL_SERVER_ERROR);
+
+        when(mockedWorklogDao.getAllFailedWorklogs()).thenReturn(destinationWorklogs);
+        when(mockedWorklogCreator.createWorklogsOnDestinationServer(anyMap())).thenReturn(worklogsWithResponseCodes);
+
+        //Act
+        sut.synchroniseFailedWorklogs();
+
+        //Assert
+        verify(mockedWorklogDao).getAllFailedWorklogs();
+    }
+
+    @Test
+    void testSynchroniseFailedWorklogsCallsCreateWorklogs() {
+        //Arrange
+        final Map<Integer, Integer> worklogsWithResponseCodes = new HashMap<>();
+        worklogsWithResponseCodes.put(1, HTTP_STATUS_INTERNAL_SERVER_ERROR);
+        worklogsWithResponseCodes.put(2, HTTP_STATUS_INTERNAL_SERVER_ERROR);
+        worklogsWithResponseCodes.put(3, HTTP_STATUS_INTERNAL_SERVER_ERROR);
+
+        when(mockedWorklogDao.getAllFailedWorklogs()).thenReturn(destinationWorklogs);
+        when(mockedWorklogCreator.createWorklogsOnDestinationServer(anyMap())).thenReturn(worklogsWithResponseCodes);
+
+        //Act
+        sut.synchroniseFailedWorklogs();
+
+        //Assert
+        verify(mockedWorklogCreator).createWorklogsOnDestinationServer(destinationWorklogs);
+    }
+
+    @Test
+    void testSynchroniseFailedWorklogsCallsAddFailedWorklogCorrectAmountOfTimes() {
+        //Arrange
+        final Map<Integer, Integer> worklogsWithResponseCodes = new HashMap<>();
+        worklogsWithResponseCodes.put(1, HTTP_STATUS_INTERNAL_SERVER_ERROR);
+        worklogsWithResponseCodes.put(2, HTTP_STATUS_INTERNAL_SERVER_ERROR);
+        worklogsWithResponseCodes.put(3, HTTP_STATUS_OK);
+
+        when(mockedWorklogDao.getAllFailedWorklogs()).thenReturn(destinationWorklogs);
+        when(mockedWorklogCreator.createWorklogsOnDestinationServer(anyMap())).thenReturn(worklogsWithResponseCodes);
+
+        //Act
+        sut.synchroniseFailedWorklogs();
+
+        //Assert
+        verify(mockedWorklogDao, times(destinationWorklogs.size() - 1)).addFailedworklog(anyInt(), anyObject());
+    }
+
+    @Test
+    void testSynchroniseFailedWorklogsCallsAddWorklogIdCorrectAmountOfTimes() {
+        //Arrange
+        final Map<Integer, Integer> worklogsWithResponseCodes = new HashMap<>();
+        worklogsWithResponseCodes.put(1, HTTP_STATUS_OK);
+        worklogsWithResponseCodes.put(2, HTTP_STATUS_OK);
+        worklogsWithResponseCodes.put(3, HTTP_STATUS_INTERNAL_SERVER_ERROR);
+
+        when(mockedWorklogDao.getAllFailedWorklogs()).thenReturn(destinationWorklogs);
+        when(mockedWorklogCreator.createWorklogsOnDestinationServer(anyMap())).thenReturn(worklogsWithResponseCodes);
+
+        //Act
+        sut.synchroniseFailedWorklogs();
+
+        //Assert
+        verify(mockedWorklogDao, times(destinationWorklogs.size() - 1)).addWorklogId(anyInt());
+    }
+
+    @Test
+    void testSynchroniseFailedWorklogsCallsDeleteFailedWorklogCorrectAmountOfTimes() {
+        //Arrange
+        final Map<Integer, Integer> worklogsWithResponseCodes = new HashMap<>();
+        worklogsWithResponseCodes.put(1, HTTP_STATUS_OK);
+        worklogsWithResponseCodes.put(2, HTTP_STATUS_OK);
+        worklogsWithResponseCodes.put(3, HTTP_STATUS_INTERNAL_SERVER_ERROR);
+
+        when(mockedWorklogDao.getAllFailedWorklogs()).thenReturn(destinationWorklogs);
+        when(mockedWorklogCreator.createWorklogsOnDestinationServer(anyMap())).thenReturn(worklogsWithResponseCodes);
+
+        //Act
+        sut.synchroniseFailedWorklogs();
+
+        //Assert
+        verify(mockedWorklogDao, times(destinationWorklogs.size() - 1)).deleteFailedWorklog(anyInt());
     }
 }

@@ -89,4 +89,20 @@ public class AutomaticSynchronisationTimerTest {
         Mockito.verify(mockedJiraWorklog).autoSynchronisation(expectedCurrentDate, expectedCurrentDate);
 
     }
+
+    @Test
+    void testAutoSynchroniseCallsJiraWorklogSynchroniseFailedWorklogs() {
+        // Arrange
+        Mockito.when(mockedAutomaticSynchronisationDAO.getLastSynchronisationMoment()).thenReturn(MOMENT);
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Date currentMoment = new Date();
+        String expectedCurrentDate = dateFormat.format(currentMoment);
+
+        // Act
+        sut.autoSynchronise(mockedTimer);
+
+        // Assert
+        Mockito.verify(mockedJiraWorklog).synchroniseFailedWorklogs();
+    }
 }

@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 /**
@@ -57,7 +58,7 @@ public class JiraWorklog implements IJiraWorklog {
      *                      make a HTTP request to the Tempo API
      *                      to retrieve worklogs from the
      *                      origin server
-     * @param userId Id of the user that wants to manually synchronise their
+     * @param userId        Id of the user that wants to manually synchronise their
      * @return {@link SynchronisedDataDTO} Containing successfully and non successfully
      * synchronised time and worklogs.
      */
@@ -91,7 +92,10 @@ public class JiraWorklog implements IJiraWorklog {
     public void autoSynchronisation(String fromDate, String untilDate) {
         List<UserSyncDTO> syncUsers = userDAO.getAllAutoSyncUsers();
 
-        List<String> originWorkers = syncUsers.stream().map(UserSyncDTO::getOriginWorker).collect(Collectors.toList());
+        List<String> originWorkers = syncUsers
+                .stream()
+                .map(UserSyncDTO::getOriginWorker)
+                .collect(Collectors.toList());
 
         WorklogRequestDTO worklogRequestDTO = new WorklogRequestDTO(
                 fromDate,
@@ -101,6 +105,17 @@ public class JiraWorklog implements IJiraWorklog {
         synchronise(worklogRequestDTO, syncUsers);
     }
 
+    @Override
+    public void synchroniseFailedWorklogs() {
+        Map<Integer, DestinationWorklogDTO> failedWorklogs = worklogDAO.getAllFailedWorklogs();
+
+        List<Integer> successfullyPostedWorklogIds = filterOutFailedPostedWorklogs(jiraWorklogCreator.createWorklogsOnDestinationServer(failedWorklogs));
+
+        getUnsuccessfullyPostedWorklogs(failedWorklogs, successfullyPostedWorklogIds).forEach((worklogId, worklog) -> worklogDAO.addFailedworklog(worklogId, worklog));
+
+        successfullyPostedWorklogIds.forEach(worklogId -> worklogDAO.addWorklogId(worklogId));
+        successfullyPostedWorklogIds.forEach(worklogId -> worklogDAO.deleteFailedWorklog(worklogId));
+    }
 
     private SynchronisedDataDTO synchronise(WorklogRequestDTO worklogRequestDTO, List<UserSyncDTO> syncUsers) {
         Map<Integer, DestinationWorklogDTO> allWorklogsFromOriginServer = jiraWorklogReader.retrieveWorklogsFromOriginServer(worklogRequestDTO);
@@ -113,11 +128,20 @@ public class JiraWorklog implements IJiraWorklog {
 
         List<Integer> successfullyPostedWorklogIds = filterOutFailedPostedWorklogs(postedWorklogsWithResponseCodes);
 
-        // TODO: onsuccesvol gesplaatste worklogs verwerken (met groep overleggen wat er moet gebeuren).
+        getUnsuccessfullyPostedWorklogs(worklogsToBeSynced, successfullyPostedWorklogIds).forEach((worklogId, worklog) -> worklogDAO.addFailedworklog(worklogId, worklog));
 
         successfullyPostedWorklogIds.forEach(worklogId -> worklogDAO.addWorklogId(worklogId));
+        successfullyPostedWorklogIds.forEach(worklogId -> worklogDAO.deleteFailedWorklog(worklogId));
 
         return calculateSynchronisedData(worklogsToBeSynced, successfullyPostedWorklogIds);
+    }
+
+    private Map<Integer, DestinationWorklogDTO> getUnsuccessfullyPostedWorklogs(Map<Integer, DestinationWorklogDTO> worklogsToBeSynced, List<Integer> successfullyPostedWorklogIds) {
+        return worklogsToBeSynced
+                .entrySet()
+                .stream()
+                .filter(i -> !successfullyPostedWorklogIds.contains(i.getKey()))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
     private SynchronisedDataDTO calculateSynchronisedData(Map<Integer, DestinationWorklogDTO> worklogstoBeSynced, List<Integer> successfullyPostedWorklogIds) {
