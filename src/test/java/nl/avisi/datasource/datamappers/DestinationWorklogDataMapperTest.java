@@ -64,7 +64,7 @@ class DestinationWorklogDataMapperTest {
         DestinationWorklogDTO result = sut.toDTO(mockedResultset);
 
         //Assert
-        assertEquals(result.getTimeSpentSeconds(), 3600);
+        assertEquals(result.getTimeSpentSeconds(), timeSpentSeconds);
         assertEquals(result.getWorker(), worker);
         assertEquals(result.getOriginTaskId(), originTaskId);
         assertEquals(result.getStarted(), started);
