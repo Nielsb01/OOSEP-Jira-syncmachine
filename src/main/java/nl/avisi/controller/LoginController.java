@@ -2,6 +2,8 @@
 package nl.avisi.controller;
 
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import nl.avisi.dto.LoginDTO;
 import nl.avisi.model.contracts.ILogin;
 
@@ -18,7 +20,7 @@ import javax.ws.rs.core.Response;
  * processing HTTP requests to this API
  * that have to do with logging in.
  */
-
+@Api(value = "Login service")
 @Path("/login")
 public class LoginController {
     private ILogin login;
@@ -39,6 +41,7 @@ public class LoginController {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
+    @ApiOperation(value = "Try to log the user in with the given credentials, returns the user id")
     public Response login(LoginDTO loginDTO) {
         return Response.status(Response.Status.OK).entity(login.validateCredentials(loginDTO)).build();
     }
