@@ -3,7 +3,7 @@ package nl.avisi.timer;
 import nl.avisi.datasource.contracts.IAutomaticSynchronisationDAO;
 import nl.avisi.datasource.exceptions.LastSynchronisationDateNotFoundException;
 import nl.avisi.logger.ILogger;
-import nl.avisi.model.JiraWorklog;
+import nl.avisi.model.contracts.IJiraWorklog;
 import nl.avisi.propertyreaders.JiraSynchronisationProperties;
 
 import javax.annotation.PostConstruct;
@@ -17,16 +17,28 @@ import java.util.Date;
 @Startup
 public class AutomaticSynchronisationTimer {
 
+    /**
+     * The EJB timer service
+     */
     private TimerService timerService;
 
+    /**
+     * Is used for fetching the dates on which should be automatically synchronised
+     */
     private JiraSynchronisationProperties jiraSynchronisationProperties;
 
+    /**
+     * Is used for saving and fetching the last date on which automatic synchronisation occurred
+     */
     private IAutomaticSynchronisationDAO automaticSynchronisationDAO;
 
-    private JiraWorklog jiraWorklog;
+    /**
+     * Contains the business logic for synchronisation
+     */
+    private IJiraWorklog jiraWorklog;
 
     /**
-     * responsible for logging errors
+     * Responsible for logging errors
      */
     private ILogger logger;
 
@@ -46,7 +58,7 @@ public class AutomaticSynchronisationTimer {
     }
 
     @Inject
-    public void setJiraWorklog(JiraWorklog jiraWorklog) {
+    public void setJiraWorklog(IJiraWorklog jiraWorklog) {
         this.jiraWorklog = jiraWorklog;
     }
 
@@ -71,17 +83,14 @@ public class AutomaticSynchronisationTimer {
         return scheduleExpression;
     }
 
+    /**
+     * Bootstraps the automatic synchronisation process
+     * @param timer The EJB timer that starts this function
+     */
     @Timeout
     public void autoSynchronise(Timer timer) {
         String currentMoment = getCurrentMoment();
-        String lastSynchronisationMoment;
-
-        try {
-            lastSynchronisationMoment = automaticSynchronisationDAO.getLastSynchronisationMoment();
-        } catch (LastSynchronisationDateNotFoundException e) {
-            logger.logToDatabase(getClass().getName(), "autoSynchronise", e);
-            lastSynchronisationMoment = currentMoment;
-        }
+        String lastSynchronisationMoment = getLastSynchronisationMoment();
 
         jiraWorklog.autoSynchronisation(
                 castMomentToDate(lastSynchronisationMoment),
@@ -103,6 +112,19 @@ public class AutomaticSynchronisationTimer {
         Date currentMoment = new Date();
 
         return dateFormat.format(currentMoment);
+    }
+
+    private String getLastSynchronisationMoment() {
+        String lastSynchronisationMoment;
+
+        try {
+            lastSynchronisationMoment = automaticSynchronisationDAO.getLastSynchronisationMoment();
+        } catch (LastSynchronisationDateNotFoundException e) {
+            logger.logToDatabase(getClass().getName(), "getLastSynchronisationMoment", e);
+            lastSynchronisationMoment = getCurrentMoment();
+        }
+
+        return lastSynchronisationMoment;
     }
 
     private String castMomentToDate(String moment) {
