@@ -6,6 +6,7 @@ import nl.avisi.datasource.exceptions.DatabaseDriverNotFoundException;
 import nl.avisi.dto.JiraUserKeyDTO;
 import nl.avisi.dto.UserPreferenceDTO;
 import nl.avisi.dto.UserSyncDTO;
+import nl.avisi.logger.ILogger;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -27,6 +28,7 @@ public class UserDAOTest {
     public static final String JIRAUSER_1000 = "JIRAUSER1000";
     private UserDAO sut;
     private Database mockedDatabase;
+    private ILogger mockedLogger;
     private IDataMapper<UserSyncDTO> mockedUserSyncDataMapper;
     private IDataMapper<UserPreferenceDTO> mockedUserPreferenceMapper;
 
@@ -34,10 +36,12 @@ public class UserDAOTest {
     void setUp() {
         sut = new UserDAO();
         mockedDatabase = mock(Database.class);
+        mockedLogger = mock(ILogger.class);
         mockedUserSyncDataMapper = mock(IDataMapper.class);
         mockedUserPreferenceMapper = mock(IDataMapper.class);
 
         sut.setDatabase(mockedDatabase);
+        sut.setLogger(mockedLogger);
         sut.setUserSyncDataMapper(mockedUserSyncDataMapper);
         sut.setUserPreferenceDataMapper(mockedUserPreferenceMapper);
     }

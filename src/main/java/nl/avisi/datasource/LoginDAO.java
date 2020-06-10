@@ -4,6 +4,7 @@ import nl.avisi.datasource.contracts.ILoginDAO;
 import nl.avisi.datasource.database.Database;
 import nl.avisi.datasource.datamappers.IDataMapper;
 import nl.avisi.dto.UserDTO;
+import nl.avisi.logger.ILogger;
 
 import javax.inject.Inject;
 import javax.ws.rs.InternalServerErrorException;
@@ -16,6 +17,11 @@ import java.sql.SQLException;
  * information.
  */
 public class LoginDAO implements ILoginDAO {
+
+    /**
+     * responsible for logging errors
+     */
+    private ILogger logger;
 
     /**
      * DataMapper is used to convert
@@ -44,6 +50,11 @@ public class LoginDAO implements ILoginDAO {
         this.userDataMapper = userDataMapper;
     }
 
+    @Inject
+    public void setLogger(ILogger logger) {
+        this.logger = logger;
+    }
+
     /**
      * Retrieves all login information corresponding to
      * the supplied username.
@@ -65,6 +76,7 @@ public class LoginDAO implements ILoginDAO {
 
             userDTO = userDataMapper.toDTO(stmt.executeQuery());
         } catch (SQLException e) {
+            logger.logToDatabase(getClass().getName(), "getLoginInfo", e);
             throw new InternalServerErrorException(e.getMessage());
         }
 

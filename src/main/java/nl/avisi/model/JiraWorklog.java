@@ -2,10 +2,7 @@ package nl.avisi.model;
 
 import nl.avisi.datasource.contracts.IUserDAO;
 import nl.avisi.datasource.contracts.IWorklogDAO;
-import nl.avisi.dto.DestinationWorklogDTO;
-import nl.avisi.dto.ManualSyncDTO;
-import nl.avisi.dto.UserSyncDTO;
-import nl.avisi.dto.WorklogRequestDTO;
+import nl.avisi.dto.*;
 import nl.avisi.model.contracts.IJiraWorklog;
 import nl.avisi.model.worklog_crud.JiraWorklogCreator;
 import nl.avisi.model.worklog_crud.JiraWorklogReader;
@@ -18,7 +15,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
- * Responsible for retrieving and creating worklogs on the specified Jira server through the Tempo API with HTTP requests
+ * Responsible for retrieving, creating and synchronising worklogs
+ * on the specified Jira server through the Tempo API with HTTP requests
  */
 public class JiraWorklog implements IJiraWorklog {
 
@@ -56,14 +54,15 @@ public class JiraWorklog implements IJiraWorklog {
      * a request to manually synchronise their worklogs.
      *
      * @param manualSyncDTO Contains the neccesary information to
-     *                          make a HTTP request to the Tempo API
-     *                          to retrieve worklogs from the
-     *                          origin server
-     * @param userId Id of the user that wants to manually synchronise their
-     *               worklogs
+     *                      make a HTTP request to the Tempo API
+     *                      to retrieve worklogs from the
+     *                      origin server
+     * @param userId        Id of the user that wants to manually synchronise their
+     * @return {@link SynchronisedDataDTO} Containing successfully and non successfully
+     * synchronised time and worklogs.
      */
     @Override
-    public void manualSynchronisation(ManualSyncDTO manualSyncDTO, int userId) {
+    public SynchronisedDataDTO manualSynchronisation(ManualSyncDTO manualSyncDTO, int userId) {
         List<UserSyncDTO> syncUsers = new ArrayList<>();
         syncUsers.add(userDAO.getSyncUser(userId));
         List<String> originWorkers = syncUsers.stream().map(UserSyncDTO::getOriginWorker).collect(Collectors.toList());
@@ -73,7 +72,7 @@ public class JiraWorklog implements IJiraWorklog {
                 manualSyncDTO.getUntilDate(),
                 originWorkers);
 
-        synchronise(worklogRequestDTO, syncUsers);
+        return synchronise(worklogRequestDTO, syncUsers);
     }
 
     /**
@@ -83,17 +82,19 @@ public class JiraWorklog implements IJiraWorklog {
      * The ids of successfully posted worklogs will be added to the database to prevent
      * wrongfully synchronising worklogs in the future
      *
-     * @param fromDate Date from which to retrieve worklogs. This is the last date
-     *                 that auto synchronisation was completed
+     * @param fromDate  Date from which to retrieve worklogs. This is the last date
+     *                  that auto synchronisation was completed
      * @param untilDate Outer date to retrieve worklog up until this data. This is
-     *               the current date
-     *
+     *                  the current date
      */
     @Override
     public void autoSynchronisation(String fromDate, String untilDate) {
         List<UserSyncDTO> syncUsers = userDAO.getAllAutoSyncUsers();
 
-        List<String> originWorkers = syncUsers.stream().map(UserSyncDTO::getOriginWorker).collect(Collectors.toList());
+        List<String> originWorkers = syncUsers
+                .stream()
+                .map(UserSyncDTO::getOriginWorker)
+                .collect(Collectors.toList());
 
         WorklogRequestDTO worklogRequestDTO = new WorklogRequestDTO(
                 fromDate,
@@ -103,8 +104,19 @@ public class JiraWorklog implements IJiraWorklog {
         synchronise(worklogRequestDTO, syncUsers);
     }
 
+    @Override
+    public void synchroniseFailedWorklogs() {
+        Map<Integer, DestinationWorklogDTO> failedWorklogs = worklogDAO.getAllFailedWorklogs();
 
-    private void synchronise(WorklogRequestDTO worklogRequestDTO, List<UserSyncDTO> syncUsers) {
+        List<Integer> successfullyPostedWorklogIds = filterOutFailedPostedWorklogs(jiraWorklogCreator.createWorklogsOnDestinationServer(failedWorklogs));
+
+        getUnsuccessfullyPostedWorklogs(failedWorklogs, successfullyPostedWorklogIds).forEach((worklogId, worklog) -> worklogDAO.addFailedworklog(worklogId, worklog));
+
+        successfullyPostedWorklogIds.forEach(worklogId -> worklogDAO.addWorklogId(worklogId));
+        successfullyPostedWorklogIds.forEach(worklogId -> worklogDAO.deleteFailedWorklog(worklogId));
+    }
+
+    private SynchronisedDataDTO synchronise(WorklogRequestDTO worklogRequestDTO, List<UserSyncDTO> syncUsers) {
         Map<Integer, DestinationWorklogDTO> allWorklogsFromOriginServer = jiraWorklogReader.retrieveWorklogsFromOriginServer(worklogRequestDTO);
 
         Map<Integer, DestinationWorklogDTO> filteredOutWorklogs = filterOutAlreadySyncedWorklogs(allWorklogsFromOriginServer, worklogDAO.getAllWorklogIds());
@@ -113,11 +125,44 @@ public class JiraWorklog implements IJiraWorklog {
 
         Map<Integer, Integer> postedWorklogsWithResponseCodes = jiraWorklogCreator.createWorklogsOnDestinationServer(worklogsToBeSynced);
 
-        List<Integer> succesfullyPostedWorklogIds = filterOutFailedPostedWorklogs(postedWorklogsWithResponseCodes);
+        List<Integer> successfullyPostedWorklogIds = filterOutFailedPostedWorklogs(postedWorklogsWithResponseCodes);
 
-        // TODO: onsuccesvol gesplaatste worklogs verwerken (met groep overleggen wat er moet gebeuren).
+        getUnsuccessfullyPostedWorklogs(worklogsToBeSynced, successfullyPostedWorklogIds).forEach((worklogId, worklog) -> worklogDAO.addFailedworklog(worklogId, worklog));
 
-        succesfullyPostedWorklogIds.forEach(worklogId -> worklogDAO.addWorklogId(worklogId));
+        successfullyPostedWorklogIds.forEach(worklogId -> worklogDAO.addWorklogId(worklogId));
+        successfullyPostedWorklogIds.forEach(worklogId -> worklogDAO.deleteFailedWorklog(worklogId));
+
+        return calculateSynchronisedData(worklogsToBeSynced, successfullyPostedWorklogIds);
+    }
+
+    private Map<Integer, DestinationWorklogDTO> getUnsuccessfullyPostedWorklogs(Map<Integer, DestinationWorklogDTO> worklogsToBeSynced, List<Integer> successfullyPostedWorklogIds) {
+        return worklogsToBeSynced
+                .entrySet()
+                .stream()
+                .filter(i -> !successfullyPostedWorklogIds.contains(i.getKey()))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+    }
+
+    private SynchronisedDataDTO calculateSynchronisedData(Map<Integer, DestinationWorklogDTO> worklogstoBeSynced, List<Integer> successfullyPostedWorklogIds) {
+        int totalTimeToBeSynced = worklogstoBeSynced
+                .values()
+                .stream()
+                .mapToInt(DestinationWorklogDTO::getTimeSpentSeconds)
+                .sum();
+
+        int totalSynchronisedSeconds = worklogstoBeSynced
+                .entrySet()
+                .stream()
+                .filter(i -> successfullyPostedWorklogIds.contains(i.getKey()))
+                .mapToInt(i -> i.getValue().getTimeSpentSeconds())
+                .sum();
+
+        int totalFailedSynchronisedSeconds = totalTimeToBeSynced - totalSynchronisedSeconds;
+        int totalWorklogsToBeSynced = worklogstoBeSynced.size();
+        int totalSynchronisedWorklogs = successfullyPostedWorklogIds.size();
+        int totalFailedSynchronisedWorklogs = totalWorklogsToBeSynced - totalSynchronisedWorklogs;
+
+        return new SynchronisedDataDTO(totalSynchronisedSeconds, totalFailedSynchronisedSeconds, totalSynchronisedWorklogs, totalFailedSynchronisedWorklogs);
     }
 
     /**

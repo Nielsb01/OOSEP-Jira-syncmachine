@@ -1,9 +1,12 @@
 package nl.avisi.model.contracts;
 
 import nl.avisi.dto.ManualSyncDTO;
+import nl.avisi.dto.SynchronisedDataDTO;
 
 public interface IJiraWorklog {
-    void manualSynchronisation(ManualSyncDTO manualSyncDTO, int userId);
+    SynchronisedDataDTO manualSynchronisation(ManualSyncDTO manualSyncDTO, int userId);
 
     void autoSynchronisation(String fromDate, String toDate);
+
+    void synchroniseFailedWorklogs();
 }
