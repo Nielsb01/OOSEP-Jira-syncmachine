@@ -108,7 +108,7 @@ public class AutomaticSynchronisationTimer {
         try {
             lastSynchronisationMoment = automaticSynchronisationDAO.getLastSynchronisationMoment();
         } catch (LastSynchronisationDateNotFoundException e) {
-            logger.logToDatabase(getClass().getName(), "autoSynchronise", e);
+            logger.logToDatabase(getClass().getName(), "getLastSynchronisationMoment", e);
             lastSynchronisationMoment = getCurrentMoment();
         }
 
