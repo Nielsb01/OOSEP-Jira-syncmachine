@@ -1,6 +1,8 @@
 
 package nl.avisi.controller;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import nl.avisi.dto.JiraUsernameDTO;
 import nl.avisi.model.contracts.IJiraUser;
 
@@ -13,7 +15,7 @@ import javax.ws.rs.core.Response;
  * Responsible for dealing with all incoming
  * HTTP requests that are related to the user
  */
-
+@Api(value = "Manage all settings for a user")
 @Path("user")
 public class UserController {
     private IJiraUser jiraUser;
@@ -38,6 +40,7 @@ public class UserController {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
+    @ApiOperation(value = "Retrieve the Jira user keys based on the e-mail addresses from the user", notes = "The Jira user keys are stored in the database and not returned in the response body")
     public Response setJiraUserKeys(JiraUsernameDTO jiraUsernameDTO, @PathParam("userId") int userId) {
         jiraUser.setJiraUserKeys(jiraUsernameDTO, userId);
         return Response.status(Response.Status.OK).build();
@@ -57,6 +60,7 @@ public class UserController {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
+    @ApiOperation(value = "Allow the user to enable or disable the auto synchronisation", notes = "The Jira user keys must be set in the database for the user")
     public Response setAutoSyncPreference(@PathParam("userId") int userId, @QueryParam("autoSync") boolean autoSyncOn) {
         jiraUser.setAutoSyncPreference(userId, autoSyncOn);
         return Response.status(Response.Status.OK).build();
@@ -72,6 +76,7 @@ public class UserController {
     @Path("/autoSync/{userId}")
     @GET
     @Consumes(MediaType.APPLICATION_JSON)
+    @ApiOperation(value = "Retrieve the auto synchronisation setting")
     public Response getAutoSyncPreference(@PathParam("userId") int userId) {
         return Response.status(Response.Status.OK).entity(jiraUser.getAutoSyncPreference(userId)).build();
     }
