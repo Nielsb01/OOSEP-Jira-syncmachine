@@ -42,11 +42,6 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>com.konghq</groupId>
-            <artifactId>unirest-java</artifactId>
-            <version>3.7.02</version>
-        </dependency>
-        <dependency>
             <groupId>com.google.oauth-client</groupId>
             <artifactId>google-oauth-client-assembly</artifactId>
             <version>1.16.0-rc</version>
