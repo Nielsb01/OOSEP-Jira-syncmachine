@@ -72,7 +72,7 @@ public class WorklogDAO implements IWorklogDAO {
     /**
      * SQL query for retrieving all worklogIds
      */
-    private static final String GET_ALL_WORKLOG_IDS_SQL = String.format("SELECT %s FROM %s", SYNCHRONISED_WORKLOG_TABLE_NAME, WORKLOG_ID_COLUMN_NAME);
+    private static final String GET_ALL_WORKLOG_IDS_SQL = String.format("SELECT %s FROM %s", WORKLOG_ID_COLUMN_NAME, SYNCHRONISED_WORKLOG_TABLE_NAME);
 
     /**
      * Used for mapping a Resultset to a List of worklog ids

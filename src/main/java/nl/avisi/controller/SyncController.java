@@ -3,7 +3,6 @@ package nl.avisi.controller;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
 import nl.avisi.dto.ManualSyncDTO;
 import nl.avisi.dto.SynchronisedDataDTO;
 import nl.avisi.model.contracts.IJiraWorklog;
