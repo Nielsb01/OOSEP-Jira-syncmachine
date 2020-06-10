@@ -60,7 +60,7 @@ public class UserController {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Allow the user to enable or disable the auto synchronisation", notes = "The Jira user keys must be set in the database for the user")
+    @ApiOperation(value = "Allow the user to enable or disable the auto synchronisation preference", notes = "The Jira user keys must be set in the database for the user")
     public Response setAutoSyncPreference(@PathParam("userId") int userId, @QueryParam("autoSync") boolean autoSyncOn) {
         jiraUser.setAutoSyncPreference(userId, autoSyncOn);
         return Response.status(Response.Status.OK).build();
