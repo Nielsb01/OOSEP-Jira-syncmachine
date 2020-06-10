@@ -76,7 +76,7 @@ public class UserController {
     @Path("/autoSync/{userId}")
     @GET
     @Consumes(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Retrieve the auto synchronisation setting")
+    @ApiOperation(value = "Retrieve the auto synchronisation preference")
     public Response getAutoSyncPreference(@PathParam("userId") int userId) {
         return Response.status(Response.Status.OK).entity(jiraUser.getAutoSyncPreference(userId)).build();
     }
