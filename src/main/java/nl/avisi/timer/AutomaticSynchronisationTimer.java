@@ -18,7 +18,7 @@ import java.util.Date;
 public class AutomaticSynchronisationTimer {
 
     /**
-     * The EJB timer
+     * The EJB timer service
      */
     private TimerService timerService;
 
@@ -85,7 +85,7 @@ public class AutomaticSynchronisationTimer {
 
     /**
      * Bootstraps the automatic synchronisation process
-     * @param timer The JEE timer that starts this function
+     * @param timer The EJB timer that starts this function
      */
     @Timeout
     public void autoSynchronise(Timer timer) {
