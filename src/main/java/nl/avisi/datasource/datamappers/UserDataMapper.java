@@ -2,6 +2,7 @@ package nl.avisi.datasource.datamappers;
 
 import nl.avisi.dto.UserDTO;
 
+import javax.ws.rs.NotAuthorizedException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -24,8 +25,9 @@ public class UserDataMapper implements IDataMapper<UserDTO> {
     @Override
     public UserDTO toDTO(ResultSet resultSet) throws SQLException {
 
-
-        resultSet.next();
+        if (!resultSet.next()) {
+            throw new NotAuthorizedException("Username does not exist!");
+        }
 
         return new UserDTO(
                 resultSet.getInt("user_id"),
