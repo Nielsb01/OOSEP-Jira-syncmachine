@@ -17,16 +17,28 @@ import java.util.Date;
 @Startup
 public class AutomaticSynchronisationTimer {
 
+    /**
+     * The EJB timer
+     */
     private TimerService timerService;
 
+    /**
+     * Is used for fetching the dates on which should be automatically synchronised
+     */
     private JiraSynchronisationProperties jiraSynchronisationProperties;
 
+    /**
+     * Is used for saving and fetching the last date on which automatic synchronisation occurred
+     */
     private IAutomaticSynchronisationDAO automaticSynchronisationDAO;
 
+    /**
+     * Contains the business logic for synchronisation
+     */
     private IJiraWorklog jiraWorklog;
 
     /**
-     * responsible for logging errors
+     * Responsible for logging errors
      */
     private ILogger logger;
 
