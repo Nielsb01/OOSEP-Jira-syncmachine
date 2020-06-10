@@ -3,7 +3,7 @@ package nl.avisi.timer;
 import nl.avisi.datasource.contracts.IAutomaticSynchronisationDAO;
 import nl.avisi.datasource.exceptions.LastSynchronisationDateNotFoundException;
 import nl.avisi.logger.ILogger;
-import nl.avisi.model.JiraWorklog;
+import nl.avisi.model.contracts.IJiraWorklog;
 import nl.avisi.propertyreaders.JiraSynchronisationProperties;
 
 import javax.annotation.PostConstruct;
@@ -23,7 +23,7 @@ public class AutomaticSynchronisationTimer {
 
     private IAutomaticSynchronisationDAO automaticSynchronisationDAO;
 
-    private JiraWorklog jiraWorklog;
+    private IJiraWorklog jiraWorklog;
 
     /**
      * responsible for logging errors
@@ -46,7 +46,7 @@ public class AutomaticSynchronisationTimer {
     }
 
     @Inject
-    public void setJiraWorklog(JiraWorklog jiraWorklog) {
+    public void setJiraWorklog(IJiraWorklog jiraWorklog) {
         this.jiraWorklog = jiraWorklog;
     }
 
