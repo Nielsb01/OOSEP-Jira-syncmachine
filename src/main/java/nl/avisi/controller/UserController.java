@@ -80,4 +80,11 @@ public class UserController {
     public Response getAutoSyncPreference(@PathParam("userId") int userId) {
         return Response.status(Response.Status.OK).entity(jiraUser.getAutoSyncPreference(userId)).build();
     }
+
+    @Path("/hasUserKeys/{userId}")
+    @GET
+    @ApiOperation(value = "Check if the user has set the Jira user keys", notes = "This will return a boolean and not the actual user keys")
+    public Response getHasJiraUserKeys(@PathParam("userId") int userId) {
+        return Response.status(Response.Status.OK).entity(jiraUser.hasJiraUserKeys(userId)).build();
+    }
 }

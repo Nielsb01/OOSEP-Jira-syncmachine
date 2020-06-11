@@ -27,7 +27,8 @@ class UserDataMapperTest {
     @Test
     void testToDTOReturnsUserDTO() throws Exception {
         //Arrange
-        when(mockedResultset.next()).thenReturn(false);
+        when(mockedResultset.next()).thenReturn(true, false);
+
         //Act
         final UserDTO result = sut.toDTO(mockedResultset);
 
