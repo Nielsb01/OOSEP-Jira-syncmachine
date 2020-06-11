@@ -81,6 +81,13 @@ public class UserController {
         return Response.status(Response.Status.OK).entity(jiraUser.getAutoSyncPreference(userId)).build();
     }
 
+    /**
+     * Responsible for retrieving if the user has set their user keys
+     * for the origin and destination Jira instance
+     *
+     * @param userId Id of the user that is requesting it's preferences
+     * @return A HTTP response with the jira user keys boolean JSON object
+     */
     @Path("/hasUserKeys/{userId}")
     @GET
     @ApiOperation(value = "Check if the user has set the Jira user keys", notes = "This will return a boolean and not the actual user keys")
