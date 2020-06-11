@@ -1,8 +1,8 @@
 package nl.avisi.datasource;
 
 import nl.avisi.datasource.database.Database;
-import nl.avisi.logger.ILogger;
 import nl.avisi.datasource.exceptions.LastSynchronisationDateNotFoundException;
+import nl.avisi.logger.ILogger;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
