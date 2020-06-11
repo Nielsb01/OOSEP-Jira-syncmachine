@@ -1,4 +1,6 @@
-package nl.avisi.model.exceptions;
+package nl.avisi.model.exceptions.mappers;
+
+import nl.avisi.model.exceptions.InvalidUsernameException;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;

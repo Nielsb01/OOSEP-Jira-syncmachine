@@ -1,4 +1,4 @@
-package nl.avisi.datasource.exceptions;
+package nl.avisi.datasource.exceptions.mappers;
 
 import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.core.Response;
