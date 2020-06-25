@@ -6,7 +6,6 @@ import nl.avisi.dto.DestinationWorklogDTO;
 import nl.avisi.logger.ILogger;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import sun.security.krb5.internal.crypto.Des;
 
 import javax.ws.rs.InternalServerErrorException;
 import java.sql.Connection;

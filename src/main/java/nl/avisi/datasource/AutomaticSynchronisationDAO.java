@@ -2,8 +2,8 @@ package nl.avisi.datasource;
 
 import nl.avisi.datasource.contracts.IAutomaticSynchronisationDAO;
 import nl.avisi.datasource.database.Database;
-import nl.avisi.logger.ILogger;
 import nl.avisi.datasource.exceptions.LastSynchronisationDateNotFoundException;
+import nl.avisi.logger.ILogger;
 
 import javax.inject.Inject;
 import javax.ws.rs.InternalServerErrorException;

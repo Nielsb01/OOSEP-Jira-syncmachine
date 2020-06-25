@@ -6,9 +6,7 @@ import kong.unirest.json.JSONArray;
 import kong.unirest.json.JSONObject;
 import nl.avisi.api.JiraInterface;
 import nl.avisi.datasource.contracts.IUserDAO;
-import nl.avisi.dto.JiraUserKeyDTO;
-import nl.avisi.dto.JiraUsernameDTO;
-import nl.avisi.dto.UserPreferenceDTO;
+import nl.avisi.dto.*;
 import nl.avisi.logger.ILogger;
 import nl.avisi.model.exceptions.InvalidUsernameException;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,8 +15,7 @@ import org.mockito.Mockito;
 
 import javax.ws.rs.InternalServerErrorException;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
@@ -251,5 +248,57 @@ class JiraUserTest {
         assertThrows(InternalServerErrorException.class, () ->
                 // Act
                 sut.setJiraUserKeys(jiraUsernameDTO, USER_ID));
+    }
+
+    @Test
+    void testHasJiraUserKeysReturnsTrueWhenBothWorkersHaveAValue() {
+        // Arrange
+        UserSyncDTO syncDTO = new UserSyncDTO(ORIGIN_USERNAME, DESTINATION_USERNAME);
+        Mockito.when(mockedUserDAO.getSyncUser(USER_ID)).thenReturn(syncDTO);
+
+        // Act
+        HasJiraUserKeysDTO result = sut.hasJiraUserKeys(USER_ID);
+
+        // Assert
+        assertTrue(result.getHasJiraUserKeys());
+    }
+
+    @Test
+    void testHasJiraUserKeysReturnsFalseWhenBothWorkersAreEmpty() {
+        // Arrange
+        UserSyncDTO syncDTO = new UserSyncDTO("", "");
+        Mockito.when(mockedUserDAO.getSyncUser(USER_ID)).thenReturn(syncDTO);
+
+        // Act
+        HasJiraUserKeysDTO result = sut.hasJiraUserKeys(USER_ID);
+
+        // Assert
+        assertFalse(result.getHasJiraUserKeys());
+    }
+
+    @Test
+    void testHasJiraUserKeysReturnsFalseWhenBothOnlyOriginWorkerIsEmpty() {
+        // Arrange
+        UserSyncDTO syncDTO = new UserSyncDTO("", DESTINATION_USERNAME);
+        Mockito.when(mockedUserDAO.getSyncUser(USER_ID)).thenReturn(syncDTO);
+
+        // Act
+        HasJiraUserKeysDTO result = sut.hasJiraUserKeys(USER_ID);
+
+        // Assert
+        assertFalse(result.getHasJiraUserKeys());
+    }
+
+    @Test
+    void testHasJiraUserKeysReturnsFalseWhenBothOnlyDestinationWorkerIsEmpty() {
+        // Arrange
+        UserSyncDTO syncDTO = new UserSyncDTO(ORIGIN_USERNAME, "");
+        Mockito.when(mockedUserDAO.getSyncUser(USER_ID)).thenReturn(syncDTO);
+
+        // Act
+        HasJiraUserKeysDTO result = sut.hasJiraUserKeys(USER_ID);
+
+        // Assert
+        assertFalse(result.getHasJiraUserKeys());
     }
 }

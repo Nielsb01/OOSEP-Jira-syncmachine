@@ -1,7 +1,6 @@
 package nl.avisi.datasource.datamappers;
 
 import nl.avisi.dto.DestinationWorklogDTO;
-import nl.avisi.dto.UserDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

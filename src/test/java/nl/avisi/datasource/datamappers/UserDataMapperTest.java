@@ -4,6 +4,7 @@ import nl.avisi.dto.UserDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import javax.ws.rs.NotAuthorizedException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -27,7 +28,8 @@ class UserDataMapperTest {
     @Test
     void testToDTOReturnsUserDTO() throws Exception {
         //Arrange
-        when(mockedResultset.next()).thenReturn(false);
+        when(mockedResultset.next()).thenReturn(true, false);
+
         //Act
         final UserDTO result = sut.toDTO(mockedResultset);
 
@@ -42,6 +44,17 @@ class UserDataMapperTest {
 
         //Act & Assert
         assertThrows(SQLException.class, () -> {
+            sut.toDTO(mockedResultset);
+        });
+    }
+
+    @Test
+    void testToDTOThrowsNotAuthorizedExceptionWhenNoResultsAreFound() throws SQLException {
+        // Arrange
+        when(mockedResultset.next()).thenReturn(false);
+
+        // Act & Assert
+        assertThrows(NotAuthorizedException.class, () -> {
             sut.toDTO(mockedResultset);
         });
     }

@@ -5,9 +5,7 @@ import kong.unirest.JsonNode;
 import kong.unirest.json.JSONException;
 import nl.avisi.api.JiraInterface;
 import nl.avisi.datasource.contracts.IUserDAO;
-import nl.avisi.dto.JiraUserKeyDTO;
-import nl.avisi.dto.JiraUsernameDTO;
-import nl.avisi.dto.UserPreferenceDTO;
+import nl.avisi.dto.*;
 import nl.avisi.logger.ILogger;
 import nl.avisi.model.contracts.IJiraUser;
 import nl.avisi.model.exceptions.InvalidUsernameException;
@@ -30,6 +28,9 @@ public class JiraUser implements IJiraUser {
      */
     private ILogger logger;
 
+    /**
+     * Interface to connect with the Jira API
+     */
     private JiraInterface jiraInterface;
 
     @Inject
@@ -81,6 +82,23 @@ public class JiraUser implements IJiraUser {
      */
     public void setJiraUserKeys(JiraUsernameDTO jiraUsernameDTO, int userId) {
         userDAO.updateJiraUserKeys(mapJiraUsernameDTOToJiraUserKeyDTO(jiraUsernameDTO), userId);
+    }
+
+    /**
+     * Check if the user has a origin worker and a destination worker
+     *
+     * @param userId The user for which to check if a origin and destination worker are set
+     * @return The object with a boolean if the user has set the origin and destination worker
+     */
+    public HasJiraUserKeysDTO hasJiraUserKeys(int userId)
+    {
+        UserSyncDTO syncDTO = userDAO.getSyncUser(userId);
+        boolean hasOriginUserKey = !syncDTO.getOriginWorker().isEmpty();
+        boolean hasDestinationUserKey = !syncDTO.getDestinationWorker().isEmpty();
+
+        return new HasJiraUserKeysDTO(
+                (hasOriginUserKey && hasDestinationUserKey)
+        );
     }
 
     /**

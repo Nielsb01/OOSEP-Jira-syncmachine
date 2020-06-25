@@ -1,5 +1,6 @@
 package nl.avisi.controller;
 
+import nl.avisi.dto.HasJiraUserKeysDTO;
 import nl.avisi.dto.JiraUsernameDTO;
 import nl.avisi.dto.UserPreferenceDTO;
 import nl.avisi.model.JiraUser;
@@ -90,5 +91,21 @@ class UserControllerTest {
         // Assert
         assertEquals(HTTP_STATUS_OK, actualValue.getStatus());
         assertEquals(preferences, actualValue.getEntity());
+    }
+
+    @Test
+    void testGetHasJiraUserKeysReturnsCorrectDataWithStatusCode() {
+        // Arrange
+        final int userId = 1;
+        final HasJiraUserKeysDTO hasJiraUserKeysDTO = new HasJiraUserKeysDTO(true);
+
+        when(mockedJiraUser.hasJiraUserKeys(anyInt())).thenReturn(hasJiraUserKeysDTO);
+
+        // Act
+        final Response actualValue = sut.getHasJiraUserKeys(userId);
+
+        // Assert
+        assertEquals(HTTP_STATUS_OK, actualValue.getStatus());
+        assertEquals(hasJiraUserKeysDTO, actualValue.getEntity());
     }
 }
